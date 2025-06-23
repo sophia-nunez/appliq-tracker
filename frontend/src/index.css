@@ -1,0 +1,65 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  --primary-color: #1b1238;
+  --secondary-color: #e9e3ff;
+  --hover-color: #787093;
+  --background-color: rgb(65, 59, 71);
+  --card-bg-color: rgb(78, 72, 83);
+  --text-color: #ffffff;
+  --delete-red: rgb(122, 40, 34);
+  --gray: rgb(198, 198, 198);
+
+  color-scheme: light dark;
+  color: var(--text-color);
+  background-color: var(--background-color);
+
+  [data-theme="light"] {
+    --text-color: #000000;
+    --background-color: #ffffff;
+    --card-bg-color: #f6f2ff;
+    --primary-color: #b9a7f2;
+    --secondary-color: #1b1238;
+    --hover-color: #e8e2ff;
+    --gray: rgb(63, 63, 63);
+    --delete-red: rgb(221, 132, 132);
+
+    background-color: var(--background-color);
+    color: var(--text-color);
+
+    a:hover {
+      color: #747bff;
+    }
+  }
+}
+
+body,
+#main-content {
+  background-color: var(--background-color);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--background-color);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto var(--primary-color);
+}

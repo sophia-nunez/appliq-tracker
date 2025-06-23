@@ -1,0 +1,25 @@
+header {
+  position: sticky;
+  top: 0;
+  height: 10vh;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0px 20px;
+}
+
+h1 {
+  font-size: 2.2em;
+  line-height: 1.1;
+  margin-right: auto;
+}
+
+.logo {
+  height: 50px;
+}
+
+.nav-icon {
+  font-size: 2em;
+  cursor: pointer;
+}

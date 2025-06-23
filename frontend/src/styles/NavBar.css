@@ -1,0 +1,61 @@
+/* CSS for Modal */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4);
+  align-content: center;
+}
+
+#modal-content {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid var(--primary-color);
+
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  animation-name: animateslide;
+  animation-duration: 0.8s;
+}
+
+.close {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 5px;
+  color: var(--secondary-color);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: var(--primary-color);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@keyframes animateslide {
+  from {
+    right: 100;
+    opacity: 1;
+  }
+  to {
+    right: 0;
+    opacity: 1;
+  }
+}
