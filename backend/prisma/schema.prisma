@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @default(autoincrement())
+  username String @unique
+  applications Application[]
+  categories Category[]
+  companies Company[]
+}
+
+model Application {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  companyId Int
+  company Company @relation(fields[companyId], references: [id])
+  title String
+  description String
+  notes String
+  status String
+  categories Category[]
+  isFeatured Boolean @default(false)
+  appliedAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  interviewAt DateTime? @default(now())
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  applications Application[]
+  isFavorite Boolean @default(false)
+  favoritedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id Int @id @default(autoincrement())
+  name String
+  applications Application[]
+  industry String?
+  description String?
+  careerPage String?
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  isFavorite Boolean @default(false)
+  favoritedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
