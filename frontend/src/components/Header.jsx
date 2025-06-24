@@ -13,10 +13,15 @@ const Header = () => {
     function handleWindowClick(event) {
       const span = document.getElementsByClassName("close")[0];
       if (event.target === span) {
-        setNavOpen(false);
+        navRef.current.classList.add("modalClosed"); // causes slideout animation
+        const timeout = setTimeout(() => {
+          setNavOpen(false);
+          clearTimeout(timeout);
+        }, "800");
       }
-      if (modalRef.current && event.target === modalRef.current) {
+      if (navRef.current && event.target === navRef.current) {
         setNavOpen(false);
+        // TODO: cause slideout animation here as well? or only clicking close
       }
     }
 
@@ -38,7 +43,7 @@ const Header = () => {
         <h1>Appliq</h1>
         <IoMenu className="nav-icon" onClick={openNav} />
       </header>
-      {navOpen && <NavBar reference={navRef} />}
+      {navOpen && <NavBar navOpen={navOpen} reference={navRef} />}
     </>
   );
 };

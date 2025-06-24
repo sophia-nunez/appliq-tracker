@@ -9,6 +9,9 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgba(0, 0, 0, 0.4);
   align-content: center;
+
+  display: flex;
+  flex-direction: column;
 }
 
 #modal-content {
@@ -18,11 +21,11 @@
   width: 200px;
   height: 100%;
   margin: auto;
-  padding: 20px;
-  border: 1px solid var(--primary-color);
+  padding: 10px 20px;
 
   background-color: var(--background-color);
   color: var(--text-color);
+  box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.589);
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -31,15 +34,29 @@
 }
 
 .close {
-  position: fixed;
-  top: 0;
-  right: 0;
   z-index: 1;
   padding: 5px;
   color: var(--secondary-color);
   float: right;
-  font-size: 28px;
   font-weight: bold;
+
+  .close-icon {
+    font-size: 28px;
+    pointer-events: none;
+  }
+}
+
+.top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .close:hover,
@@ -49,13 +66,25 @@
   cursor: pointer;
 }
 
+.modalClosed {
+  animation-name: animateslide;
+  animation-duration: 0.8s;
+  animation-direction: reverse;
+  background-color: transparent;
+}
+
+#toggle-mode {
+  margin: 20px;
+  margin-top: auto;
+}
+
 @keyframes animateslide {
   from {
-    right: 100;
+    transform: translate(100%, 0);
     opacity: 1;
   }
   to {
-    right: 0;
+    transform: translate(0, 0);
     opacity: 1;
   }
 }

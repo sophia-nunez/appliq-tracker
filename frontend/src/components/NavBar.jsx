@@ -2,17 +2,23 @@ import { ThemeProvider, useTheme } from "./ThemeContext";
 import { IoMenu } from "react-icons/io5";
 import "../styles/NavBar.css";
 
-const NavBar = ({ reference }) => {
+const NavBar = ({ navOpen, reference }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <aside id="nav-modal" className="modal" ref={reference}>
-      <span className="close">
-        <IoMenu />
-      </span>
       <section id="modal-content">
+        <div className="top-row">
+          <h2>Appliq</h2>
+          <span className="close">
+            <IoMenu className="close-icon" />
+          </span>
+        </div>
         <nav>
-          <p>Navigation Bar</p>
+          <button>Home</button>
+          <button>Applications</button>
+          <button>Companies</button>
+          <button>Data</button>
           <button id="toggle-mode" onClick={toggleTheme}>
             {theme === "light" ? "☀️ Light" : "🌖 Dark"}
           </button>
