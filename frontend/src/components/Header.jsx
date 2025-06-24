@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { IoMenu } from "react-icons/io5";
 import icon from "../assets/images/icon.png";
 import NavBar from "./NavBar.jsx";
+import { homePath } from "../links.js";
 import "../styles/Header.css";
 
 const Header = () => {
@@ -40,7 +41,7 @@ const Header = () => {
   return (
     <>
       <header>
-        <Link to="/">
+        <Link to={homePath}>
           <img src={icon} alt="Appliq logo" className="logo" />
           <h1>Appliq</h1>
         </Link>

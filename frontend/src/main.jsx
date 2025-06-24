@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider, useTheme } from "./components/ThemeContext";
+import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ApplicationsPage from "./pages/ApplicationsPage";
 import Header from "./components/Header";
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "data",
         Component: DataPage,
+      },
+      {
+        path: "login",
+        Component: LoginPage,
       },
     ],
   },

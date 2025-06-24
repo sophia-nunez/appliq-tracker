@@ -1,0 +1,36 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  margin: auto;
+  width: 60%;
+  border-radius: 3px;
+
+  .input-container {
+    width: clamp(100px, 50vw, 400px);
+  }
+
+  input {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-radius: 3px;
+    border: 1px solid var(--secondary-color);
+    width: 100%;
+  }
+
+  .login-btns {
+    place-items: center;
+
+    hr {
+      width: 60vw;
+      margin: 20px 0px;
+    }
+
+    .login-btn,
+    .register-btn {
+      width: clamp(100px, 20vw, 200px);
+    }
+  }
+}

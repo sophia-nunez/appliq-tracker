@@ -30,6 +30,7 @@ footer {
     gap: 1em;
 
     a {
+      text-decoration: none;
       text-align: center;
     }
   }

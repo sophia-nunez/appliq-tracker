@@ -12,6 +12,7 @@
   height: 20vh;
   min-height: 300px;
   padding: 10px 20px;
+  border-radius: 3px;
   background-color: var(--card-bg-color);
 
   .featured-content {
@@ -25,11 +26,13 @@
 
   .featured {
     margin: auto 0px;
-    background-color: var(--background-color);
     padding: 10px;
     height: 70%;
     width: 22%;
     min-width: 150px;
     max-width: 250px;
+    border-radius: 3px;
+    background-color: var(--background-color);
+    box-shadow: 1px 1px 3px 0px var(--primary-color);
   }
 }

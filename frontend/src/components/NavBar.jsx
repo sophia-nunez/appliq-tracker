@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { ThemeProvider, useTheme } from "./ThemeContext";
 import { IoMdClose } from "react-icons/io";
 import "../styles/NavBar.css";
+import { homePath, applicationsPath, companiesPath, dataPath } from "../links";
 
 const NavBar = ({ navOpen, reference }) => {
   const { theme, toggleTheme } = useTheme();
@@ -16,10 +17,10 @@ const NavBar = ({ navOpen, reference }) => {
           </span>
         </div>
         <nav>
-          <Link to="/">Home</Link>
-          <Link to="/applications">Applications</Link>
-          <Link to="/companies">Companies</Link>
-          <Link to="/data">Data</Link>
+          <Link to={homePath}>Home</Link>
+          <Link to={applicationsPath}>Applications</Link>
+          <Link to={companiesPath}>Companies</Link>
+          <Link to={dataPath}>Data</Link>
           <button id="toggle-mode" onClick={toggleTheme}>
             {theme === "light" ? "☀️ Light" : "🌖 Dark"}
           </button>

@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import SearchBar from "../components/SearchBar";
 import Featured from "../components/Featured";
 import List from "../components/List";
+import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
 
 const HomePage = () => {
@@ -9,9 +9,9 @@ const HomePage = () => {
     <main>
       <h2>Home</h2>
       <nav className="home-nav">
-        <Link to="/applications">Applications</Link>
-        <Link to="/companies">Companies</Link>
-        <Link to="/data">Data</Link>
+        <Link to={applicationsPath}>Applications</Link>
+        <Link to={companiesPath}>Companies</Link>
+        <Link to={dataPath}>Data</Link>
       </nav>
       <section className="featured-container">
         <Featured />
