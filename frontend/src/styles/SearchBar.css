@@ -1,0 +1,29 @@
+.searchbar-content {
+  text-align: center;
+
+  h2 {
+    font-weight: 300;
+    font-size: 2.1rem;
+  }
+
+  .search-sort {
+    display: flex;
+    justify-content: space-evenly;
+
+    .search {
+      border-radius: 10px;
+      border: 1px solid var(--text-color);
+
+      min-width: 60%;
+    }
+
+    #sort-by {
+      border-radius: 5px;
+      border: transparent;
+      color: var(--background-color);
+      background-color: var(--secondary-color);
+
+      padding: 0.2em;
+    }
+  }
+}

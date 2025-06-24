@@ -1,6 +1,9 @@
+import SearchBar from "./SearchBar";
+
 const HomePage = () => {
   return (
     <main>
+      <SearchBar />
       <section className="featured-container">
         <p>Featured applications</p>
       </section>

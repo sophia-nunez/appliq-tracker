@@ -45,6 +45,11 @@ body,
   min-height: 100vh;
 }
 
+main {
+  min-height: 85vh;
+  padding: 10px;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
