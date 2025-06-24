@@ -1,5 +1,5 @@
 import { ThemeProvider, useTheme } from "./ThemeContext";
-import { IoMenu } from "react-icons/io5";
+import { IoMdClose } from "react-icons/io";
 import "../styles/NavBar.css";
 
 const NavBar = ({ navOpen, reference }) => {
@@ -11,7 +11,7 @@ const NavBar = ({ navOpen, reference }) => {
         <div className="top-row">
           <h2>Appliq</h2>
           <span className="close">
-            <IoMenu className="close-icon" />
+            <IoMdClose className="close-icon" />
           </span>
         </div>
         <nav>

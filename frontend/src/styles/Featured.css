@@ -1,0 +1,35 @@
+.featured-container {
+  margin: 20px 10px;
+
+  h3 {
+    font-weight: 400;
+    font-size: 1.4em;
+    margin: 0px;
+  }
+}
+
+.featured-background {
+  height: 20vh;
+  min-height: 300px;
+  padding: 10px 20px;
+  background-color: var(--card-bg-color);
+
+  .featured-content {
+    height: 100%;
+    display: flex;
+    overflow: auto;
+    justify-content: start;
+    align-items: stretch;
+    gap: 1em;
+  }
+
+  .featured {
+    margin: auto 0px;
+    background-color: var(--background-color);
+    padding: 10px;
+    height: 70%;
+    width: 22%;
+    min-width: 150px;
+    max-width: 250px;
+  }
+}

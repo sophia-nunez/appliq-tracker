@@ -1,0 +1,19 @@
+.list-content {
+  background-color: var(--card-bg-color);
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+
+  .child {
+    padding: 10px 20px;
+    width: 100%;
+    background-color: var(--background-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
