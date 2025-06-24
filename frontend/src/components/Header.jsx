@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { Link } from "react-router";
 import { IoMenu } from "react-icons/io5";
 import icon from "../assets/images/icon.png";
 import NavBar from "./NavBar.jsx";
@@ -39,8 +40,10 @@ const Header = () => {
   return (
     <>
       <header>
-        <img src={icon} alt="Appliq logo" className="logo" />
-        <h1>Appliq</h1>
+        <Link to="/">
+          <img src={icon} alt="Appliq logo" className="logo" />
+          <h1>Appliq</h1>
+        </Link>
         <IoMenu className="nav-icon" onClick={openNav} />
       </header>
       {navOpen && <NavBar navOpen={navOpen} reference={navRef} />}

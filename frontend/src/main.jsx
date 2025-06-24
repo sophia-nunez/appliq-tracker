@@ -1,12 +1,14 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import ReactDOM from "react-dom/client";
-import HomePage from "./components/HomePage";
-import ApplicationsPage from "./components/ApplicationsPage";
+import { ThemeProvider, useTheme } from "./components/ThemeContext";
+import HomePage from "./pages/HomePage";
+import ApplicationsPage from "./pages/ApplicationsPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import NotFound from "./components/NotFound";
-import { ThemeProvider, useTheme } from "./components/ThemeContext";
+import CompanyPage from "./pages/CompanyPage";
 import "./index.css";
+import DataPage from "./pages/DataPage";
 
 function Root() {
   return (
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "applications",
         Component: ApplicationsPage,
+      },
+      {
+        path: "companies",
+        Component: CompanyPage,
+      },
+      {
+        path: "data",
+        Component: DataPage,
       },
     ],
   },

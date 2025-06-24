@@ -1,11 +1,6 @@
 .searchbar-content {
   text-align: center;
 
-  h2 {
-    font-weight: 300;
-    font-size: 2.1rem;
-  }
-
   .search-sort {
     display: flex;
     justify-content: space-evenly;

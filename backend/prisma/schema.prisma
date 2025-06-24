@@ -17,6 +17,7 @@ datasource db {
 model User {
   id Int @default(autoincrement())
   username String @unique
+  password String
   applications Application[]
   categories Category[]
   companies Company[]
@@ -45,8 +46,6 @@ model Category {
   userId Int
   user User @relation(fields: [userId], references: [id])
   applications Application[]
-  isFavorite Boolean @default(false)
-  favoritedAt DateTime @default(now())
   createdAt DateTime @default(now())
 }
 

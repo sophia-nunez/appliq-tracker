@@ -1,9 +1,9 @@
 import "../styles/SearchBar.css";
 
-const SearchBar = () => {
+const SearchBar = ({ pageName }) => {
   return (
     <section className="searchbar-content">
-      <h2>Home</h2>
+      <h2>{pageName}</h2>
       <div className="search-sort">
         <input
           type="search"
