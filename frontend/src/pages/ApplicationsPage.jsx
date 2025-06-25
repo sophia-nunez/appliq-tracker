@@ -2,13 +2,16 @@ import { useState } from "react";
 import List from "../components/List";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
+import { useNavigate } from "react-router";
 
 const ApplicationsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // TODO: currently on all, move to applications list
-  const openModal = () => {
-    setModalOpen(true);
+  const openPage = (e, id) => {
+    e.preventDefault();
+    navigate(`${id}`);
   };
 
   return (
@@ -16,7 +19,7 @@ const ApplicationsPage = () => {
       <main>
         <SearchBar pageName="Applications" />
         <section className="list-container">
-          <h3 onClick={openModal}>All</h3>
+          <h3>All</h3>
           <List />
         </section>
       </main>

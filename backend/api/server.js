@@ -12,7 +12,6 @@ let sessionConfig = {
   secret: process.env.SESSION_SECRET,
   rolling: true,
   cookie: {
-    maxAge: 1000 * 60 * 15,
     secure: false,
     httpOnly: true,
   },

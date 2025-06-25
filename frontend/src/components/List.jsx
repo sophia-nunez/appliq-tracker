@@ -1,8 +1,10 @@
+import { Link } from "react-router";
 import "../styles/List.css";
+import { applicationsPath } from "../links";
 
 const List = () => {
   return (
-    <section className="list-content">
+    <Link className="list-content" to={`${applicationsPath}/1`}>
       <article className="child">
         <div className="text">
           <h4>Title</h4>
@@ -30,7 +32,7 @@ const List = () => {
           <button>Delete</button>
         </div>
       </article>
-    </section>
+    </Link>
   );
 };
 

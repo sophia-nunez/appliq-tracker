@@ -1,6 +1,8 @@
 import List from "./List";
 
 const ApplicationModal = () => {
+  //TODO: make this the edit modal for applications
+
   return (
     <section className="application-details">
       <h2>Job Title</h2>

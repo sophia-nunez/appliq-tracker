@@ -3,16 +3,18 @@ import { baseURL } from "../utils/authUtils";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
+export const UserProvider = ({ setIsLoading, children }) => {
   const [user, setUser] = useState({});
 
   useEffect(() => {
+    setIsLoading(true);
     fetch(`${baseURL()}/me`, { credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.id) {
-          setUser(data);
+          setUser({ ...user, ...data });
         }
+        setIsLoading(false);
       });
   }, []);
 
