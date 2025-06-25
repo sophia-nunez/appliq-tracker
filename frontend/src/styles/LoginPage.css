@@ -1,4 +1,5 @@
-.login-container {
+.login-container,
+.register-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,7 +31,22 @@
 
     .login-btn,
     .register-btn {
+      color: var(--text-color);
       width: clamp(100px, 20vw, 200px);
+      text-decoration: none;
     }
+  }
+
+  .error-text {
+    padding: 10px 20px;
+    border-radius: 3px;
+    background-color: var(--delete-red);
+  }
+
+  .success-text {
+    padding: 10px 20px;
+    border-radius: 3px;
+    color: black;
+    background-color: rgb(193, 223, 193);
   }
 }

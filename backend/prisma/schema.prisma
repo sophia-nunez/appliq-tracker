@@ -15,7 +15,7 @@ datasource db {
 }
 
 model User {
-  id Int @default(autoincrement())
+  id Int @id @default(autoincrement())
   username String @unique
   password String
   applications Application[]
@@ -28,7 +28,7 @@ model Application {
   userId Int
   user User @relation(fields: [userId], references: [id])
   companyId Int
-  company Company @relation(fields[companyId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
   title String
   description String
   notes String

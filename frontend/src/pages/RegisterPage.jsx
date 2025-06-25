@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Link } from "react-router";
-import { loginUser } from "../utils/authUtils.js";
-import { homePath, registerPath } from "../links.js";
-
+import { registerUser } from "../utils/authUtils";
 import "../styles/LoginPage.css";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
-
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [error, setError] = useState("");
@@ -26,14 +22,15 @@ const LoginPage = () => {
     setPasswordInput(event.target.value);
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     const user = { username: usernameInput, password: passwordInput };
     try {
-      await loginUser(user);
-      setSuccess("Login successful! Redirecting...");
+      await registerUser(user);
+      setSuccess("Registration successful! Redirecting...");
       const timeout = setTimeout(() => {
-        navigate(homePath);
-        console.log("home");
+        navigate("/login", {
+          state: { message: "Account created successfully!" },
+        });
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
@@ -50,8 +47,8 @@ const LoginPage = () => {
 
   return (
     <main>
-      <section className="login-container">
-        <h2>Login</h2>
+      <section className="register-container">
+        <h2>Register</h2>
         <div className="username-input input-container">
           <label htmlFor="username">Username: </label>
           <input
@@ -72,23 +69,16 @@ const LoginPage = () => {
             onChange={updatePass}
           />
         </div>
-        <div className="login-btns">
-          <button className="login-btn" onClick={handleLogin}>
-            Log in
-          </button>
-          {success && <p className="success-text">{success}</p>}
-          {error && <p className="error-text">{error}</p>}
-          <hr />
-          <p>Or</p>
-          <button className="register-btn">
-            <Link to={registerPath} className="register-btn">
-              Register
-            </Link>
+        <div className="register-btns">
+          <button className="register-btn" onClick={handleRegister}>
+            Register
           </button>
         </div>
+        {success && <p className="success-text">{success}</p>}
+        {error && <p className="error-text">{error}</p>}
       </section>
     </main>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
