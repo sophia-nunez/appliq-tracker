@@ -1,12 +1,16 @@
 import { Link } from "react-router";
-import { ThemeProvider, useTheme } from "./ThemeContext";
 import { IoMdClose } from "react-icons/io";
+import { IoSettingsOutline } from "react-icons/io5";
 import "../styles/NavBar.css";
-import { homePath, applicationsPath, companiesPath, dataPath } from "../links";
+import {
+  homePath,
+  applicationsPath,
+  companiesPath,
+  dataPath,
+  settingsPath,
+} from "../links";
 
 const NavBar = ({ navOpen, reference }) => {
-  const { theme, toggleTheme } = useTheme();
-
   return (
     <aside id="nav-modal" className="modal" ref={reference}>
       <section id="modal-content">
@@ -21,9 +25,12 @@ const NavBar = ({ navOpen, reference }) => {
           <Link to={applicationsPath}>Applications</Link>
           <Link to={companiesPath}>Companies</Link>
           <Link to={dataPath}>Data</Link>
-          <button id="toggle-mode" onClick={toggleTheme}>
-            {theme === "light" ? "☀️ Light" : "🌖 Dark"}
-          </button>
+          <div id="non-nav-btns">
+            <button className="logout-btn">Log Out</button>
+            <Link to={settingsPath}>
+              <IoSettingsOutline className="settings-icon" />
+            </Link>
+          </div>
         </nav>
       </section>
     </aside>

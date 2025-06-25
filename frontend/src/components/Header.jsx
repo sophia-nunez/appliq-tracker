@@ -1,14 +1,19 @@
 import { useRef, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { IoMenu } from "react-icons/io5";
+import { useUser } from "./UserContext";
+import { useTheme } from "../components/ThemeContext";
 import icon from "../assets/images/icon.png";
+import darkIcon from "../assets/images/icon-dark.png";
 import NavBar from "./NavBar.jsx";
 import { homePath } from "../links.js";
 import "../styles/Header.css";
 
 const Header = () => {
+  const { theme } = useTheme();
   const [navOpen, setNavOpen] = useState(false);
   const navRef = useRef(null);
+  const { user } = useUser();
 
   // closes modal on window click off of modal or on span
   useEffect(() => {
@@ -42,10 +47,14 @@ const Header = () => {
     <>
       <header>
         <Link to={homePath}>
-          <img src={icon} alt="Appliq logo" className="logo" />
+          <img
+            src={theme === "light" ? icon : darkIcon}
+            alt="Appliq logo"
+            className="logo"
+          />
           <h1>Appliq</h1>
         </Link>
-        <IoMenu className="nav-icon" onClick={openNav} />
+        {user && <IoMenu className="nav-icon" onClick={openNav} />}
       </header>
       {navOpen && <NavBar navOpen={navOpen} reference={navRef} />}
     </>

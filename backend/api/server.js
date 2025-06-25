@@ -20,12 +20,29 @@ let sessionConfig = {
   saveUninitialized: false,
 };
 
+server.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
 
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ error: "You must be logged in to view this page." });
+  }
+  next();
+};
+
 // user authentication
 server.post("/register", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -53,7 +70,7 @@ server.post("/register", async (req, res) => {
     const newUser = await prisma.user.create({
       data: { username, password: hashedPassword },
     });
-    res.status(201).json({ message: "Account created successfully!" });
+    res.status(201).json(newUser.id);
   } catch (err) {
     return res.status(400).json({ error: "Failed to create account." });
   }
@@ -67,6 +84,8 @@ const loginLimiter = rateLimit({
 
 server.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
   try {
     if (!username || !password) {
       return res
@@ -89,13 +108,14 @@ server.post("/login", async (req, res) => {
 
     req.session.userId = user.id;
 
-    res.json({ message: "Login successful." });
+    res.json(user.id);
   } catch (err) {
     return res.status(401).json({ error: "Login failed." });
   }
 });
 
 server.get("/me", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   if (!req.session.userId) {
     return res.status(401).json({ message: "Not logged in" });
   }
@@ -105,7 +125,7 @@ server.get("/me", async (req, res) => {
     select: { username: true },
   });
 
-  res.json({ id: req.session.userId, username: user.username });
+  res.json({ id: user.id, username: user.username });
 });
 
 // [CATCH-ALL]
