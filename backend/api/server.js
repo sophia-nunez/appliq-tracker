@@ -8,12 +8,12 @@ const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 const server = express();
 let sessionConfig = {
-  name: "sessionId",
+  name: "session",
   secret: process.env.SESSION_SECRET,
   rolling: true,
   cookie: {
     maxAge: 1000 * 60 * 15,
-    secure: process.env.RENDER ? true : false,
+    secure: false,
     httpOnly: false,
   },
   resave: false,
@@ -70,7 +70,7 @@ server.post("/register", async (req, res) => {
     const newUser = await prisma.user.create({
       data: { username, password: hashedPassword },
     });
-    res.status(201).json(newUser.id);
+    res.status(201).json({ id: newUser.id, username: newUser.username });
   } catch (err) {
     return res.status(400).json({ error: "Failed to create account." });
   }
@@ -82,7 +82,7 @@ const loginLimiter = rateLimit({
   message: { error: "Too many failed login attempts. Try again later." },
 });
 
-server.post("/login", async (req, res) => {
+server.post("/login", loginLimiter, async (req, res) => {
   const { username, password } = req.body;
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
@@ -108,10 +108,20 @@ server.post("/login", async (req, res) => {
 
     req.session.userId = user.id;
 
-    res.json(user.id);
+    res.json({ id: user.id, username: user.username });
   } catch (err) {
     return res.status(401).json({ error: "Login failed." });
   }
+});
+
+server.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to log out" });
+    }
+    res.clearCookie("connect.sid");
+    res.json({ message: "Logged out successfully" });
+  });
 });
 
 server.get("/me", async (req, res) => {
@@ -122,9 +132,8 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { username: true },
+    select: { id: true, username: true },
   });
-
   res.json({ id: user.id, username: user.username });
 });
 

@@ -4,7 +4,7 @@ import { baseURL } from "../utils/authUtils";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     fetch(`${baseURL()}/me`, { credentials: "include" })

@@ -56,7 +56,7 @@ const Header = () => {
         </Link>
         {user && <IoMenu className="nav-icon" onClick={openNav} />}
       </header>
-      {navOpen && <NavBar navOpen={navOpen} reference={navRef} />}
+      {navOpen && <NavBar reference={navRef} />}
     </>
   );
 };

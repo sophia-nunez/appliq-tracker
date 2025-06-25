@@ -1,6 +1,8 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useUser } from "./UserContext";
 import { IoMdClose } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
+import { baseURL } from "../utils/authUtils";
 import "../styles/NavBar.css";
 import {
   homePath,
@@ -8,9 +10,22 @@ import {
   companiesPath,
   dataPath,
   settingsPath,
+  loginPath,
 } from "../links";
 
-const NavBar = ({ navOpen, reference }) => {
+const NavBar = ({ reference }) => {
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await fetch(`${baseURL()}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+    navigate(loginPath);
+  };
+
   return (
     <aside id="nav-modal" className="modal" ref={reference}>
       <section id="modal-content">
@@ -25,11 +40,18 @@ const NavBar = ({ navOpen, reference }) => {
           <Link to={applicationsPath}>Applications</Link>
           <Link to={companiesPath}>Companies</Link>
           <Link to={dataPath}>Data</Link>
-          <div id="non-nav-btns">
-            <button className="logout-btn">Log Out</button>
-            <Link to={settingsPath}>
-              <IoSettingsOutline className="settings-icon" />
-            </Link>
+          <div className="bottom-nav">
+            <span>
+              Signed in as <strong>{user.username}</strong>
+            </span>
+            <div id="non-nav-btns">
+              <button className="logout-btn" onClick={handleLogout}>
+                Log Out
+              </button>
+              <Link to={settingsPath}>
+                <IoSettingsOutline className="settings-icon" />
+              </Link>
+            </div>
           </div>
         </nav>
       </section>
