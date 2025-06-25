@@ -18,16 +18,12 @@ const Header = () => {
   // closes modal on window click off of modal or on span
   useEffect(() => {
     function handleWindowClick(event) {
-      const span = document.getElementsByClassName("close")[0];
+      const span = document.getElementById("nav-close");
       if (event.target === span) {
-        navRef.current.classList.add("modalClosed"); // causes slideout animation
-        const timeout = setTimeout(() => {
-          setNavOpen(false);
-          clearTimeout(timeout);
-        }, "800");
+        closeNav();
       }
       if (navRef.current && event.target === navRef.current) {
-        setNavOpen(false);
+        closeNav();
         // TODO: cause slideout animation here as well? or only clicking close
       }
     }
@@ -43,6 +39,14 @@ const Header = () => {
     setNavOpen(true);
   };
 
+  const closeNav = () => {
+    navRef.current.classList.add("modalClosed"); // causes slideout animation
+    const timeout = setTimeout(() => {
+      setNavOpen(false);
+      clearTimeout(timeout);
+    }, "800");
+  };
+
   return (
     <>
       <header>
@@ -54,9 +58,9 @@ const Header = () => {
           />
           <h1>Appliq</h1>
         </Link>
-        {user && <IoMenu className="nav-icon" onClick={openNav} />}
+        {user.id && <IoMenu className="nav-icon" onClick={openNav} />}
       </header>
-      {navOpen && <NavBar reference={navRef} />}
+      {navOpen && <NavBar closeNav={closeNav} reference={navRef} />}
     </>
   );
 };

@@ -1,18 +1,19 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "./UserContext";
+import { loginPath } from "../links.js";
 
 const WithAuth = (WrappedComponent) => {
   return function ProtectedComponent(props) {
     const { user } = useUser();
     const navigate = useNavigate();
     useEffect(() => {
-      if (!user) {
-        navigate("/login");
+      if (!user.id) {
+        navigate(loginPath);
       }
     }, [user, navigate]);
 
-    if (!user) {
+    if (!user.id) {
       return <p>Loading...</p>;
     }
 

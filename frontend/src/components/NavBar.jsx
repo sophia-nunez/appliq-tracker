@@ -13,7 +13,7 @@ import {
   loginPath,
 } from "../links";
 
-const NavBar = ({ reference }) => {
+const NavBar = ({ closeNav, reference }) => {
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
@@ -22,16 +22,17 @@ const NavBar = ({ reference }) => {
       method: "POST",
       credentials: "include",
     });
-    setUser(null);
+    closeNav(); // close navbar
+    setUser({});
     navigate(loginPath);
   };
 
   return (
     <aside id="nav-modal" className="modal" ref={reference}>
-      <section id="modal-content">
+      <section id="nav-content">
         <div className="top-row">
           <h2>Appliq</h2>
-          <span className="close">
+          <span id="nav-close" className="close">
             <IoMdClose className="close-icon" />
           </span>
         </div>

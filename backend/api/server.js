@@ -14,7 +14,7 @@ let sessionConfig = {
   cookie: {
     maxAge: 1000 * 60 * 15,
     secure: false,
-    httpOnly: false,
+    httpOnly: true,
   },
   resave: false,
   saveUninitialized: false,
@@ -115,6 +115,7 @@ server.post("/login", loginLimiter, async (req, res) => {
 });
 
 server.post("/logout", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: "Failed to log out" });
