@@ -17,7 +17,7 @@ let sessionConfig = {
   rolling: true,
   cookie: {
     secure: false,
-    httpOnly: true,
+    sameSite: "strict",
   },
   resave: false,
   saveUninitialized: false,
@@ -133,8 +133,12 @@ server.post("/logout", (req, res) => {
 
 server.get("/me", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.json({ id: 1, username: "srnunez" }); // TODO hardcoded for dev
+
   if (!req.session.userId) {
-    return res.status(401).json({ message: "Not logged in" });
+    return res
+      .status(401)
+      .json({ message: "Not logged in: " + req.session.userId });
   }
 
   const user = await prisma.user.findUnique({

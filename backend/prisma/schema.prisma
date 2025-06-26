@@ -27,9 +27,9 @@ model Application {
   id Int @id @default(autoincrement())
   userId Int
   user User @relation(fields: [userId], references: [id])
-  companyName String
+  companyName String?
   companyId Int?
-  company Company @relation(fields: [companyId], references: [id])
+  company Company? @relation(fields: [companyId], references: [id])
   title String
   description String?
   notes String?
