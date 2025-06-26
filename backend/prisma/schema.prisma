@@ -27,11 +27,12 @@ model Application {
   id Int @id @default(autoincrement())
   userId Int
   user User @relation(fields: [userId], references: [id])
-  companyId Int
+  companyName String
+  companyId Int?
   company Company @relation(fields: [companyId], references: [id])
   title String
-  description String
-  notes String
+  description String?
+  notes String?
   status String
   categories Category[]
   isFeatured Boolean @default(false)

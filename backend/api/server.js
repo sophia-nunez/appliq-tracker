@@ -5,6 +5,10 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("../generated/prisma");
 
+const applicationRouter = require("./applications");
+const categoryRouter = require("./categories");
+const companyRouter = require("./companies");
+
 const prisma = new PrismaClient();
 const server = express();
 let sessionConfig = {
@@ -29,6 +33,9 @@ server.use(
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
+server.use(applicationRouter);
+server.use(categoryRouter);
+server.use(companyRouter);
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
