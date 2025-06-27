@@ -1,0 +1,25 @@
+.status-btn {
+  font-size: 1rem;
+  font-weight: 350;
+  padding: 3px;
+}
+
+.status-btn.accepted {
+  background-color: palegreen;
+}
+
+.status-btn.rejected {
+  background-color: var(--delete-red);
+}
+
+.status-btn.applied {
+  background-color: lightgray;
+}
+
+.status-btn.interview {
+  background-color: var(--primary-color);
+}
+
+.status-btn.other {
+  background-color: palegoldenrod;
+}

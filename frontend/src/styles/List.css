@@ -8,7 +8,7 @@
   align-items: center;
   gap: 1em;
 
-  .child {
+  .long {
     padding: 10px 20px;
     width: 100%;
     border-radius: 3px;
@@ -17,5 +17,59 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .text {
+      width: 100%;
+      margin: 0px 20px;
+      .app-description {
+        text-overflow: ellipsis;
+      }
+    }
+
+    .header-span {
+      display: flex;
+      flex-direction: column;
+
+      .details {
+        margin: 0px;
+      }
+    }
+    @media (min-width: 501px) {
+      .header-span {
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+
+        .details {
+          margin-left: auto;
+          gap: 5px;
+        }
+      }
+    }
+  }
+}
+
+.application {
+  cursor: pointer;
+  animation-name: animatescale;
+  animation-duration: 1s;
+}
+
+.application:hover {
+  cursor: pointer;
+  animation-name: animatescale;
+  animation-direction: reverse;
+  animation-duration: 1s;
+  transform: scale(1.02);
+  box-shadow: 0px 0px 3px 0px var(--primary-color);
+}
+
+@keyframes animatescale {
+  from {
+    transform: scale(1.02);
+    box-shadow: 0px 0px 3px 0px var(--primary-color);
+  }
+  to {
+    transform: scale(1);
   }
 }

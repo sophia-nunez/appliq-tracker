@@ -1,0 +1,3 @@
+.status-details {
+  width: clamp(250px, 80%, 2000px);
+}
