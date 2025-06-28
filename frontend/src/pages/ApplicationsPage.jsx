@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
-import { useNavigate } from "react-router";
-import "../styles/List.css";
 import { getApplications } from "../utils/applicationUtils";
-import { useEffect } from "react";
+import "../styles/List.css";
 
 const ApplicationsPage = () => {
   const [applications, setApplications] = useState(Array());
@@ -18,7 +17,7 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, []);
+  }, [query]);
 
   // TODO: currently on all, move to applications list
   const openPage = (e, id) => {
@@ -26,9 +25,11 @@ const ApplicationsPage = () => {
     navigate(`${id}`);
   };
 
+  // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
+    console.log("loaded");
     const currQuery = new URLSearchParams({
-      title: query.trim(),
+      text: query.trim(),
       category: filter,
     });
     try {
@@ -39,6 +40,7 @@ const ApplicationsPage = () => {
     }
   };
 
+  // opens modal to add application
   const addApplication = (e) => {
     e.preventDefault();
     setModalOpen(true);
@@ -46,7 +48,12 @@ const ApplicationsPage = () => {
   return (
     <>
       <main>
-        <SearchBar pageName="Applications" />
+        <SearchBar
+          pageName="Applications"
+          query={query}
+          setQuery={setQuery}
+          handleSearch={loadApplications}
+        />
         <section className="list-container">
           <div className="list-header">
             <h3>All</h3>
@@ -63,6 +70,7 @@ const ApplicationsPage = () => {
                     companyName={application.companyName}
                     title={application.title}
                     description={application.description}
+                    appliedAt={application.appliedAt}
                     status={application.status}
                   />
                 );
@@ -75,6 +83,7 @@ const ApplicationsPage = () => {
           contents="application"
           setModalOpen={setModalOpen}
           application={{}}
+          reloadPage={loadApplications}
         />
       )}
     </>

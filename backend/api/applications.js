@@ -3,6 +3,11 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
+router.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  next();
+});
+
 // [GET] many applications with optional search
 router.get("/applications", async (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -13,12 +18,14 @@ router.get("/applications", async (req, res, next) => {
   // order featured first, then by most recent
   let orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
 
-  if (search.title) {
-    // if title query, search by title
-    where.title = {
-      contains: search.title,
-      mode: "insensitive",
-    };
+  if (search.text) {
+    // if given search text, look in title, company, notes, and description for a match
+    where.OR = [
+      { title: { contains: search.text, mode: "insensitive" } },
+      { companyName: { contains: search.text, mode: "insensitive" } },
+      { description: { contains: search.text, mode: "insensitive" } },
+      { notes: { contains: search.text, mode: "insensitive" } },
+    ];
   }
 
   if (search.category) {
@@ -39,7 +46,8 @@ router.get("/applications", async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
-    next(err);
+    console.log(err);
+    return res.status(401).json({ error: "Failed to get applications." });
   }
 });
 
@@ -57,34 +65,68 @@ router.get("/applications/:id", async (req, res, next) => {
       next({ status: 404, message: "Application not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(401).json({ error: "Application not found." });
   }
 });
 
 // [POST] create application
 router.post("/applications", async (req, res, next) => {
-  const newApplication = req.body;
-  const userId = req.session.userId;
+  const newApplication = { ...req.body, userId: req.session.userId };
   try {
     // Validate that new application has required fields
     // TODO add companyId from name if possible (find company)
-    // TODO same for category and user
+    // TODO same for category
     const newApplicationValid =
       newApplication.title !== undefined &&
-      newApplication.companyId !== undefined &&
+      newApplication.companyName !== undefined &&
       newApplication.status !== undefined &&
-      userId !== undefined;
+      newApplication.userId !== undefined;
     if (newApplicationValid) {
       const created = await prisma.application.create({ data: newApplication });
-      res.status(201).json(created);
+      return res.status(201).json();
     } else {
-      next({
-        status: 422,
-        message: "company, title, and status are required",
-      });
+      return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
-    next(err);
+    return res.status(401).json({ error: "Failed to create application." });
+  }
+});
+
+router.put("/applications/:appId", async (req, res, next) => {
+  const id = Number(req.params.appId);
+  const updatedApp = { ...req.body, userId: req.session.userId };
+  try {
+    // Make sure the ID is valid
+    const application = await prisma.application.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      return res.status(400).json({ error: "Application not found" });
+    }
+
+    // Validate that application has required fields
+    // TODO add companyId from name if possible (find company)
+    // TODO same for category
+    const updatedAppValid =
+      updatedApp.title !== undefined &&
+      updatedApp.companyName !== undefined &&
+      updatedApp.status !== undefined &&
+      updatedApp.userId !== undefined;
+    if (updatedAppValid) {
+      const updated = await prisma.application.update({
+        data: updatedApp,
+        where: { id },
+      });
+      return res.status(201).json();
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Application modifications are invalid" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ error: "Failed to update application." });
   }
 });
 
@@ -97,10 +139,10 @@ router.delete("/applications/:id", async (req, res, next) => {
       const deleted = await prisma.application.delete({ where: { id } });
       res.json(deleted);
     } else {
-      next({ status: 404, message: "Application not found" });
+      return res.status(404).json({ error: "Application not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(401).json({ error: "Failed to delete application." });
   }
 });
 

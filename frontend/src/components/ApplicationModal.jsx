@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Status from "./Status";
 import { DateTimePicker } from "@mantine/dates";
-import { createApplication } from "../utils/applicationUtils";
+import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
-const ApplicationModal = ({ application, setModalOpen }) => {
+const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
+  // input for application creation/modfication - currently excluded category functionality
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -12,12 +12,20 @@ const ApplicationModal = ({ application, setModalOpen }) => {
     notes: "",
     status: "",
     // categories: "",
-    appliedAt: Date(),
+    appliedAt: new Date(),
     interviewAt: undefined,
   });
+  // TODO add category functionality
 
+  // if editing existing application, loads in current data to the form
+  useEffect(() => {
+    if (application.id) {
+      setFormInput((prev) => ({ ...prev, ...application }));
+    }
+  }, []);
+
+  // works for all but date pickers, updates the given formInput field
   const handleChange = (e) => {
-    e.preventDefault();
     const { name, value } = e.target;
 
     setFormInput((previous) => ({
@@ -28,14 +36,20 @@ const ApplicationModal = ({ application, setModalOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
-  };
 
-  useEffect(() => {
-    if (application) {
-      setFormInput({ ...formInput, ...application });
+    try {
+      if (application.id) {
+        const { categories, ...modifiedApplication } = formInput;
+        const edit = await editApplication(modifiedApplication, application.id);
+      } else {
+        const added = await createApplication(formInput);
+      }
+      reloadPage();
+      setModalOpen(false);
+    } catch (error) {
+      alert(error.message);
     }
-  }, []);
+  };
 
   return (
     <form className="application-form" onSubmit={handleSubmit}>
@@ -110,7 +124,14 @@ const ApplicationModal = ({ application, setModalOpen }) => {
               ></textarea>
             </article>
             <article className="child tags">
-              {application &&
+              {/* <label htmlFor="categories">Tags</label>
+              <input
+                id="categories"
+                name="categories"
+                placeholder="+ Add tag"
+                onChange={handleChange}
+              /> */}
+              {application.categories &&
                 application.categories.map((category) => {
                   return (
                     <p className="tag" key={category.id}>
@@ -123,18 +144,26 @@ const ApplicationModal = ({ application, setModalOpen }) => {
               <div>
                 <DateTimePicker
                   label="Application Date"
+                  id="appliedAt"
+                  name="appliedAt"
                   value={formInput.appliedAt}
+                  onChange={(value) =>
+                    setFormInput((prev) => ({ ...prev, appliedAt: value }))
+                  }
                   withAsterisk
                   description="Time is optional"
-                  placeholder="Input placeholder"
                   required
                 />
               </div>
               <div>
                 <DateTimePicker
                   label="Interview Date"
+                  id="interviewAt"
+                  name="interviewAt"
                   value={formInput.interviewAt}
-                  withAsterisk
+                  onChange={(value) =>
+                    setFormInput((prev) => ({ ...prev, interviewAt: value }))
+                  }
                 />
               </div>
             </article>
@@ -144,7 +173,11 @@ const ApplicationModal = ({ application, setModalOpen }) => {
           <button className="edit-btn" type="submit">
             Submit
           </button>
-          {application && <button className="delete-btn">Delete</button>}
+          {application && (
+            <button type="button" className="delete-btn">
+              Delete
+            </button>
+          )}
         </section>
       </section>
     </form>

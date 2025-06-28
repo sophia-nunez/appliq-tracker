@@ -15,7 +15,7 @@ const Header = () => {
   const navRef = useRef(null);
   const { user } = useUser();
 
-  // closes modal on window click off of modal or on span
+  // closes navbar on window click off of nav or on span
   useEffect(() => {
     function handleWindowClick(event) {
       const span = document.getElementById("nav-close");

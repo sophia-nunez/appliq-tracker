@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
 
-const Modal = ({ contents, setModalOpen }) => {
+const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
   const modalRef = useRef(null);
 
   // closes modal on window click off of modal or on span
@@ -15,7 +15,6 @@ const Modal = ({ contents, setModalOpen }) => {
       }
       if (modalRef.current && event.target === modalRef.current) {
         closeModal();
-        // TODO: cause slideout animation here as well? or only clicking close
       }
     }
 
@@ -30,6 +29,7 @@ const Modal = ({ contents, setModalOpen }) => {
     setModalOpen(false);
   };
 
+  // modal loads content based on prop passed in by parent page
   return (
     <aside id="modal" className="modal" ref={modalRef}>
       <span id="nav-close" className="close">
@@ -37,7 +37,11 @@ const Modal = ({ contents, setModalOpen }) => {
       </span>
       <section id="modal-content">
         {contents === "application" && (
-          <ApplicationModal setModalOpen={setModalOpen} />
+          <ApplicationModal
+            setModalOpen={setModalOpen}
+            application={application}
+            reloadPage={reloadPage}
+          />
         )}
       </section>
     </aside>

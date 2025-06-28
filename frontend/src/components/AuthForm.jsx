@@ -9,17 +9,21 @@ const AuthForm = ({ type }) => {
   const { setUser } = useUser();
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); // error or success message
 
+  // updates corresponding input field
   function handleChange(event) {
     const { name, value } = event.target;
     setFormInput((prev) => ({ ...prev, [name]: value }));
   }
 
+  // resets login inputs
   const clearInputs = () => {
     setFormInput({ username: "", password: "" });
   };
 
+  // tries to log in or register user, then gives a message and redirects on success
+  // if an issue is encountered, displays an error message
   const handleSubmit = async (event) => {
     event.preventDefault();
     let data;
@@ -39,6 +43,7 @@ const AuthForm = ({ type }) => {
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
+      // TODO: restrict messages that can be displayed
       setMessage({
         type: "error",
         text: err.message || "Network issue. Please try again.",

@@ -17,6 +17,7 @@ const NavBar = ({ closeNav, reference }) => {
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
+  // ends session, resets user, and returns to the login page
   const handleLogout = async () => {
     await fetch(`${baseURL()}/logout`, {
       method: "POST",

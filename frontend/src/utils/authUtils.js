@@ -1,9 +1,12 @@
+// checks if in dev to return base API url
+// no real sitename given yet
 function baseURL() {
   return import.meta.env.VITE_DEV
     ? "http://localhost:3000"
     : "https://backend-sitename-here";
 }
 
+// checks valid login info and unique username, then attempts to POST
 const registerUser = async (loginInfo) => {
   if (!loginInfo.username || !loginInfo.password) {
     throw new Error("Username and password are required.");
@@ -30,6 +33,7 @@ const registerUser = async (loginInfo) => {
   }
 };
 
+// attempts to log in user, if error the error message is returned
 const loginUser = async (loginInfo) => {
   if (!loginInfo.username || !loginInfo.password) {
     throw new Error("Username and password are required.");

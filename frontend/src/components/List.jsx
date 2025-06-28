@@ -3,6 +3,7 @@ import "../styles/List.css";
 import { applicationsPath } from "../links";
 
 const List = () => {
+  // static component for dev purposes and styling
   return (
     <section className="list-content" to={`${applicationsPath}/1`}>
       <article className="child">
