@@ -72,7 +72,7 @@ router.post("/applications", async (req, res, next) => {
   try {
     // Validate that new application has required fields
     // TODO add companyId from name if possible (find company)
-    // TODO same for category and user
+    // TODO same for category
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
@@ -80,12 +80,50 @@ router.post("/applications", async (req, res, next) => {
       newApplication.userId !== undefined;
     if (newApplicationValid) {
       const created = await prisma.application.create({ data: newApplication });
-      return res.status(201).json(created);
+      return res.status(201).json();
     } else {
       return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
     return res.status(401).json({ error: "Failed to create application." });
+  }
+});
+
+router.put("/applications/:appId", async (req, res, next) => {
+  const id = Number(req.params.appId);
+  const updatedApp = { ...req.body, userId: req.session.userId };
+  try {
+    // Make sure the ID is valid
+    const application = await prisma.application.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      return res.status(400).json({ error: "Application not found" });
+    }
+
+    // Validate that application has required fields
+    // TODO add companyId from name if possible (find company)
+    // TODO same for category
+    const updatedAppValid =
+      updatedApp.title !== undefined &&
+      updatedApp.companyName !== undefined &&
+      updatedApp.status !== undefined &&
+      updatedApp.userId !== undefined;
+    if (updatedAppValid) {
+      const updated = await prisma.application.update({
+        data: updatedApp,
+        where: { id },
+      });
+      return res.status(201).json();
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Application modifications are invalid" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ error: "Failed to update application." });
   }
 });
 

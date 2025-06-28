@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
 
-const Modal = ({ contents, setModalOpen }) => {
+const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
   const modalRef = useRef(null);
 
   // closes modal on window click off of modal or on span
@@ -37,7 +37,11 @@ const Modal = ({ contents, setModalOpen }) => {
       </span>
       <section id="modal-content">
         {contents === "application" && (
-          <ApplicationModal setModalOpen={setModalOpen} />
+          <ApplicationModal
+            setModalOpen={setModalOpen}
+            application={application}
+            reloadPage={reloadPage}
+          />
         )}
       </section>
     </aside>

@@ -66,6 +66,38 @@ const createApplication = async (application) => {
   }
 };
 
+const editApplication = async (application, id) => {
+  const appliedDate = new Date(application.appliedAt);
+  let newInfo = {
+    ...application,
+    appliedAt: appliedDate,
+  };
+
+  if (application.interviewedAt) {
+    const interviewDate = new Date(application.interviewAt);
+    newInfo = {
+      ...application,
+      interviewAt: interviewDate,
+    };
+  }
+
+  try {
+    const response = await fetch(`${baseURL()}/applications/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newInfo),
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error();
+    }
+  } catch (error) {
+    throw new Error("Failed to update application");
+  }
+};
+
 const deleteApplication = async (id) => {
   try {
     const response = await fetch(`${baseURL()}/applications/${id}`, {
@@ -83,5 +115,6 @@ export {
   getApplications,
   getApplication,
   createApplication,
+  editApplication,
   deleteApplication,
 };

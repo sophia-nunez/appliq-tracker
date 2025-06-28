@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import Status from "./Status";
 import { DateTimePicker } from "@mantine/dates";
-import { createApplication } from "../utils/applicationUtils";
+import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
-const ApplicationModal = ({ application, setModalOpen }) => {
+const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -15,6 +14,12 @@ const ApplicationModal = ({ application, setModalOpen }) => {
     appliedAt: new Date(),
     interviewAt: undefined,
   });
+
+  useEffect(() => {
+    if (application.id) {
+      setFormInput((prev) => ({ ...prev, ...application }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,20 +32,20 @@ const ApplicationModal = ({ application, setModalOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("appliedAt value:", formInput.appliedAt);
+
     try {
-      const added = await createApplication(formInput);
+      if (application.id) {
+        const { categories, ...modifiedApplication } = formInput;
+        const edit = await editApplication(modifiedApplication, application.id);
+      } else {
+        const added = await createApplication(formInput);
+      }
+      reloadPage();
       setModalOpen(false);
     } catch (error) {
       alert(error.message);
     }
   };
-
-  useEffect(() => {
-    if (application) {
-      setFormInput((prev) => ({ ...prev, ...application }));
-    }
-  }, []);
 
   return (
     <form className="application-form" onSubmit={handleSubmit}>
@@ -122,7 +127,7 @@ const ApplicationModal = ({ application, setModalOpen }) => {
                 placeholder="+ Add tag"
                 onChange={handleChange}
               /> */}
-              {application &&
+              {application.categories &&
                 application.categories.map((category) => {
                   return (
                     <p className="tag" key={category.id}>

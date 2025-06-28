@@ -75,6 +75,7 @@ const ApplicationsPage = () => {
           contents="application"
           setModalOpen={setModalOpen}
           application={{}}
+          reloadPage={loadApplications}
         />
       )}
     </>
