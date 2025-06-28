@@ -32,7 +32,21 @@ const getApplication = async (id) => {
   }
 };
 
-const createApplication = async (newInfo) => {
+const createApplication = async (application) => {
+  const appliedDate = new Date(application.appliedAt);
+  let newInfo = {
+    ...application,
+    appliedAt: appliedDate,
+  };
+
+  if (application.interviewedAt) {
+    const interviewDate = new Date(application.interviewAt);
+    newInfo = {
+      ...application,
+      interviewAt: interviewDate,
+    };
+  }
+
   try {
     const response = await fetch(`${baseURL()}/applications`, {
       method: "POST",
@@ -43,15 +57,12 @@ const createApplication = async (newInfo) => {
       credentials: "include",
     });
     if (!response.ok) {
-      const text = await response.json();
-      throw new Error(text.error);
+      throw new Error();
     }
 
     const data = await response.json();
-    return data;
   } catch (error) {
-    throw error;
-    //throw new Error("Failed to Create Application");
+    throw new Error("Failed to Create Application");
   }
 };
 

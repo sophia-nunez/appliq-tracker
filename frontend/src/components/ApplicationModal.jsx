@@ -12,12 +12,11 @@ const ApplicationModal = ({ application, setModalOpen }) => {
     notes: "",
     status: "",
     // categories: "",
-    appliedAt: Date(),
+    appliedAt: new Date(),
     interviewAt: undefined,
   });
 
   const handleChange = (e) => {
-    e.preventDefault();
     const { name, value } = e.target;
 
     setFormInput((previous) => ({
@@ -28,12 +27,18 @@ const ApplicationModal = ({ application, setModalOpen }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted");
+    console.log("appliedAt value:", formInput.appliedAt);
+    try {
+      const added = await createApplication(formInput);
+      setModalOpen(false);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   useEffect(() => {
     if (application) {
-      setFormInput({ ...formInput, ...application });
+      setFormInput((prev) => ({ ...prev, ...application }));
     }
   }, []);
 
@@ -110,6 +115,13 @@ const ApplicationModal = ({ application, setModalOpen }) => {
               ></textarea>
             </article>
             <article className="child tags">
+              {/* <label htmlFor="categories">Tags</label>
+              <input
+                id="categories"
+                name="categories"
+                placeholder="+ Add tag"
+                onChange={handleChange}
+              /> */}
               {application &&
                 application.categories.map((category) => {
                   return (
@@ -123,18 +135,26 @@ const ApplicationModal = ({ application, setModalOpen }) => {
               <div>
                 <DateTimePicker
                   label="Application Date"
+                  id="appliedAt"
+                  name="appliedAt"
                   value={formInput.appliedAt}
+                  onChange={(value) =>
+                    setFormInput((prev) => ({ ...prev, appliedAt: value }))
+                  }
                   withAsterisk
                   description="Time is optional"
-                  placeholder="Input placeholder"
                   required
                 />
               </div>
               <div>
                 <DateTimePicker
                   label="Interview Date"
+                  id="interviewAt"
+                  name="interviewAt"
                   value={formInput.interviewAt}
-                  withAsterisk
+                  onChange={(value) =>
+                    setFormInput((prev) => ({ ...prev, interviewAt: value }))
+                  }
                 />
               </div>
             </article>
@@ -144,7 +164,11 @@ const ApplicationModal = ({ application, setModalOpen }) => {
           <button className="edit-btn" type="submit">
             Submit
           </button>
-          {application && <button className="delete-btn">Delete</button>}
+          {application && (
+            <button type="button" className="delete-btn">
+              Delete
+            </button>
+          )}
         </section>
       </section>
     </form>

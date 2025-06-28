@@ -16,8 +16,10 @@ let sessionConfig = {
   secret: process.env.SESSION_SECRET,
   rolling: true,
   cookie: {
+    httpOnly: true,
+    domain: "localhost",
     secure: false,
-    sameSite: "strict",
+    sameSite: "lax",
   },
   resave: false,
   saveUninitialized: false,
@@ -37,6 +39,11 @@ server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 
+server.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  next();
+});
+
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
     return res
@@ -48,7 +55,6 @@ const isAuthenticated = (req, res, next) => {
 
 // user authentication
 server.post("/register", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -90,7 +96,6 @@ const loginLimiter = rateLimit({
 
 server.post("/login", loginLimiter, async (req, res) => {
   const { username, password } = req.body;
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
   try {
     if (!username || !password) {
@@ -121,7 +126,6 @@ server.post("/login", loginLimiter, async (req, res) => {
 });
 
 server.post("/logout", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: "Failed to log out" });
@@ -132,9 +136,6 @@ server.post("/logout", (req, res) => {
 });
 
 server.get("/me", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.json({ id: 1, username: "srnunez" }); // TODO hardcoded for dev
-
   if (!req.session.userId) {
     return res
       .status(401)
