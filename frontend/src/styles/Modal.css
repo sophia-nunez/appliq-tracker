@@ -84,9 +84,20 @@
   }
 }
 
-/* CSS for Application details modal page */
-.application-details {
+/* CSS for Application modal page */
+.application-form {
   place-items: center;
+
+  .application-details {
+    width: 100%;
+  }
+
+  .list-content {
+    .child {
+      min-height: 60px;
+      padding: 10px;
+    }
+  }
 
   .application-status {
     width: 100%;
@@ -96,5 +107,67 @@
   .application-btns {
     display: flex;
     gap: 10px;
+  }
+
+  h2 input {
+    text-align: center;
+  }
+
+  input,
+  textarea {
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: 1px solid rgba(128, 128, 128, 0.331);
+    border-radius: 5px;
+  }
+
+  .description-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+
+    textarea {
+      padding: 5px 10px;
+      max-width: 100%;
+      max-height: 50vh;
+      height: 150px;
+    }
+  }
+
+  .child.notes {
+    display: flex;
+    gap: 0.6em;
+
+    textarea {
+      width: 100%;
+      max-width: 100%;
+      max-height: 40vh;
+    }
+  }
+
+  .child.tags {
+    display: flex;
+    gap: 0.6em;
+
+    #categories {
+      height: fit-content;
+      width: 80px;
+    }
+  }
+
+  .status-details {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    gap: 0.6em;
+
+    h3 {
+      margin: 0px;
+    }
+
+    #status {
+      border-radius: 5px;
+      height: fit-content;
+    }
   }
 }

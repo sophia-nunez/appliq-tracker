@@ -5,17 +5,7 @@ const Status = ({ status }) => {
 
   // set text and class for display
   useEffect(() => {
-    if (status === "accepted") {
-      setStatusText("Signed");
-    } else if (status === "rejected") {
-      setStatusText("Rejected");
-    } else if (status === "interview") {
-      setStatusText("Interview");
-    } else if (status === "offer") {
-      setStatusText("Offer");
-    } else {
-      setStatusText("Applied");
-    }
+    setStatusText(status);
   }, [status]);
 
   return <button className={`status-btn ${status}`}>{statusText}</button>;

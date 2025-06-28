@@ -1,24 +1,153 @@
-import List from "./List";
+import { useState, useEffect } from "react";
+import Status from "./Status";
+import { DateTimePicker } from "@mantine/dates";
+import { createApplication } from "../utils/applicationUtils";
+import "../styles/Modal.css";
 
-const ApplicationModal = () => {
-  //TODO: make this the edit modal for applications
+const ApplicationModal = ({ application, setModalOpen }) => {
+  const [formInput, setFormInput] = useState({
+    companyName: "",
+    title: "",
+    description: "",
+    notes: "",
+    status: "",
+    // categories: "",
+    appliedAt: Date(),
+    interviewAt: undefined,
+  });
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+
+    setFormInput((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("submitted");
+  };
+
+  useEffect(() => {
+    if (application) {
+      setFormInput({ ...formInput, ...application });
+    }
+  }, []);
 
   return (
-    <section className="application-details">
-      <h2>Job Title</h2>
-      <button>Company</button>
-      <p>Description of the job position, including the...</p>
-      <section className="application-status">
-        <h3>Status</h3>
-        <div className="status-details">
-          <List />
+    <form className="application-form" onSubmit={handleSubmit}>
+      <section className="application-header">
+        <h2>
+          <label htmlFor="title"></label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Job Title"
+            value={formInput.title}
+            onChange={handleChange}
+            required
+          />
+        </h2>
+        <p>
+          <label htmlFor="companyName"></label>
+          <input
+            type="text"
+            id="companyName"
+            name="companyName"
+            placeholder="Company"
+            value={formInput.companyName}
+            onChange={handleChange}
+            required
+          />
+        </p>
+      </section>
+      <section className="application-details">
+        <div className="description-input">
+          <label htmlFor="description">Job description: </label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Required Skills, Location, etc."
+            value={formInput.description}
+            onChange={handleChange}
+          />
         </div>
+        <div className="list-container user-details">
+          <section className="status-details">
+            <label htmlFor="status">
+              <h3>Status | </h3>
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={formInput.status}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled={true}>
+                Select
+              </option>
+              <option value="Applied">Applied</option>
+              <option value="Interview">Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Signed">Signed</option>
+              <option value="Other">Other</option>
+            </select>
+          </section>
+          <section className="list-content">
+            <article className="child notes">
+              <label htmlFor="notes">Notes: </label>
+              <textarea
+                id="notes"
+                name="notes"
+                value={formInput.notes}
+                onChange={handleChange}
+              ></textarea>
+            </article>
+            <article className="child tags">
+              {application &&
+                application.categories.map((category) => {
+                  return (
+                    <p className="tag" key={category.id}>
+                      {category.name}
+                    </p>
+                  );
+                })}
+            </article>
+            <article className="child dates">
+              <div>
+                <DateTimePicker
+                  label="Application Date"
+                  value={formInput.appliedAt}
+                  withAsterisk
+                  description="Time is optional"
+                  placeholder="Input placeholder"
+                  required
+                />
+              </div>
+              <div>
+                <DateTimePicker
+                  label="Interview Date"
+                  value={formInput.interviewAt}
+                  withAsterisk
+                />
+              </div>
+            </article>
+          </section>
+        </div>
+        <section className="application-btns">
+          <button className="edit-btn" type="submit">
+            Submit
+          </button>
+          {application && <button className="delete-btn">Delete</button>}
+        </section>
       </section>
-      <section className="application-btns">
-        <button>Edit</button>
-        <button>Delete</button>
-      </section>
-    </section>
+    </form>
   );
 };
 

@@ -13,7 +13,7 @@ const ApplicationLong = ({
     <article className="application long" onClick={(e) => openPage(e, id)}>
       <div className="text">
         <span className="header-span">
-          <h4>{title} plus slightly more text</h4>
+          <h4>{title}</h4>
           <p className="details">
             {companyName} | <Status status={status} />
           </p>

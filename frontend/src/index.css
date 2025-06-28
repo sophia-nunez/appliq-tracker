@@ -79,3 +79,10 @@ button:focus,
 button:focus-visible {
   outline: 4px auto var(--primary-color);
 }
+
+.delete-btn {
+  background-color: var(--delete-red);
+}
+.delete-btn:hover {
+  background-color: rgba(255, 0, 0, 0.421);
+}

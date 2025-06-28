@@ -47,7 +47,10 @@ router.get("/applications", async (req, res, next) => {
 router.get("/applications/:id", async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
-    const application = await prisma.application.findUnique({ where: { id } });
+    const application = await prisma.application.findUnique({
+      where: { id },
+      include: { categories: true },
+    });
     if (application) {
       res.json(application);
     } else {
@@ -61,6 +64,7 @@ router.get("/applications/:id", async (req, res, next) => {
 // [POST] create application
 router.post("/applications", async (req, res, next) => {
   const newApplication = req.body;
+  const userId = req.session.userId;
   try {
     // Validate that new application has required fields
     // TODO add companyId from name if possible (find company)
@@ -69,7 +73,7 @@ router.post("/applications", async (req, res, next) => {
       newApplication.title !== undefined &&
       newApplication.companyId !== undefined &&
       newApplication.status !== undefined &&
-      newApplication.userId !== undefined;
+      userId !== undefined;
     if (newApplicationValid) {
       const created = await prisma.application.create({ data: newApplication });
       res.status(201).json(created);

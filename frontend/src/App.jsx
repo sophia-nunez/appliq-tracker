@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import { ThemeProvider, useTheme } from "./components/ThemeContext";
 import { UserProvider, useUser } from "./components/UserContext";
+import { MantineProvider } from "@mantine/core";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
@@ -15,6 +16,7 @@ import WithAuth from "./components/WithAuth";
 import DataPage from "./pages/DataPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
+import "@mantine/core/styles.css";
 
 function Root() {
   return (
@@ -85,10 +87,12 @@ export default function App() {
   ]);
 
   return (
-    <ThemeProvider>
-      <UserProvider setIsLoading={setIsLoading}>
-        <AppContent router={router} />
-      </UserProvider>
-    </ThemeProvider>
+    <MantineProvider>
+      <ThemeProvider>
+        <UserProvider setIsLoading={setIsLoading}>
+          <AppContent router={router} />
+        </UserProvider>
+      </ThemeProvider>
+    </MantineProvider>
   );
 }

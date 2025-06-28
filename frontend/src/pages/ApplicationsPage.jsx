@@ -39,12 +39,19 @@ const ApplicationsPage = () => {
     }
   };
 
+  const addApplication = (e) => {
+    e.preventDefault();
+    setModalOpen(true);
+  };
   return (
     <>
       <main>
         <SearchBar pageName="Applications" />
         <section className="list-container">
-          <h3>All</h3>
+          <div className="list-header">
+            <h3>All</h3>
+            <p onClick={addApplication}>+</p>
+          </div>
           <section className="list-content">
             {applications &&
               applications.map((application) => {
@@ -64,7 +71,11 @@ const ApplicationsPage = () => {
         </section>
       </main>
       {modalOpen && (
-        <Modal contents="application" setModalOpen={setModalOpen} />
+        <Modal
+          contents="application"
+          setModalOpen={setModalOpen}
+          application={{}}
+        />
       )}
     </>
   );

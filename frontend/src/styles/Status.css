@@ -4,19 +4,19 @@
   padding: 3px;
 }
 
-.status-btn.accepted {
+.status-btn.Signed {
   background-color: palegreen;
 }
 
-.status-btn.rejected {
+.status-btn.Rejected {
   background-color: var(--delete-red);
 }
 
-.status-btn.applied {
+.status-btn.Applied {
   background-color: lightgray;
 }
 
-.status-btn.interview {
+.status-btn.Interview {
   background-color: var(--primary-color);
 }
 
