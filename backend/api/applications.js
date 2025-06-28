@@ -18,12 +18,14 @@ router.get("/applications", async (req, res, next) => {
   // order featured first, then by most recent
   let orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
 
-  if (search.title) {
-    // if title query, search by title
-    where.title = {
-      contains: search.title,
-      mode: "insensitive",
-    };
+  if (search.text) {
+    // if given search text, look in title, company, notes, and description for a match
+    where.OR = [
+      { title: { contains: search.text, mode: "insensitive" } },
+      { companyName: { contains: search.text, mode: "insensitive" } },
+      { description: { contains: search.text, mode: "insensitive" } },
+      { notes: { contains: search.text, mode: "insensitive" } },
+    ];
   }
 
   if (search.category) {
@@ -44,6 +46,7 @@ router.get("/applications", async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
+    console.log(err);
     return res.status(401).json({ error: "Failed to get applications." });
   }
 });

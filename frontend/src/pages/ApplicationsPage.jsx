@@ -17,7 +17,7 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, []);
+  }, [query]);
 
   // TODO: currently on all, move to applications list
   const openPage = (e, id) => {
@@ -27,8 +27,9 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
+    console.log("loaded");
     const currQuery = new URLSearchParams({
-      title: query.trim(),
+      text: query.trim(),
       category: filter,
     });
     try {
@@ -47,7 +48,12 @@ const ApplicationsPage = () => {
   return (
     <>
       <main>
-        <SearchBar pageName="Applications" />
+        <SearchBar
+          pageName="Applications"
+          query={query}
+          setQuery={setQuery}
+          handleSearch={loadApplications}
+        />
         <section className="list-container">
           <div className="list-header">
             <h3>All</h3>
