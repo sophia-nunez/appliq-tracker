@@ -6,6 +6,7 @@ const UserContext = createContext();
 export const UserProvider = ({ setIsLoading, children }) => {
   const [user, setUser] = useState({});
 
+  // on render, fetches current user
   useEffect(() => {
     setIsLoading(true);
     fetch(`${baseURL()}/me`, { credentials: "include" })

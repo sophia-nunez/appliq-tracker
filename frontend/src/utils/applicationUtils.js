@@ -1,5 +1,6 @@
 import { baseURL } from "./authUtils";
 
+// uses query params to load matching applications
 const getApplications = async (query) => {
   try {
     const response = await fetch(
@@ -17,6 +18,7 @@ const getApplications = async (query) => {
   }
 };
 
+// fetches single application by id
 const getApplication = async (id) => {
   try {
     const response = await fetch(`${baseURL()}/applications/${id}`);
@@ -32,6 +34,7 @@ const getApplication = async (id) => {
   }
 };
 
+// converts dates to Date objects and attempts to POST data
 const createApplication = async (application) => {
   const appliedDate = new Date(application.appliedAt);
   let newInfo = {
@@ -66,6 +69,7 @@ const createApplication = async (application) => {
   }
 };
 
+// modifies applciation based on updated information
 const editApplication = async (application, id) => {
   const appliedDate = new Date(application.appliedAt);
   let newInfo = {
@@ -98,6 +102,7 @@ const editApplication = async (application, id) => {
   }
 };
 
+// removes application based on given id
 const deleteApplication = async (id) => {
   try {
     const response = await fetch(`${baseURL()}/applications/${id}`, {

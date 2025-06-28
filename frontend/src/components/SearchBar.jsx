@@ -10,7 +10,7 @@ const SearchBar = ({ pageName }) => {
           className="search"
           placeholder="Search Applications..."
         />
-        <select name="sort-by" id="sort-by">
+        <select name="sort-by" id="sort-by" value="default">
           <option value="default" disabled>
             Sort By
           </option>

@@ -4,6 +4,7 @@ import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
 const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
+  // input for application creation/modfication - currently excluded category functionality
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -14,13 +15,16 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     appliedAt: new Date(),
     interviewAt: undefined,
   });
+  // TODO add category functionality
 
+  // if editing existing application, loads in current data to the form
   useEffect(() => {
     if (application.id) {
       setFormInput((prev) => ({ ...prev, ...application }));
     }
   }, []);
 
+  // works for all but date pickers, updates the given formInput field
   const handleChange = (e) => {
     const { name, value } = e.target;
 

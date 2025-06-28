@@ -9,22 +9,26 @@ import "../styles/ApplicationDetailPage.css";
 
 const ApplicationDetailPage = () => {
   const navigate = useNavigate();
+  // application information
   const { appId } = useParams(); // id of application
   const [application, setApplication] = useState({});
   const [applicationDate, setApplicationDate] = useState("");
   const [interviewDate, setInterviewDate] = useState("");
-  const [companyPage, setCompanyPage] = useState(".");
+  const [companyPage, setCompanyPage] = useState("."); // default is current page
+  // modal visibility
   const [modalOpen, setModalOpen] = useState(false);
 
+  // initial load
   useEffect(() => {
     loadApplication();
   }, []);
 
+  // using given id, fetches application data and converts dates to strings
   const loadApplication = async () => {
     const loadedApplication = await getApplication(appId);
     const loadedDate = new Date(loadedApplication.appliedAt);
 
-    // only set if user gave interview date
+    // only convert interviewAt set if user gave interview date
     if (loadedApplication.interviewAt) {
       const interview = new Date(loadedApplication.interviewAt);
       setInterviewDate(interview.toLocaleDateString());
@@ -38,6 +42,7 @@ const ApplicationDetailPage = () => {
     setApplicationDate(loadedDate.toLocaleDateString());
   };
 
+  // deletes application by id, otherwise sends alert
   const handleDelete = async () => {
     try {
       const deleted = await deleteApplication(appId);

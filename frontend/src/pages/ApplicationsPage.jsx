@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
-import { useNavigate } from "react-router";
-import "../styles/List.css";
 import { getApplications } from "../utils/applicationUtils";
-import { useEffect } from "react";
+import "../styles/List.css";
 
 const ApplicationsPage = () => {
   const [applications, setApplications] = useState(Array());
@@ -26,6 +25,7 @@ const ApplicationsPage = () => {
     navigate(`${id}`);
   };
 
+  // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
     const currQuery = new URLSearchParams({
       title: query.trim(),
@@ -39,6 +39,7 @@ const ApplicationsPage = () => {
     }
   };
 
+  // opens modal to add application
   const addApplication = (e) => {
     e.preventDefault();
     setModalOpen(true);
@@ -63,6 +64,7 @@ const ApplicationsPage = () => {
                     companyName={application.companyName}
                     title={application.title}
                     description={application.description}
+                    appliedAt={application.appliedAt}
                     status={application.status}
                   />
                 );

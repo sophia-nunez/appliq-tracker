@@ -18,6 +18,7 @@ import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 
+// basic layout to be rendered on all pages
 function Root() {
   return (
     <>
@@ -28,6 +29,7 @@ function Root() {
   );
 }
 
+// wraps content so all components have the theming
 const AppContent = ({ router }) => {
   const { theme } = useTheme();
   return (
@@ -47,6 +49,7 @@ export default function App() {
   const ProtectedData = WithAuth(isLoading, DataPage);
   const ProtectedSettings = WithAuth(isLoading, SettingsPage);
 
+  // sets up routes for each URL to the respectice component
   const router = createBrowserRouter([
     {
       path: "/",
@@ -65,6 +68,10 @@ export default function App() {
         {
           path: "companies",
           Component: ProtectedCompanies,
+        },
+        {
+          path: "companies/:companyId",
+          Component: ProtectedCompanies, //TODO temporary, no companyDetailPage yet
         },
         {
           path: "data",
@@ -86,6 +93,9 @@ export default function App() {
     },
   ]);
 
+  // wraps in mantine provider for imported component functionality
+  // theme provider to give theme for light/dark mode
+  // userProvider to give login/user information
   return (
     <MantineProvider>
       <ThemeProvider>

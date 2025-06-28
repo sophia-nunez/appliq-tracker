@@ -15,7 +15,6 @@ const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
       }
       if (modalRef.current && event.target === modalRef.current) {
         closeModal();
-        // TODO: cause slideout animation here as well? or only clicking close
       }
     }
 
@@ -30,6 +29,7 @@ const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
     setModalOpen(false);
   };
 
+  // modal loads content based on prop passed in by parent page
   return (
     <aside id="modal" className="modal" ref={modalRef}>
       <span id="nav-close" className="close">

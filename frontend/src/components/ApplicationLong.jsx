@@ -1,5 +1,6 @@
 import Status from "./Status";
 import "../styles/List.css";
+import { useEffect, useState } from "react";
 
 const ApplicationLong = ({
   openPage,
@@ -7,18 +8,27 @@ const ApplicationLong = ({
   companyName,
   title,
   description,
+  appliedAt,
   status,
 }) => {
+  const [applicationDate, setApplicationDate] = useState("");
+
+  // formats date to string for display
+  useEffect(() => {
+    const loadedDate = new Date(appliedAt);
+    setApplicationDate(loadedDate.toLocaleDateString());
+  }, []);
+
   return (
     <article className="application long" onClick={(e) => openPage(e, id)}>
       <div className="text">
-        <span className="header-span">
-          <h4>{title}</h4>
-          <p className="details">
-            {companyName} | <Status status={status} />
-          </p>
-        </span>
-        <p className="app-description">{description}</p>
+        <p>{companyName}</p>
+        <h4>{title}</h4>
+        <p className="ellipsis-overflow">{description}</p>
+      </div>
+      <div className="details">
+        <Status status={status} />
+        <p>{applicationDate}</p>
       </div>
     </article>
   );
