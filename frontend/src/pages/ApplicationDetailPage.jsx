@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
-import { getApplication } from "../utils/applicationUtils";
+import { deleteApplication, getApplication } from "../utils/applicationUtils";
 import Status from "../components/Status";
 import "../styles/Subpage.css";
 import "../styles/ApplicationDetailPage.css";
@@ -34,6 +34,15 @@ const ApplicationDetailPage = () => {
 
     setApplication(loadedApplication);
     setApplicationDate(loadedDate.toLocaleDateString());
+  };
+
+  const handleDelete = async () => {
+    try {
+      const deleted = await deleteApplication(appId);
+      navigate(-1);
+    } catch (error) {
+      alert("Failed to delete application");
+    }
   };
 
   return (
@@ -91,7 +100,9 @@ const ApplicationDetailPage = () => {
         </div>
         <section className="application-btns">
           <button className="edit-btn">Edit</button>
-          <button className="delete-btn">Delete</button>
+          <button className="delete-btn" onClick={handleDelete}>
+            Delete
+          </button>
         </section>
       </section>
     </main>

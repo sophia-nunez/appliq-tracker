@@ -11,7 +11,6 @@ const WithAuth = (isLoading, WrappedComponent) => {
     const navigate = useNavigate();
     useEffect(() => {
       if (!isLoading && !user.id) {
-        console.log("navigated");
         navigate(loginPath);
       }
     }, [user, navigate]);

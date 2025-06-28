@@ -98,7 +98,7 @@ router.delete("/applications/:id", async (req, res, next) => {
       const deleted = await prisma.application.delete({ where: { id } });
       res.json(deleted);
     } else {
-      next({ status: 404, message: "Application not found" });
+      return res.status(404).json({ error: "Application not found" });
     }
   } catch (err) {
     return res.status(401).json({ error: "Failed to delete application." });

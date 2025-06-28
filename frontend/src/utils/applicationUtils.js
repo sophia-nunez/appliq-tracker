@@ -66,4 +66,22 @@ const createApplication = async (application) => {
   }
 };
 
-export { getApplications, getApplication, createApplication };
+const deleteApplication = async (id) => {
+  try {
+    const response = await fetch(`${baseURL()}/applications/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    throw new Error("Failed to delete application");
+  }
+};
+
+export {
+  getApplications,
+  getApplication,
+  createApplication,
+  deleteApplication,
+};
