@@ -1,0 +1,13 @@
+.page-info {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  font-size: 40px;
+  width: 40px;
+  color: var(--primary-color);
+}

@@ -1,0 +1,102 @@
+.list-container {
+  margin: 20px auto;
+
+  .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+      cursor: pointer;
+      font-size: 1.3rem;
+      margin: 0px 5px;
+
+      background-color: rgba(211, 211, 211, 0.342);
+      border-radius: 50px;
+      padding: 0px 8px;
+    }
+  }
+}
+
+.list-content {
+  background-color: var(--card-bg-color);
+  padding: 20px;
+  border-radius: 3px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+
+  .child {
+    background-color: var(--background-color);
+    border-radius: 5px;
+    width: 100%;
+    padding: 0px 10px;
+  }
+
+  .long {
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 3px;
+    background-color: var(--background-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .text {
+      width: 100%;
+      margin: 0px 20px;
+      .app-description {
+        text-overflow: ellipsis;
+      }
+    }
+
+    .header-span {
+      display: flex;
+      flex-direction: column;
+
+      .details {
+        margin: 0px;
+      }
+    }
+    @media (min-width: 501px) {
+      .header-span {
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+
+        .details {
+          margin-left: auto;
+          gap: 5px;
+        }
+      }
+    }
+  }
+}
+
+.application {
+  cursor: pointer;
+  animation-name: animatescale;
+  animation-duration: 1s;
+}
+
+.application:hover {
+  cursor: pointer;
+  animation-name: animatescale;
+  animation-direction: reverse;
+  animation-duration: 1s;
+  transform: scale(1.02);
+  box-shadow: 0px 0px 3px 0px var(--primary-color);
+}
+
+@keyframes animatescale {
+  from {
+    transform: scale(1.02);
+    box-shadow: 0px 0px 3px 0px var(--primary-color);
+  }
+  to {
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,25 @@
+.status-btn {
+  font-size: 1rem;
+  font-weight: 350;
+  padding: 3px;
+}
+
+.status-btn.Signed {
+  background-color: palegreen;
+}
+
+.status-btn.Rejected {
+  background-color: var(--delete-red);
+}
+
+.status-btn.Applied {
+  background-color: lightgray;
+}
+
+.status-btn.Interview {
+  background-color: var(--primary-color);
+}
+
+.status-btn.other {
+  background-color: palegoldenrod;
+}

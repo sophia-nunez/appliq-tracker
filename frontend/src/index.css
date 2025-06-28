@@ -3,11 +3,11 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --primary-color: #1b1238;
-  --secondary-color: #e9e3ff;
+  --primary-color: #121f38;
+  --secondary-color: #bccff2;
   --hover-color: #787093;
-  --background-color: rgb(65, 59, 71);
-  --card-bg-color: rgb(78, 72, 83);
+  --background-color: rgb(59, 62, 71);
+  --card-bg-color: rgb(72, 73, 83);
   --text-color: #ffffff;
   --delete-red: rgb(122, 40, 34);
   --gray: rgb(198, 198, 198);
@@ -16,13 +16,17 @@
   color: var(--text-color);
   background-color: var(--background-color);
 
+  * {
+    box-sizing: border-box;
+  }
+
   [data-theme="light"] {
     --text-color: #000000;
     --background-color: #ffffff;
-    --card-bg-color: #f6f2ff;
-    --primary-color: #b9a7f2;
-    --secondary-color: #1b1238;
-    --hover-color: #e8e2ff;
+    --card-bg-color: #cad0df;
+    --primary-color: #bccff2;
+    --secondary-color: #121f38;
+    --hover-color: #ccd6ea;
     --gray: rgb(63, 63, 63);
     --delete-red: rgb(221, 132, 132);
 
@@ -45,6 +49,17 @@ body,
   min-height: 100vh;
 }
 
+main {
+  min-height: 85vh;
+  padding: 10px;
+}
+
+h2 {
+  font-weight: 300;
+  font-size: 2.1rem;
+  text-align: center;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -52,14 +67,22 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--background-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: var(--hover-color);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto var(--primary-color);
+}
+
+.delete-btn {
+  background-color: var(--delete-red);
+}
+.delete-btn:hover {
+  background-color: rgba(255, 0, 0, 0.421);
 }

@@ -1,0 +1,42 @@
+.application-detail-page {
+  .page-info {
+    margin-bottom: 20px;
+  }
+
+  .application-header {
+    place-items: center;
+  }
+
+  .user-details {
+    width: clamp(250px, 80%, 2000px);
+  }
+
+  .tags {
+    .tag {
+      width: fit-content;
+      background-color: lightgray;
+      padding: 5px;
+      border-radius: 10px;
+    }
+  }
+
+  .dates {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 0.7em;
+
+    h4 {
+      font-weight: 500;
+      color: gray;
+    }
+  }
+}
+
+h4 {
+  margin-bottom: 10px;
+}
+
+p {
+  margin-top: 0px;
+}

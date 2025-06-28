@@ -1,0 +1,7 @@
+.settings-page {
+  place-items: center;
+
+  * {
+    place-items: center;
+  }
+}
