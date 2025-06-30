@@ -8,13 +8,22 @@ router.use((req, res, next) => {
   next();
 });
 
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ error: "You must be logged in to view this page." });
+  }
+  next();
+};
+
 // [GET] many applications with optional search
-router.get("/applications", async (req, res, next) => {
+router.get("/applications", isAuthenticated, async (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
   const search = req.query;
 
-  const where = {};
+  const where = { userId: req.session.userId };
   // order featured first, then by most recent
   let orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
 
@@ -46,17 +55,16 @@ router.get("/applications", async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ error: "Failed to get applications." });
   }
 });
 
 // [GET] one application by id
-router.get("/applications/:id", async (req, res, next) => {
+router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
     const application = await prisma.application.findUnique({
-      where: { id },
+      where: { id, userId: req.session.userId },
       include: { categories: true },
     });
     if (application) {
@@ -70,7 +78,7 @@ router.get("/applications/:id", async (req, res, next) => {
 });
 
 // [POST] create application
-router.post("/applications", async (req, res, next) => {
+router.post("/applications", isAuthenticated, async (req, res, next) => {
   const newApplication = { ...req.body, userId: req.session.userId };
   try {
     // Validate that new application has required fields
@@ -92,13 +100,13 @@ router.post("/applications", async (req, res, next) => {
   }
 });
 
-router.put("/applications/:appId", async (req, res, next) => {
+router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.appId);
   const updatedApp = { ...req.body, userId: req.session.userId };
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
-      where: { id },
+      where: { id, userId: req.session.userId },
     });
 
     if (!application) {
@@ -131,10 +139,12 @@ router.put("/applications/:appId", async (req, res, next) => {
 });
 
 // [DELETE] delete application
-router.delete("/applications/:id", async (req, res, next) => {
+router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.id);
   try {
-    const application = await prisma.application.findUnique({ where: { id } });
+    const application = await prisma.application.findUnique({
+      where: { id, userId: req.session.userId },
+    });
     if (application) {
       const deleted = await prisma.application.delete({ where: { id } });
       res.json(deleted);

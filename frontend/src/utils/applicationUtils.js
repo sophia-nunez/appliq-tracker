@@ -4,7 +4,8 @@ import { baseURL } from "./authUtils";
 const getApplications = async (query) => {
   try {
     const response = await fetch(
-      `${baseURL()}/applications/?${query.toString()}`
+      `${baseURL()}/applications/?${query.toString()}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       const text = await response.json();
@@ -21,7 +22,9 @@ const getApplications = async (query) => {
 // fetches single application by id
 const getApplication = async (id) => {
   try {
-    const response = await fetch(`${baseURL()}/applications/${id}`);
+    const response = await fetch(`${baseURL()}/applications/${id}`, {
+      credentials: "include",
+    });
     if (!response.ok) {
       const text = await response.json();
       throw new Error(text.error);
@@ -107,6 +110,7 @@ const deleteApplication = async (id) => {
   try {
     const response = await fetch(`${baseURL()}/applications/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

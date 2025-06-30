@@ -1,16 +1,20 @@
-.application-detail-page {
+.application-detail-page,
+.company-detail-page {
   .page-info {
     margin-bottom: 20px;
   }
 
-  .application-header {
+  .application-header,
+  .company-header {
     place-items: center;
   }
 
-  .application-details {
+  .application-details,
+  .company-details {
     place-items: center;
 
-    .application-btns {
+    .application-btns,
+    .company-btns {
       display: flex;
       gap: 20px;
     }

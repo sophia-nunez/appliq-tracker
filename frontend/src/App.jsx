@@ -17,6 +17,7 @@ import DataPage from "./pages/DataPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
+import CompanyDetailPage from "./pages/CompanyDetailPage";
 
 // basic layout to be rendered on all pages
 function Root() {
@@ -46,6 +47,7 @@ export default function App() {
   const ProtectedApplications = WithAuth(isLoading, ApplicationsPage);
   const ProtectedApplication = WithAuth(isLoading, ApplicationDetailPage);
   const ProtectedCompanies = WithAuth(isLoading, CompanyPage);
+  const ProtectedCompany = WithAuth(isLoading, CompanyDetailPage);
   const ProtectedData = WithAuth(isLoading, DataPage);
   const ProtectedSettings = WithAuth(isLoading, SettingsPage);
 
@@ -71,7 +73,7 @@ export default function App() {
         },
         {
           path: "companies/:companyId",
-          Component: ProtectedCompanies, //TODO temporary, no companyDetailPage yet
+          Component: ProtectedCompany,
         },
         {
           path: "data",
