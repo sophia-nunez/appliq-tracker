@@ -8,7 +8,9 @@ router.get("/categories", async (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({
+      where: { userId: req.session.userId },
+    });
     if (categories) {
       res.json(categories);
     } else {
@@ -23,7 +25,9 @@ router.get("/categories", async (req, res, next) => {
 router.get("/categories/:id", async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
-    const category = await prisma.category.findUnique({ where: { id } });
+    const category = await prisma.category.findUnique({
+      where: { id, userId: req.session.userId },
+    });
     if (category) {
       res.json(category);
     } else {
@@ -62,7 +66,9 @@ router.post("/categories", async (req, res, next) => {
 router.delete("/categories/:id", async (req, res, next) => {
   const id = Number(req.params.id);
   try {
-    const category = await prisma.category.findUnique({ where: { id } });
+    const category = await prisma.category.findUnique({
+      where: { id, userId: req.session.userId },
+    });
     if (category) {
       const deleted = await prisma.category.delete({ where: { id } });
       res.json(deleted);

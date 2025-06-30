@@ -13,7 +13,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // [GET] many companies with optional search
-router.get("/companies", async (req, res, next) => {
+router.get("/companies", isAuthenticated, async (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
   const search = req.query;
@@ -30,13 +30,11 @@ router.get("/companies", async (req, res, next) => {
     };
   }
 
-  if (search.category) {
+  if (search.industry) {
     // if industry query, search by industry
     if (search.industry === "all") {
     } else {
-      where.industry = {
-        contains: search.industry,
-      };
+      where.industry = search.industry;
     }
   }
 
@@ -44,6 +42,24 @@ router.get("/companies", async (req, res, next) => {
     const companies = await prisma.company.findMany({ where, orderBy });
     if (companies) {
       res.json(companies);
+    } else {
+      return res.status(404).json({ error: "No companies found" });
+    }
+  } catch (err) {
+    return res.status(404).json({ error: "Failed to get companies." });
+  }
+});
+
+// [GET] many companies with optional search
+router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+  const where = { userId: req.session.userId };
+
+  try {
+    const industries = await prisma.company.findMany({ where });
+    if (industries) {
+      res.json(industries);
     } else {
       return res.status(404).json({ error: "No companies found" });
     }

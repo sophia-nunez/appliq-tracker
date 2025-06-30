@@ -42,7 +42,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     if (search.category === "all") {
     } else {
       where.categories = {
-        contains: search.category,
+        some: { name: search.category },
       };
     }
   }
