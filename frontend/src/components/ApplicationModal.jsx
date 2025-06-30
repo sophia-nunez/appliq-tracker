@@ -39,7 +39,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
 
     try {
       if (application.id) {
-        const { categories, ...modifiedApplication } = formInput;
+        const { categories, ...modifiedApplication } = formInput; // remove when categorise are implemented
         const edit = await editApplication(modifiedApplication, application.id);
       } else {
         const added = await createApplication(formInput);

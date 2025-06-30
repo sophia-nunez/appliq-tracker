@@ -85,10 +85,12 @@
 }
 
 /* CSS for Application modal page */
-.application-form {
+.application-form,
+.company-form {
   place-items: center;
 
-  .application-details {
+  .application-details,
+  .company-details {
     width: 100%;
   }
 
@@ -104,7 +106,9 @@
     margin-bottom: 10px;
   }
 
-  .application-btns {
+  .application-btns,
+  .company-btns {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
   }
@@ -170,4 +174,11 @@
       height: fit-content;
     }
   }
+}
+
+.company-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

@@ -78,7 +78,14 @@ const CompanyPage = () => {
           </section>
         </section>
       </main>
-      {modalOpen && <Modal contents="company" setModalOpen={setModalOpen} />}
+      {modalOpen && (
+        <Modal
+          contents="company"
+          setModalOpen={setModalOpen}
+          item={{}}
+          reloadPage={loadCompanies}
+        />
+      )}
     </>
   );
 };

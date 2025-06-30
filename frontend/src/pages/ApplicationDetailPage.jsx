@@ -120,7 +120,7 @@ const ApplicationDetailPage = () => {
         <Modal
           contents="application"
           setModalOpen={setModalOpen}
-          application={application}
+          item={application}
           reloadPage={loadApplication}
         />
       )}

@@ -47,7 +47,13 @@ const CompanyDetailPage = () => {
             <h2>{company.name}</h2>
             <button>
               {company.careerPage ? (
-                <a href={company.careerPage}>Career Page</a>
+                <a
+                  className="website-URL"
+                  href={company.careerPage}
+                  target="_blank"
+                >
+                  Career Page
+                </a>
               ) : (
                 "No Career Page Linked"
               )}
@@ -56,7 +62,6 @@ const CompanyDetailPage = () => {
           <div className="back-btn" />
         </div>
         <section className="company-details">
-          <p>Company description: {company.description}</p>
           <div className="list-container user-details">
             <section className="list-content">
               <article className="child tags">
@@ -66,6 +71,10 @@ const CompanyDetailPage = () => {
                 ) : (
                   <p>{company.industry}</p>
                 )}
+              </article>
+              <article className="child description">
+                <h4>Description</h4>
+                <p>{company.description}</p>
               </article>
             </section>
           </div>
@@ -83,7 +92,7 @@ const CompanyDetailPage = () => {
         <Modal
           contents="company"
           setModalOpen={setModalOpen}
-          company={company}
+          item={company}
           reloadPage={loadCompany}
         />
       )}

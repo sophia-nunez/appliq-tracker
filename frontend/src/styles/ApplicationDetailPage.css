@@ -53,3 +53,8 @@ h4 {
 p {
   margin-top: 0px;
 }
+
+.website-URL {
+  text-decoration: none;
+  color: var(--text-color);
+}

@@ -87,8 +87,8 @@ router.get("/companies/:name", async (req, res, next) => {
 });
 
 // [POST] create company
-router.post("/companies", async (req, res, next) => {
-  const newCompany = req.body;
+router.post("/companies", isAuthenticated, async (req, res, next) => {
+  const newCompany = { ...req.body, userId: req.session.userId };
   try {
     // Validate that new company has required fields
     // TODO check for duplicate by name

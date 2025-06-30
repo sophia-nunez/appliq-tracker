@@ -27,7 +27,6 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
-    console.log("loaded");
     const currQuery = new URLSearchParams({
       text: query.trim(),
       category: filter,
@@ -82,7 +81,7 @@ const ApplicationsPage = () => {
         <Modal
           contents="application"
           setModalOpen={setModalOpen}
-          application={{}}
+          item={{}}
           reloadPage={loadApplications}
         />
       )}
