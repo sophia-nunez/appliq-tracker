@@ -37,6 +37,24 @@ const getCompany = async (id) => {
   }
 };
 
+// gets list of industries for user
+const getIndustries = async () => {
+  try {
+    const response = await fetch(`${baseURL()}/companies/industries`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error(text.error);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // converts dates to Date objects and attempts to POST data
 const createCompany = async (company) => {
   try {

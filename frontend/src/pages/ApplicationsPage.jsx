@@ -4,10 +4,13 @@ import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
 import { getApplications } from "../utils/applicationUtils";
+import { getCategories } from "../utils/categoryUtils";
 import "../styles/List.css";
+import "../styles/CategoryDropdown.css";
 
 const ApplicationsPage = () => {
   const [applications, setApplications] = useState(Array());
+  const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
   // search and nav
   const [filter, setFilter] = useState("all");
@@ -17,7 +20,7 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, [query]);
+  }, [query, filter]);
 
   // TODO: currently on all, move to applications list
   const openPage = (e, id) => {
@@ -33,6 +36,9 @@ const ApplicationsPage = () => {
     });
     try {
       const data = await getApplications(currQuery);
+      const categories = await getCategories();
+
+      setCategoriesList(categories);
       setApplications(data);
     } catch (error) {
       alert(error.message);
@@ -55,7 +61,23 @@ const ApplicationsPage = () => {
         />
         <section className="list-container">
           <div className="list-header">
-            <h3>All</h3>
+            <select
+              name="industry"
+              id="industry"
+              className="category-dropdown"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              {categoriesList &&
+                categoriesList.map((cat) => {
+                  return (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  );
+                })}
+            </select>
             <p onClick={addApplication}>+</p>
           </div>
           <section className="list-content">

@@ -29,7 +29,7 @@ const CompanyPage = () => {
   const loadCompanies = async () => {
     const currQuery = new URLSearchParams({
       name: query.trim(),
-      category: filter,
+      industry: filter,
     });
     try {
       const data = await getCompanies(currQuery);
