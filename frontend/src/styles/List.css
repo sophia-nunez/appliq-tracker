@@ -84,13 +84,15 @@
   }
 }
 
-.application {
+.application,
+.company {
   cursor: pointer;
   animation-name: animatescale;
   animation-duration: 1s;
 }
 
-.application:hover {
+.application:hover,
+.company:hover {
   cursor: pointer;
   animation-name: animatescale;
   animation-direction: reverse;

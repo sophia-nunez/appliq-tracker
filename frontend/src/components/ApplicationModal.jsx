@@ -102,7 +102,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
       </section>
       <section className="application-details">
         <div className="description-input">
-          <label htmlFor="description">Job description: </label>
+          <label htmlFor="description">Job Description </label>
           <textarea
             id="description"
             name="description"
@@ -136,7 +136,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
           </section>
           <section className="list-content">
             <article className="child notes">
-              <label htmlFor="notes">Notes: </label>
+              <label htmlFor="notes">Notes </label>
               <textarea
                 id="notes"
                 name="notes"
@@ -146,32 +146,32 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
             </article>
             <article className="child tags">
               <label htmlFor="categories">Tags</label>
-              <input
-                id="categories"
-                name="categories"
-                placeholder="Add tag"
-                value={category}
-                onChange={handleTag}
-              />
-              <button type="button" onClick={updateTags}>
-                +
-              </button>
-              {formInput.categories &&
-                formInput.categories.map((category, index) => {
-                  return (
-                    <p className="tag" key={index}>
-                      {category.name}
-                    </p>
-                  );
-                })}
-              {application.categories &&
-                application.categories.map((category) => {
-                  return (
-                    <p className="tag" key={category.id}>
-                      {category.name}
-                    </p>
-                  );
-                })}
+              <div className="tag-input">
+                <input
+                  id="categories"
+                  name="categories"
+                  placeholder="Add tag"
+                  value={category}
+                  onChange={handleTag}
+                />
+                <button
+                  className="add-tag-btn"
+                  type="button"
+                  onClick={updateTags}
+                >
+                  +
+                </button>
+              </div>
+              <div className="category-list">
+                {formInput.categories &&
+                  formInput.categories.map((category, index) => {
+                    return (
+                      <p className="tag" key={index}>
+                        {category.name}
+                      </p>
+                    );
+                  })}
+              </div>
             </article>
             <article className="child dates">
               <div>
