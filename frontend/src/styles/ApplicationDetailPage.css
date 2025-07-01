@@ -31,6 +31,12 @@
       padding: 5px;
       border-radius: 10px;
     }
+
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6em;
+    }
   }
 
   .dates {

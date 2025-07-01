@@ -5,23 +5,25 @@ import "../styles/Modal.css";
 
 const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
   // input for application creation/modfication - currently excluded category functionality
+  const [category, setCategory] = useState("");
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
     description: "",
     notes: "",
     status: "",
-    // categories: "",
+    categories: Array(),
     appliedAt: new Date(),
     interviewAt: undefined,
   });
-  // TODO add category functionality
 
   // if editing existing application, loads in current data to the form
   useEffect(() => {
     if (application.id) {
+      // TODO currently adds userId and all other fields to payload, should this be avoided?
       setFormInput((prev) => ({ ...prev, ...application }));
     }
+    // TODO categories is set to a list of objects, not just names
   }, []);
 
   // works for all but date pickers, updates the given formInput field
@@ -34,13 +36,32 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     }));
   };
 
+  const handleTag = (e) => {
+    setCategory(e.target.value);
+  };
+
+  const updateTags = (e) => {
+    const newCat = { name: category.trim() };
+    if (formInput.categories.includes(newCat)) {
+      alert("Tag cannot be duplicate.");
+      return;
+    }
+    const newCategories = [...formInput.categories, newCat];
+
+    setFormInput((prev) => ({
+      ...prev,
+      categories: newCategories,
+    }));
+
+    setCategory("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (application.id) {
-        const { categories, ...modifiedApplication } = formInput; // remove when categorise are implemented
-        const edit = await editApplication(modifiedApplication, application.id);
+        const edit = await editApplication(formInput, application.id);
       } else {
         const added = await createApplication(formInput);
       }
@@ -124,13 +145,25 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
               ></textarea>
             </article>
             <article className="child tags">
-              {/* <label htmlFor="categories">Tags</label>
+              <label htmlFor="categories">Tags</label>
               <input
                 id="categories"
                 name="categories"
-                placeholder="+ Add tag"
-                onChange={handleChange}
-              /> */}
+                placeholder="Add tag"
+                value={category}
+                onChange={handleTag}
+              />
+              <button type="button" onClick={updateTags}>
+                +
+              </button>
+              {formInput.categories &&
+                formInput.categories.map((category, index) => {
+                  return (
+                    <p className="tag" key={index}>
+                      {category.name}
+                    </p>
+                  );
+                })}
               {application.categories &&
                 application.categories.map((category) => {
                   return (

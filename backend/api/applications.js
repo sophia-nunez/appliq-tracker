@@ -19,8 +19,6 @@ const isAuthenticated = (req, res, next) => {
 
 // [GET] many applications with optional search
 router.get("/applications", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   const search = req.query;
 
   const where = { userId: req.session.userId };
@@ -77,9 +75,32 @@ router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// returns existing category or new one based on name given
+const addCategories = async (userId, category) => {
+  // check if already exists
+  const existing = await prisma.category.findFirst({
+    where: { name: category.name },
+  });
+  if (existing) {
+    // if category exists, return it
+    return existing;
+  } else {
+    // if new, create category and return
+    const newCategory = await prisma.category.create({
+      data: {
+        userId,
+        name: category.name,
+      },
+    });
+
+    return newCategory;
+  }
+};
+
 // [POST] create application
 router.post("/applications", isAuthenticated, async (req, res, next) => {
   const newApplication = { ...req.body, userId: req.session.userId };
+  let categories = { connect: [] };
   try {
     // Validate that new application has required fields
     // TODO add companyId from name if possible (find company)
@@ -90,19 +111,34 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       newApplication.status !== undefined &&
       newApplication.userId !== undefined;
     if (newApplicationValid) {
+      // adding categories, either add existing or create new one
+      if (newApplication.categories) {
+        for (const item of newApplication.categories) {
+          // for each category name, get appropriate category
+          const toAdd = await addCategories(req.session.userId, item);
+          // and add to connection list
+          categories.connect.push({ id: toAdd.id });
+        }
+        // replace categories
+        newApplication.categories = categories;
+      }
+
       const created = await prisma.application.create({ data: newApplication });
-      return res.status(201).json();
+      return res.status(201).json(created);
     } else {
       return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to create application." });
+    console.log(err);
+    return res.status(500).json({ error: "Failed to create application." });
   }
 });
 
 router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.appId);
   const updatedApp = { ...req.body, userId: req.session.userId };
+  let categories = { connect: [] };
+
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
@@ -122,6 +158,19 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
       updatedApp.status !== undefined &&
       updatedApp.userId !== undefined;
     if (updatedAppValid) {
+      if (updatedApp.categories) {
+        for (const item of updatedApp.categories) {
+          // for each category name, get appropriate category
+          const toAdd = await addCategories(req.session.userId, item);
+          // and add to connection list
+          categories.connect.push({ id: toAdd.id });
+          console.log(categories);
+        }
+        // replace categories
+        updatedApp.categories = categories;
+        console.log(updatedApp);
+      }
+
       const updated = await prisma.application.update({
         data: updatedApp,
         where: { id },
