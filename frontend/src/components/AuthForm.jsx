@@ -43,10 +43,11 @@ const AuthForm = ({ type }) => {
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
-      // TODO: restrict messages that can be displayed
       setMessage({
         type: "error",
-        text: err.message || "Network issue. Please try again.",
+        text:
+          err.message ||
+          "There was an issue completing your request. Please try again.",
       });
     } finally {
       clearInputs();
