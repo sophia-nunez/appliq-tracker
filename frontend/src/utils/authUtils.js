@@ -21,12 +21,13 @@ const registerUser = async (loginInfo) => {
       body: JSON.stringify(loginInfo),
       credentials: "include",
     });
-    if (!response.ok) {
-      const text = await response.json();
-      throw new Error(text.error);
-    }
 
     const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Registration failed.");
+    }
+
     return data;
   } catch (error) {
     throw error;
@@ -52,8 +53,7 @@ const loginUser = async (loginInfo) => {
     const data = await response.json();
 
     if (!response.ok) {
-      const text = await response.json();
-      throw new Error(text.error);
+      throw new Error(data.error || "Login failed.");
     }
     return data;
   } catch (error) {

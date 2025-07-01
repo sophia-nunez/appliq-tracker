@@ -130,7 +130,6 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to create application." });
   }
 });
