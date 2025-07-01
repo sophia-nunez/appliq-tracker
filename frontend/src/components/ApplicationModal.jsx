@@ -15,7 +15,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     categories: Array(),
     removedCategories: Array(),
     appliedAt: new Date(),
-    interviewAt: undefined,
+    interviewAt: Date(),
   });
 
   // if editing existing application, loads in current data to the form
@@ -33,6 +33,15 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     setFormInput((previous) => ({
       ...previous,
       [name]: value,
+    }));
+  };
+
+  const handleDateChange = (name, value) => {
+    const date = new Date(value).toISOString();
+
+    setFormInput((prev) => ({
+      ...prev,
+      [name]: date,
     }));
   };
 
@@ -207,9 +216,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="appliedAt"
                   name="appliedAt"
                   value={formInput.appliedAt}
-                  onChange={(value) =>
-                    setFormInput((prev) => ({ ...prev, appliedAt: value }))
-                  }
+                  onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
                   required
@@ -221,9 +228,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
-                  onChange={(value) =>
-                    setFormInput((prev) => ({ ...prev, interviewAt: value }))
-                  }
+                  onChange={(value) => handleDateChange("interviewAt", value)}
                 />
               </div>
             </article>

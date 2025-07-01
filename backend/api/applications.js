@@ -179,6 +179,7 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(401).json({ error: "Failed to update application." });
   }
 });
