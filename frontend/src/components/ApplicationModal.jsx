@@ -13,6 +13,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     notes: "",
     status: "",
     categories: Array(),
+    removedCategories: Array(),
     appliedAt: new Date(),
     interviewAt: undefined,
   });
@@ -23,7 +24,6 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
       // TODO currently adds userId and all other fields to payload, should this be avoided?
       setFormInput((prev) => ({ ...prev, ...application }));
     }
-    // TODO categories is set to a list of objects, not just names
   }, []);
 
   // works for all but date pickers, updates the given formInput field
@@ -54,6 +54,26 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     }));
 
     setCategory("");
+  };
+
+  const removeTag = (e) => {
+    // information on removed category
+    const index = e.target.dataset.idx;
+    const removed = formInput.categories[index];
+    // remove tag from categories array
+    const updatedCategories = formInput.categories.toSpliced(index, 1);
+
+    if (removed.id) {
+      // if it's an existing tag (not new), add to removal list for db
+      setFormInput((prev) => ({
+        ...prev,
+        categories: updatedCategories,
+        removedCategories: [...prev.removedCategories, { id: removed.id }],
+      }));
+    } else {
+      // only remove string if category isn't connected already
+      setFormInput({ ...formInput, categories: updatedCategories });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -167,7 +187,14 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   formInput.categories.map((category, index) => {
                     return (
                       <p className="tag" key={index}>
-                        {category.name}
+                        {category.name}{" "}
+                        <span
+                          className="remove-tag-btn"
+                          data-idx={index}
+                          onClick={removeTag}
+                        >
+                          x
+                        </span>
                       </p>
                     );
                   })}

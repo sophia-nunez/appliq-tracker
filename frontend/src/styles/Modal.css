@@ -177,6 +177,16 @@
       background-color: lightgray;
       padding: 5px;
       border-radius: 10px;
+
+      .remove-tag-btn {
+        margin: auto;
+        font-size: 0.75em;
+      }
+
+      .remove-tag-btn:hover {
+        cursor: pointer;
+        color: gray;
+      }
     }
 
     .category-list {

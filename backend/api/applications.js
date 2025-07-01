@@ -99,12 +99,13 @@ const addCategories = async (userId, category) => {
 
 // [POST] create application
 router.post("/applications", isAuthenticated, async (req, res, next) => {
-  const newApplication = { ...req.body, userId: req.session.userId };
+  const { data, removedCategories } = req.body;
+  // separate field of categories to be removed
+  const newApplication = { ...data, userId: req.session.userId };
   let categories = { connect: [] };
   try {
     // Validate that new application has required fields
     // TODO add companyId from name if possible (find company)
-    // TODO same for category
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
@@ -136,9 +137,10 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
 
 router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.appId);
-  const updatedApp = { ...req.body, userId: req.session.userId };
-  let categories = { connect: [] };
-
+  // separate field of categories to be removed
+  const { removedCategories, ...data } = req.body;
+  const updatedApp = { ...data, userId: req.session.userId };
+  let categories = { connect: [], disconnect: removedCategories };
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
@@ -167,7 +169,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         // replace categories
         updatedApp.categories = categories;
       }
-
       const updated = await prisma.application.update({
         data: updatedApp,
         where: { id },
@@ -179,7 +180,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ error: "Failed to update application." });
   }
 });
