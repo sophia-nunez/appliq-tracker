@@ -74,11 +74,14 @@ const createApplication = async (application) => {
 
 // modifies applciation based on updated information
 const editApplication = async (application, id) => {
-  const appliedDate = new Date(application.appliedAt);
-  let newInfo = {
-    ...application,
-    appliedAt: appliedDate,
-  };
+  let newInfo = { ...application };
+  if (application.appliedAt) {
+    const appliedDate = new Date(application.appliedAt);
+    newInfo = {
+      ...application,
+      appliedAt: appliedDate,
+    };
+  }
 
   if (application.interviewedAt) {
     const interviewDate = new Date(application.interviewAt);

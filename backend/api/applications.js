@@ -151,24 +151,21 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
 
     // Validate that application has required fields
     // TODO add companyId from name if possible (find company)
-    // TODO same for category
-    const updatedAppValid =
-      updatedApp.title !== undefined &&
-      updatedApp.companyName !== undefined &&
-      updatedApp.status !== undefined &&
-      updatedApp.userId !== undefined;
+    const updatedAppValid = updatedApp.userId !== undefined;
     if (updatedAppValid) {
+      // set updated time to now
+      updatedApp.updatedAt = new Date();
+
+      // add categories as needed
       if (updatedApp.categories) {
         for (const item of updatedApp.categories) {
           // for each category name, get appropriate category
           const toAdd = await addCategories(req.session.userId, item);
           // and add to connection list
           categories.connect.push({ id: toAdd.id });
-          console.log(categories);
         }
         // replace categories
         updatedApp.categories = categories;
-        console.log(updatedApp);
       }
 
       const updated = await prisma.application.update({

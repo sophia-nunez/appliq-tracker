@@ -5,11 +5,11 @@ import { editCompany } from "../utils/companyUtils";
 
 const CompanyLong = ({
   openPage,
+  reloadPage,
   id,
   name,
   industry,
   description,
-  careerPage,
   isFavorite,
 }) => {
   const [favorite, setFavorite] = useState(isFavorite);
@@ -21,6 +21,7 @@ const CompanyLong = ({
     const company = await editCompany({ isFavorite: toggledFav }, id);
 
     setFavorite((prev) => !prev);
+    reloadPage();
   };
 
   return (

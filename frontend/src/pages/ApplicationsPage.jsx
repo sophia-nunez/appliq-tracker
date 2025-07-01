@@ -62,8 +62,8 @@ const ApplicationsPage = () => {
         <section className="list-container">
           <div className="list-header">
             <select
-              name="industry"
-              id="industry"
+              name="category"
+              id="category"
               className="category-dropdown"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -86,6 +86,7 @@ const ApplicationsPage = () => {
                 return (
                   <ApplicationLong
                     openPage={openPage}
+                    reloadPage={loadApplications}
                     key={application.id}
                     id={application.id}
                     companyName={application.companyName}
@@ -93,6 +94,7 @@ const ApplicationsPage = () => {
                     description={application.description}
                     appliedAt={application.appliedAt}
                     status={application.status}
+                    isFeatured={application.isFeatured}
                   />
                 );
               })}

@@ -56,7 +56,7 @@ const CompanyPage = () => {
         />
         <section className="list-container">
           <div className="list-header">
-            <h3>All</h3>
+            <h3 style={{ margin: 10 + "px" }}>All</h3>
             <p onClick={addCompany}>+</p>
           </div>
           <section className="list-content">
