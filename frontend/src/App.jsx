@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import { ThemeProvider, useTheme } from "./components/ThemeContext";
 import { UserProvider, useUser } from "./components/UserContext";
 import { MantineProvider } from "@mantine/core";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
@@ -18,6 +19,8 @@ import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
+
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 // basic layout to be rendered on all pages
 function Root() {
@@ -101,9 +104,11 @@ export default function App() {
   return (
     <MantineProvider>
       <ThemeProvider>
-        <UserProvider setIsLoading={setIsLoading}>
-          <AppContent router={router} />
-        </UserProvider>
+        <GoogleOAuthProvider clientId={CLIENT_ID}>
+          <UserProvider setIsLoading={setIsLoading}>
+            <AppContent router={router} />
+          </UserProvider>
+        </GoogleOAuthProvider>
       </ThemeProvider>
     </MantineProvider>
   );

@@ -99,19 +99,29 @@ const addCategories = async (userId, category) => {
 
 // [POST] create application
 router.post("/applications", isAuthenticated, async (req, res, next) => {
-  const { data, removedCategories } = req.body;
-  // separate field of categories to be removed
+  let data = {};
+  if (req.body.removedCategories) {
+    const { removedCategories, ...data } = req.body;
+  } else {
+    data = { ...req.body };
+  }
   const newApplication = { ...data, userId: req.session.userId };
   let categories = { connect: [] };
   try {
     // Validate that new application has required fields
-    // TODO add companyId from name if possible (find company)
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
       newApplication.status !== undefined &&
       newApplication.userId !== undefined;
     if (newApplicationValid) {
+      // try to find company to add companyId
+      const existingCompany = await prisma.company.findFirst({
+        where: { userId: req.session.userId, name: newApplication.companyName },
+      });
+      if (existingCompany) {
+        newApplication.companyId = existingCompany.id;
+      }
       // adding categories, either add existing or create new one
       if (newApplication.categories) {
         for (const item of newApplication.categories) {
@@ -151,9 +161,22 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
     }
 
     // Validate that application has required fields
-    // TODO add companyId from name if possible (find company)
     const updatedAppValid = updatedApp.userId !== undefined;
     if (updatedAppValid) {
+      if (updatedApp.companyName) {
+        // if companyName is changed, check if that company exists
+        const existingCompany = await prisma.company.findFirst({
+          where: { userId: req.session.userId, name: updatedApp.companyName },
+        });
+        if (existingCompany) {
+          updatedApp.companyId = existingCompany.id;
+        } else {
+          // if no matching company, remove any existing companyId
+          updatedApp.companyId = null;
+        }
+      }
+
+      console.log(updatedApp);
       // set updated time to now
       updatedApp.updatedAt = new Date();
 
@@ -179,7 +202,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ error: "Failed to update application." });
   }
 });

@@ -105,9 +105,9 @@ router.get("/companies/:name", async (req, res, next) => {
 // [POST] create company
 router.post("/companies", isAuthenticated, async (req, res, next) => {
   const newCompany = { ...req.body, userId: req.session.userId };
+  let matchingApplications = [];
   try {
     // Validate that new company has required fields
-    // TODO check for duplicate by name
     const newCompanyValid =
       newCompany.name !== undefined && newCompany.userId !== undefined;
     if (newCompanyValid) {
@@ -115,7 +115,21 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
         where: { name: newCompany.name, userId: req.session.userId },
       });
       if (!existingCompany) {
+        matchingApplications = await prisma.application.findMany({
+          where: { userId: req.session.userId, companyName: newCompany.name },
+        });
+
+        // create new company
         const created = await prisma.company.create({ data: newCompany });
+
+        // add company id to applications with matching company names
+        for (const application of matchingApplications) {
+          await prisma.application.update({
+            data: { companyId: created.id },
+            where: { userId: req.session.userId, id: application.id },
+          });
+        }
+
         res.status(201).json(created);
       } else {
         return res.status(422).json({ error: "Duplicate company." });
@@ -124,12 +138,16 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
       return res.status(422).json({ error: "Company name required" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(401).json({ error: "Failed to create company." });
   }
 });
 
 // [PUT] update company
 router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
+  // TODO if company name is updated, update applications with that company as well
+  // or should it remove the applications - make decision
+
   const id = Number(req.params.companyId);
   const changes = { ...req.body, userId: req.session.userId };
   try {

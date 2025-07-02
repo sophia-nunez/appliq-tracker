@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
+import { useGoogleLogin, hasGrantedAllScopesGoogle } from "@react-oauth/google";
 import { useUser } from "./UserContext";
 import { loginUser, registerUser } from "../utils/authUtils";
 import { homePath, registerPath } from "../links";
@@ -10,6 +11,25 @@ const AuthForm = ({ type }) => {
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
   const [message, setMessage] = useState(""); // error or success message
+
+  // google login for authorization
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => handleGoogleLogin(codeResponse),
+    onError: () => {
+      alert("Login failed. Please try again");
+    },
+    flow: "auth-code",
+  });
+
+  const handleGoogleLogin = (codeResponse) => {
+    console.log(codeResponse);
+
+    const hasAccess = hasGrantedAllScopesGoogle(
+      tokenResponse,
+      "google-scope-1",
+      "google-scope-2"
+    );
+  };
 
   // updates corresponding input field
   function handleChange(event) {
@@ -86,6 +106,7 @@ const AuthForm = ({ type }) => {
             <>
               <hr />
               <p>Or</p>
+              <button onClick={() => login()}>Sign in with Google</button>
               <button className="register-btn">
                 <Link to={registerPath} className="register-btn">
                   Register
