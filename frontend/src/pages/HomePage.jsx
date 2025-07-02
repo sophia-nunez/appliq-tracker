@@ -3,8 +3,14 @@ import Featured from "../components/Featured";
 import List from "../components/List";
 import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
+import { useEffect } from "react";
+import { getMessages } from "../utils/oauthUtils";
 
 const HomePage = () => {
+  useEffect(() => {
+    const messages = getMessages();
+  }, []);
+
   return (
     <main>
       <h2>Home</h2>

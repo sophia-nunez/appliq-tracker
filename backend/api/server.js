@@ -241,11 +241,6 @@ server.get("/me", async (req, res) => {
   res.json({ id: user.id, username: user.username });
 });
 
-// [CATCH-ALL]
-server.use((req, res, next) => {
-  res.status(404).json();
-});
-
 server.get("/user", async (req, res) => {
   if (!req.session.userId) {
     return res
@@ -258,6 +253,7 @@ server.get("/user", async (req, res) => {
     select: {
       id: true,
       username: true,
+      email: true,
       auth_provider: true,
       google_id: true,
       access_token: true,
@@ -266,6 +262,7 @@ server.get("/user", async (req, res) => {
 
   res.json({
     id: user.id,
+    email: user.email,
     username: user.username,
     auth_provider: user.auth_provider,
     google_id: user.google_id,
