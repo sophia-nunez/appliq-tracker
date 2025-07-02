@@ -74,6 +74,7 @@ router.get("/companies/:id", async (req, res, next) => {
   try {
     const company = await prisma.company.findUnique({
       where: { id, userId: req.session.userId },
+      include: { applications: true },
     });
     if (company) {
       res.json(company);

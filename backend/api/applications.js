@@ -176,7 +176,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         }
       }
 
-      console.log(updatedApp);
       // set updated time to now
       updatedApp.updatedAt = new Date();
 

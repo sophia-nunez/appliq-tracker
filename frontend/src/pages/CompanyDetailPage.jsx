@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
+import ApplicationLong from "../components/ApplicationLong";
 import Modal from "../components/Modal";
 import { deleteCompany, getCompany } from "../utils/companyUtils";
 import "../styles/Subpage.css";
@@ -24,6 +25,11 @@ const CompanyDetailPage = () => {
     const loadedCompany = await getCompany(companyId);
 
     setCompany(loadedCompany);
+  };
+
+  const openPage = (e, id) => {
+    e.preventDefault();
+    navigate(`../applications/${id}`);
   };
 
   // deletes company by id, otherwise sends alert
@@ -75,6 +81,31 @@ const CompanyDetailPage = () => {
               <article className="child description">
                 <h4>Description</h4>
                 <p>{company.description}</p>
+              </article>
+              <article className="child company-apps">
+                <h4>Applications</h4>
+                <div className="apps-list">
+                  {(company.applications && company.applications.length) > 0 ? (
+                    company.applications.map((application) => {
+                      return (
+                        <ApplicationLong
+                          openPage={openPage}
+                          reloadPage={loadCompany}
+                          key={application.id}
+                          id={application.id}
+                          companyName={application.companyName}
+                          title={application.title}
+                          description={application.description}
+                          appliedAt={application.appliedAt}
+                          status={application.status}
+                          isFeatured={application.isFeatured}
+                        />
+                      );
+                    })
+                  ) : (
+                    <p>No associated applications.</p>
+                  )}
+                </div>
               </article>
             </section>
           </div>

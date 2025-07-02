@@ -22,7 +22,6 @@ const ApplicationsPage = () => {
     loadApplications();
   }, [query, filter]);
 
-  // TODO: currently on all, move to applications list
   const openPage = (e, id) => {
     e.preventDefault();
     navigate(`${id}`);
