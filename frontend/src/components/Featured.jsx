@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { getFeatured } from "../utils/applicationUtils";
 import "../styles/Featured.css";
 import Status from "./Status";
@@ -52,7 +52,13 @@ const Featured = () => {
               );
             })
           ) : (
-            <p>Nothing to display.</p>
+            <div className="no-display">
+              <h2>Nothing to display.</h2>
+              <p>
+                Go to the <Link to="applications">Applications</Link> page to
+                add an application!
+              </p>
+            </div>
           )}
         </div>
       </section>

@@ -132,19 +132,23 @@ server.post("/login", loginLimiter, async (req, res) => {
   }
 });
 
+// get token information for user
 server.post("/auth/google", async (req, res) => {
   const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
 
   res.json(tokens);
 });
 
+// refresh access token for user, set new token based on given google_id
 server.post("/auth/google/refresh-token", async (req, res) => {
+  const { google_id } = req.body;
   const user = new UserRefreshClient(
     clientId,
     clientSecret,
     req.body.refreshToken
   );
   const { credentials } = await user.refreshAccessToken(); // obtain new tokens
+  // TODO: prisma update with new access token and expiry date
   res.json(credentials);
 });
 
@@ -172,12 +176,14 @@ server.post("/auth/google/login", async (req, res) => {
   });
 
   if (existingUser) {
+    // accounts exists, set logged in user
+    // TODO: check if access expires soon, if so refresh
     req.session.userId = existingUser.id;
 
     res.status(201).json({
       id: existingUser.id,
       type: existingUser.auth_provider,
-      username: existingUser.given_name,
+      username: existingUser.name,
     });
   } else {
     try {
@@ -202,7 +208,7 @@ server.post("/auth/google/login", async (req, res) => {
       res.status(201).json({
         id: newUser.id,
         type: newUser.auth_provider,
-        username: newUser.given_name,
+        username: newUser.name,
       });
     } catch (err) {
       return res.status(400).json({ error: "Failed to create account." });

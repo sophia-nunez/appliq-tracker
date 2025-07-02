@@ -9,20 +9,23 @@
     align-items: center;
     justify-content: space-between;
 
-    p {
+    .add-btn {
+      color: var(--text-color);
       cursor: pointer;
-      font-size: 1.3rem;
+      font-size: 2.6rem;
       margin: 0px 5px;
 
-      background-color: rgba(211, 211, 211, 0.342);
-      border-radius: 50px;
       padding: 0px 8px;
+    }
+    .add-btn:hover {
+      color: var(--card-bg-color);
     }
   }
 }
 
 .list-content {
   background-color: var(--card-bg-color);
+  min-height: 50vh;
   padding: 20px;
   border-radius: 3px;
 
@@ -36,6 +39,11 @@
     border-radius: 5px;
     width: 100%;
     padding: 0px 10px;
+  }
+
+  .no-display {
+    margin: auto;
+    text-align: center;
   }
 
   .long {

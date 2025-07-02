@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { FaCirclePlus } from "react-icons/fa6";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
@@ -77,10 +78,10 @@ const ApplicationsPage = () => {
                   );
                 })}
             </select>
-            <p onClick={addApplication}>+</p>
+            <FaCirclePlus className="add-btn" onClick={addApplication} />
           </div>
           <section className="list-content">
-            {applications &&
+            {applications && applications.length > 0 ? (
               applications.map((application) => {
                 return (
                   <ApplicationLong
@@ -96,7 +97,15 @@ const ApplicationsPage = () => {
                     isFeatured={application.isFeatured}
                   />
                 );
-              })}
+              })
+            ) : (
+              <div className="no-display">
+                <h2>No applications to display.</h2>
+                <p>
+                  Click the <FaCirclePlus /> above to add an application!
+                </p>
+              </div>
+            )}
           </section>
         </section>
       </main>

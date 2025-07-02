@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { FaCirclePlus } from "react-icons/fa6";
 import List from "../components/List.jsx";
 import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
@@ -57,10 +58,10 @@ const CompanyPage = () => {
         <section className="list-container">
           <div className="list-header">
             <h3 style={{ margin: 10 + "px" }}>All</h3>
-            <p onClick={addCompany}>+</p>
+            <FaCirclePlus className="add-btn" onClick={addCompany} />
           </div>
           <section className="list-content">
-            {companies &&
+            {companies && companies.length > 0 ? (
               companies.map((company) => {
                 return (
                   <CompanyLong
@@ -74,7 +75,15 @@ const CompanyPage = () => {
                     isFavorite={company.isFavorite}
                   />
                 );
-              })}
+              })
+            ) : (
+              <div className="no-display">
+                <h2>No companies to display.</h2>
+                <p>
+                  Click the <FaCirclePlus /> above to add a company!
+                </p>
+              </div>
+            )}
           </section>
         </section>
       </main>

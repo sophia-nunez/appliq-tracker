@@ -25,6 +25,16 @@
 
     height: 100%;
     padding: 10px;
+
+    .no-display {
+      margin: auto;
+      text-align: center;
+
+      a {
+        color: var(--gray);
+        text-decoration: none;
+      }
+    }
   }
 
   .featured {
