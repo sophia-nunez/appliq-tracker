@@ -139,7 +139,6 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
       return res.status(422).json({ error: "Company name required" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ error: "Failed to create company." });
   }
 });

@@ -46,7 +46,6 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 
   if (search.status) {
-    console.log("status filtered");
     // filter for featured types (favorite, upcoming interview, signed/offer)
     where.OR = [
       { isFeatured: true },
@@ -54,8 +53,6 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       { status: "Offer" },
       { status: "Signed" },
     ];
-
-    console.log(where);
   }
 
   try {
@@ -66,7 +63,6 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
-    console.log(err);
     return res.status(401).json({ error: "Failed to get applications." });
   }
 });

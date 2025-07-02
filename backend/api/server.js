@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const rateLimit = require("express-rate-limit");
+const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("../generated/prisma");
@@ -24,6 +26,12 @@ let sessionConfig = {
   resave: false,
   saveUninitialized: false,
 };
+
+const oAuth2Client = new OAuth2Client(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "postmessage"
+);
 
 server.use(
   cors({
@@ -73,7 +81,11 @@ server.post("/register", async (req, res) => {
     const newUser = await prisma.user.create({
       data: { username, password: hashedPassword },
     });
-    res.status(201).json({ id: newUser.id, username: newUser.username });
+    res.status(201).json({
+      id: newUser.id,
+      type: newUser.auth_provider,
+      username: newUser.username,
+    });
   } catch (err) {
     return res.status(400).json({ error: "Failed to create account." });
   }
@@ -110,9 +122,91 @@ server.post("/login", loginLimiter, async (req, res) => {
 
     req.session.userId = user.id;
 
-    res.json({ id: user.id, username: user.username });
+    res.json({
+      id: user.id,
+      type: user.auth_provider,
+      username: user.username,
+    });
   } catch (err) {
     return res.status(401).json({ error: "Login failed." });
+  }
+});
+
+server.post("/auth/google", async (req, res) => {
+  const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
+
+  res.json(tokens);
+});
+
+server.post("/auth/google/refresh-token", async (req, res) => {
+  const user = new UserRefreshClient(
+    clientId,
+    clientSecret,
+    req.body.refreshToken
+  );
+  const { credentials } = await user.refreshAccessToken(); // obtain new tokens
+  res.json(credentials);
+});
+
+// checks if google account already has profile (login), otherwise registers
+server.post("/auth/google/login", async (req, res) => {
+  const {
+    expiry_date,
+    sub,
+    name,
+    given_name,
+    picture,
+    email,
+    access_token,
+    refresh_token,
+  } = req.body;
+
+  if (!access_token || !sub || !email) {
+    return res
+      .status(400)
+      .json({ error: "Google login failed - missing profile information." });
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { google_id: sub },
+  });
+
+  if (existingUser) {
+    req.session.userId = existingUser.id;
+
+    res.status(201).json({
+      id: existingUser.id,
+      type: existingUser.auth_provider,
+      username: existingUser.given_name,
+    });
+  } else {
+    try {
+      const hashedAcessToken = await bcrypt.hash(access_token, 10);
+      const hashedRefreshToken = await bcrypt.hash(refresh_token, 10);
+      const token_expiry = new Date(expiry_date);
+
+      const newUser = await prisma.user.create({
+        data: {
+          email,
+          name: given_name,
+          auth_provider: "google",
+          google_id: sub,
+          access_token: hashedAcessToken,
+          refresh_token: hashedRefreshToken,
+          token_expiry,
+        },
+      });
+
+      req.session.userId = newUser.id;
+
+      res.status(201).json({
+        id: newUser.id,
+        type: newUser.auth_provider,
+        username: newUser.given_name,
+      });
+    } catch (err) {
+      return res.status(400).json({ error: "Failed to create account." });
+    }
   }
 });
 

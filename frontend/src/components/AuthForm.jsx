@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { useGoogleLogin, hasGrantedAllScopesGoogle } from "@react-oauth/google";
 import { useUser } from "./UserContext";
-import { loginUser, registerUser } from "../utils/authUtils";
+import {
+  loginGoogleUser,
+  getGoogleToken,
+  loginUser,
+  registerUser,
+} from "../utils/authUtils";
 import { homePath, registerPath } from "../links";
 import "../styles/LoginPage.css";
 
@@ -14,21 +19,43 @@ const AuthForm = ({ type }) => {
 
   // google login for authorization
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => handleGoogleLogin(codeResponse),
+    onSuccess: async (tokenResponse) => await handleGoogleLogin(tokenResponse),
     onError: () => {
       alert("Login failed. Please try again");
     },
     flow: "auth-code",
   });
 
-  const handleGoogleLogin = (codeResponse) => {
-    console.log(codeResponse);
-
+  const handleGoogleLogin = async (tokenResponse) => {
     const hasAccess = hasGrantedAllScopesGoogle(
       tokenResponse,
-      "google-scope-1",
-      "google-scope-2"
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
     );
+
+    if (hasAccess) {
+      try {
+        const tokens = await getGoogleToken(tokenResponse);
+        const userProfile = await loginGoogleUser(tokens);
+
+        setUser(userProfile);
+        setMessage({
+          type: "success",
+          text: "Successful! Redirecting...",
+        });
+        const timeout = setTimeout(() => {
+          navigate(homePath);
+          clearTimeout(timeout);
+        }, 1000);
+      } catch (err) {
+        setMessage({
+          type: "error",
+          text: err.message || "Google login failed.",
+        });
+      }
+    } else {
+      alert("Login failed due to missing permissions.");
+    }
   };
 
   // updates corresponding input field

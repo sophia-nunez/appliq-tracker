@@ -61,4 +61,73 @@ const loginUser = async (loginInfo) => {
   }
 };
 
-export { registerUser, loginUser, baseURL };
+const getGoogleToken = async (code) => {
+  try {
+    const response = await fetch(`${baseURL()}/auth/google`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(code),
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Google authentication failed.");
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getGoogleProfile = async (tokenResponse) => {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v3/userinfo`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenResponse.access_token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Google profile creation failed.");
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const loginGoogleUser = async (tokenResponse) => {
+  const profile = await getGoogleProfile(tokenResponse);
+  const userInfo = { ...profile, ...tokenResponse };
+  try {
+    const response = await fetch(`${baseURL()}/auth/google/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Google authentication failed.");
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { registerUser, loginUser, getGoogleToken, loginGoogleUser, baseURL };
