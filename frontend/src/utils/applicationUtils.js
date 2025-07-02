@@ -19,6 +19,26 @@ const getApplications = async (query) => {
   }
 };
 
+const getFeatured = async () => {
+  const query = new URLSearchParams({ status: "featured" });
+
+  try {
+    const response = await fetch(
+      `${baseURL()}/applications/?${query.toString()}`,
+      { credentials: "include" }
+    );
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error(text.error);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // fetches single application by id
 const getApplication = async (id) => {
   try {
@@ -126,6 +146,7 @@ const deleteApplication = async (id) => {
 export {
   getApplications,
   getApplication,
+  getFeatured,
   createApplication,
   editApplication,
   deleteApplication,
