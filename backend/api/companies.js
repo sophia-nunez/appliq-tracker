@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
+const middleware = require("../middleware/middleware");
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
@@ -11,6 +12,8 @@ const isAuthenticated = (req, res, next) => {
   }
   next();
 };
+
+router.use(middleware);
 
 // [GET] many companies with optional search
 router.get("/companies", isAuthenticated, async (req, res, next) => {

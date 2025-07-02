@@ -3,6 +3,8 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
+const middleware = require("../middleware/middleware");
+
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
     return res
@@ -11,6 +13,8 @@ const isAuthenticated = (req, res, next) => {
   }
   next();
 };
+
+router.use(middleware);
 
 // [GET] many categories
 router.get("/categories", isAuthenticated, async (req, res, next) => {

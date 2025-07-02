@@ -3,10 +3,9 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
-router.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-  next();
-});
+const middleware = require("../middleware/middleware");
+
+router.use(middleware);
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
@@ -232,7 +231,5 @@ router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
     return res.status(401).json({ error: "Failed to delete application." });
   }
 });
-
-// TODO: [PUT] modify application
 
 module.exports = router;
