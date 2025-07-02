@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { DateTimePicker } from "@mantine/dates";
 import { createCompany, editCompany } from "../utils/companyUtils";
 import "../styles/Modal.css";
 

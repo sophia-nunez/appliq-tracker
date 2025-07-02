@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { DateTimePicker } from "@mantine/dates";
+import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
@@ -183,13 +184,13 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   value={category}
                   onChange={handleTag}
                 />
-                <button
+                <FaCirclePlus
                   className="add-tag-btn"
                   type="button"
                   onClick={updateTags}
                 >
                   +
-                </button>
+                </FaCirclePlus>
               </div>
               <div className="category-list">
                 {formInput.categories &&
