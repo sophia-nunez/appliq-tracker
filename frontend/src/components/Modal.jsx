@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
+import CompanyModal from "./CompanyModal";
 
-const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
+const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
   const modalRef = useRef(null);
 
   // closes modal on window click off of modal or on span
@@ -39,7 +40,14 @@ const Modal = ({ contents, application, setModalOpen, reloadPage }) => {
         {contents === "application" && (
           <ApplicationModal
             setModalOpen={setModalOpen}
-            application={application}
+            application={item}
+            reloadPage={reloadPage}
+          />
+        )}
+        {contents === "company" && (
+          <CompanyModal
+            setModalOpen={setModalOpen}
+            company={item}
             reloadPage={reloadPage}
           />
         )}

@@ -85,15 +85,19 @@
 }
 
 /* CSS for Application modal page */
-.application-form {
+.application-form,
+.company-form {
   place-items: center;
 
-  .application-details {
+  .application-details,
+  .company-details {
     width: 100%;
   }
 
   .list-content {
     .child {
+      display: flex;
+      flex-direction: column;
       min-height: 60px;
       padding: 10px;
     }
@@ -104,9 +108,15 @@
     margin-bottom: 10px;
   }
 
-  .application-btns {
+  .application-btns,
+  .company-btns {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
+  }
+
+  label {
+    font-weight: bold;
   }
 
   h2 input {
@@ -147,11 +157,46 @@
 
   .child.tags {
     display: flex;
+    flex-direction: column;
     gap: 0.6em;
+
+    .tag-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6em;
+      align-items: center;
+    }
 
     #categories {
       height: fit-content;
       width: 80px;
+    }
+
+    .tag {
+      width: fit-content;
+      background-color: lightgray;
+      padding: 5px;
+      border-radius: 10px;
+
+      .remove-tag-btn {
+        margin: auto;
+        font-size: 0.75em;
+      }
+
+      .remove-tag-btn:hover {
+        cursor: pointer;
+        color: gray;
+      }
+    }
+
+    .category-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6em;
+    }
+
+    .add-tag-btn {
+      max-height: 30px;
     }
   }
 
@@ -170,4 +215,11 @@
       height: fit-content;
     }
   }
+}
+
+.company-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

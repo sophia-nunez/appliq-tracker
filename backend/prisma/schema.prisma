@@ -16,8 +16,15 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  username String @unique
-  password String
+  username String? @unique
+  auth_provider String @default("local")
+  password String?
+  name String?
+  email String?
+  google_id String? @unique
+  access_token String?
+  refresh_token String?
+  token_expiry DateTime?
   applications Application[]
   categories Category[]
   companies Company[]

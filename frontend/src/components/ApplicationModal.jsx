@@ -1,25 +1,28 @@
 import { useState, useEffect } from "react";
 import { DateTimePicker } from "@mantine/dates";
+import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
 const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
   // input for application creation/modfication - currently excluded category functionality
+  const [category, setCategory] = useState("");
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
     description: "",
     notes: "",
     status: "",
-    // categories: "",
+    categories: Array(),
+    removedCategories: Array(),
     appliedAt: new Date(),
-    interviewAt: undefined,
+    interviewAt: Date(),
   });
-  // TODO add category functionality
 
   // if editing existing application, loads in current data to the form
   useEffect(() => {
     if (application.id) {
+      // TODO currently adds userId and all other fields to payload, should this be avoided?
       setFormInput((prev) => ({ ...prev, ...application }));
     }
   }, []);
@@ -34,13 +37,61 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     }));
   };
 
+  const handleDateChange = (name, value) => {
+    const date = new Date(value).toISOString();
+
+    setFormInput((prev) => ({
+      ...prev,
+      [name]: date,
+    }));
+  };
+
+  const handleTag = (e) => {
+    setCategory(e.target.value);
+  };
+
+  const updateTags = (e) => {
+    const newCat = { name: category.trim() };
+    if (formInput.categories.includes(newCat)) {
+      alert("Tag cannot be duplicate.");
+      return;
+    }
+    const newCategories = [...formInput.categories, newCat];
+
+    setFormInput((prev) => ({
+      ...prev,
+      categories: newCategories,
+    }));
+
+    setCategory("");
+  };
+
+  const removeTag = (e) => {
+    // information on removed category
+    const index = e.target.dataset.idx;
+    const removed = formInput.categories[index];
+    // remove tag from categories array
+    const updatedCategories = formInput.categories.toSpliced(index, 1);
+
+    if (removed.id) {
+      // if it's an existing tag (not new), add to removal list for db
+      setFormInput((prev) => ({
+        ...prev,
+        categories: updatedCategories,
+        removedCategories: [...prev.removedCategories, { id: removed.id }],
+      }));
+    } else {
+      // only remove string if category isn't connected already
+      setFormInput({ ...formInput, categories: updatedCategories });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (application.id) {
-        const { categories, ...modifiedApplication } = formInput;
-        const edit = await editApplication(modifiedApplication, application.id);
+        const edit = await editApplication(formInput, application.id);
       } else {
         const added = await createApplication(formInput);
       }
@@ -81,7 +132,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
       </section>
       <section className="application-details">
         <div className="description-input">
-          <label htmlFor="description">Job description: </label>
+          <label htmlFor="description">Job Description </label>
           <textarea
             id="description"
             name="description"
@@ -115,7 +166,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
           </section>
           <section className="list-content">
             <article className="child notes">
-              <label htmlFor="notes">Notes: </label>
+              <label htmlFor="notes">Notes </label>
               <textarea
                 id="notes"
                 name="notes"
@@ -124,21 +175,40 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
               ></textarea>
             </article>
             <article className="child tags">
-              {/* <label htmlFor="categories">Tags</label>
-              <input
-                id="categories"
-                name="categories"
-                placeholder="+ Add tag"
-                onChange={handleChange}
-              /> */}
-              {application.categories &&
-                application.categories.map((category) => {
-                  return (
-                    <p className="tag" key={category.id}>
-                      {category.name}
-                    </p>
-                  );
-                })}
+              <label htmlFor="categories">Tags</label>
+              <div className="tag-input">
+                <input
+                  id="categories"
+                  name="categories"
+                  placeholder="Add tag"
+                  value={category}
+                  onChange={handleTag}
+                />
+                <FaCirclePlus
+                  className="add-tag-btn"
+                  type="button"
+                  onClick={updateTags}
+                >
+                  +
+                </FaCirclePlus>
+              </div>
+              <div className="category-list">
+                {formInput.categories &&
+                  formInput.categories.map((category, index) => {
+                    return (
+                      <p className="tag" key={index}>
+                        {category.name}{" "}
+                        <span
+                          className="remove-tag-btn"
+                          data-idx={index}
+                          onClick={removeTag}
+                        >
+                          x
+                        </span>
+                      </p>
+                    );
+                  })}
+              </div>
             </article>
             <article className="child dates">
               <div>
@@ -147,9 +217,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="appliedAt"
                   name="appliedAt"
                   value={formInput.appliedAt}
-                  onChange={(value) =>
-                    setFormInput((prev) => ({ ...prev, appliedAt: value }))
-                  }
+                  onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
                   required
@@ -161,9 +229,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
-                  onChange={(value) =>
-                    setFormInput((prev) => ({ ...prev, interviewAt: value }))
-                  }
+                  onChange={(value) => handleDateChange("interviewAt", value)}
                 />
               </div>
             </article>
