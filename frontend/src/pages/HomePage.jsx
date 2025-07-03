@@ -4,11 +4,11 @@ import List from "../components/List";
 import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
-import { getMessages } from "../utils/oauthUtils";
+import { findInterviewTimes } from "../utils/oauthUtils";
 
 const HomePage = () => {
   useEffect(() => {
-    const messages = getMessages();
+    const interviews = findInterviewTimes();
   }, []);
 
   return (
