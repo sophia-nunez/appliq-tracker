@@ -103,7 +103,7 @@ const editApplication = async (application, id) => {
     };
   }
 
-  if (application.interviewedAt) {
+  if (application.interviewAt) {
     const interviewDate = new Date(application.interviewAt);
     newInfo = {
       ...application,
