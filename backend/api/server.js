@@ -270,6 +270,35 @@ server.get("/user", async (req, res) => {
   });
 });
 
+server.put("/user", async (req, res) => {
+  const { emailScanned } = req.body;
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ message: "Not logged in: " + req.session.userId });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+    });
+
+    if (user) {
+      const updated = await prisma.user.update({
+        data: { emailScanned },
+        where: { id: req.session.userId },
+      });
+    } else {
+      res.status(401).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ error: "Failed to update account." });
+  }
+});
+
 // [CATCH-ALL]
 server.use((req, res, next) => {
   res.status(404).json();

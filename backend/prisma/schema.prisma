@@ -28,6 +28,7 @@ model User {
   applications Application[]
   categories Category[]
   companies Company[]
+  emailScanned DateTime?
 }
 
 model Application {

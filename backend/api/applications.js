@@ -84,6 +84,31 @@ router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// GET one application by title and company
+// [GET] one application by id
+router.get(
+  "/applications/:company/:title",
+  isAuthenticated,
+  async (req, res, next) => {
+    const companyName = req.params.company;
+    const title = req.params.title;
+    try {
+      const applications = await prisma.application.findMany({
+        where: { title, companyName, userId: req.session.userId },
+      });
+      if (applications) {
+        res.json(applications[0]);
+        return;
+      }
+      res.json({});
+      return;
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ error: "Application not found." });
+    }
+  }
+);
+
 // returns existing category or new one based on name given
 const addCategories = async (userId, category) => {
   // check if already exists
