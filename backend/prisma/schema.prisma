@@ -27,6 +27,7 @@ model User {
   token_expiry DateTime?
   applications Application[]
   categories Category[]
+  notes Note[]
   companies Company[]
   emailScanned DateTime?
 }
@@ -70,5 +71,14 @@ model Company {
   user User @relation(fields: [userId], references: [id])
   isFavorite Boolean @default(false)
   favoritedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Note {
+  id Int @id @default(autoincrement())
+  task String
+  description String?
+  userId Int
+  user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
