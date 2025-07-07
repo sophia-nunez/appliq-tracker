@@ -10,6 +10,7 @@ const { PrismaClient } = require("../generated/prisma");
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
+const noteRouter = require("./notes");
 const middleware = require("../middleware/middleware");
 
 const prisma = new PrismaClient();
@@ -47,6 +48,7 @@ server.use(cors());
 server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
+server.use(noteRouter);
 server.use(middleware);
 
 // user authentication
@@ -138,13 +140,12 @@ server.post("/auth/google", async (req, res) => {
 
 // refresh access token for user, set new token based on given google_id
 server.post("/auth/google/refresh-token", async (req, res) => {
-  const { google_id } = req.body;
-  const user = new UserRefreshClient(
-    clientId,
-    clientSecret,
-    req.body.refreshToken
-  );
-  const { credentials } = await user.refreshAccessToken(); // obtain new tokens
+  const user = await prisma.user.findUnique({
+    where: { id: req.session.userId },
+  });
+  oAuth2Client.setCredentials({
+    refresh_token: user.refresh_token,
+  });
   // TODO: prisma update with new access token and expiry date
   res.json(credentials);
 });

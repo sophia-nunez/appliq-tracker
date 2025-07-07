@@ -1,29 +1,105 @@
 import { Link } from "react-router";
 import "../styles/List.css";
 import { applicationsPath } from "../links";
+import { useEffect, useState } from "react";
+import { getNotes, createNote, deleteNote } from "../utils/noteUtils";
 
 const List = () => {
-  // static component for dev purposes and styling
+  const [notes, setNotes] = useState(Array());
+  const [formInput, setFormInput] = useState({
+    task: "",
+    description: "",
+  });
+
+  useEffect(() => {
+    loadList();
+  }, []);
+
+  // updates the given formInput field
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormInput((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  const loadList = async () => {
+    const notesList = await getNotes();
+    setNotes(notesList);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // create new task
+    const created = await createNote(formInput);
+    // reload notes list
+    loadList();
+
+    setFormInput({
+      task: "",
+      description: "",
+    });
+  };
+
+  const handleDelete = async (e, id) => {
+    e.preventDefault();
+
+    // delete task
+    const deleted = await deleteNote(id);
+    // reload notes list
+    loadList();
+  };
+
   return (
-    <section className="list-content" to={`${applicationsPath}/1`}>
-      <article className="child">
+    <section className="list-content notes-list" to={`${applicationsPath}/1`}>
+      <form className="child" onSubmit={handleSubmit}>
         <div className="text">
-          <h4>Title</h4>
-          <p>Description</p>
+          <label htmlFor="task" />
+          <input
+            type="text"
+            id="task"
+            name="task"
+            placeholder="New task..."
+            value={formInput.task}
+            onChange={handleChange}
+          />
+          <label htmlFor="description" />
+          <input
+            type="text"
+            id="description"
+            name="description"
+            placeholder="Task description, deadlines, etc."
+            value={formInput.description}
+            onChange={handleChange}
+          />
         </div>
         <div className="buttons">
-          <button>Delete</button>
+          <button type="submit">Add Task</button>
         </div>
-      </article>
-      <article className="child">
-        <div className="text">
-          <h4>Title</h4>
-          <p>Description</p>
-        </div>
-        <div className="buttons">
-          <button>Delete</button>
-        </div>
-      </article>
+      </form>
+      {notes && notes.length > 0
+        ? notes.map((note) => {
+            return (
+              <article key={note.id} className="child">
+                <div className="text">
+                  <h4>{note.task}</h4>
+                  <p>{note.description}</p>
+                </div>
+                <div className="buttons">
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => handleDelete(e, note.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </article>
+            );
+          })
+        : "No notes to display."}
     </section>
   );
 };

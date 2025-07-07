@@ -39,6 +39,7 @@ const Featured = () => {
             featured.map((application) => {
               return (
                 <article
+                  key={application.id}
                   className="featured"
                   onClick={(e) => openApplicationPage(e, application.id)}
                 >

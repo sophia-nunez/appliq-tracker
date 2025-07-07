@@ -122,3 +122,29 @@
     transform: scale(1);
   }
 }
+
+.notes-list {
+  .child {
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7em;
+    padding: 5px 15px;
+
+    form {
+      .text {
+        width: 100%;
+      }
+    }
+
+    #task {
+      font-weight: 500;
+      font-size: 1.3em;
+    }
+    input {
+      border: transparent;
+      width: 100%;
+    }
+  }
+}
