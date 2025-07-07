@@ -21,7 +21,8 @@
     width: 100%;
   }
 
-  .login-btns {
+  .login-btns,
+  .register-btns {
     place-items: center;
 
     hr {
@@ -34,6 +35,31 @@
       color: var(--text-color);
       width: clamp(100px, 20vw, 200px);
       text-decoration: none;
+    }
+
+    .google-btn {
+      display: flex;
+      gap: 0.7em;
+      align-items: center;
+
+      .google-logo {
+        background-color: var(--background-color);
+        border-radius: 10px;
+        font-size: x-large;
+        margin: auto 0px;
+      }
+    }
+
+    .alt-login {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+
+      p {
+        margin: 0px;
+      }
     }
   }
 
