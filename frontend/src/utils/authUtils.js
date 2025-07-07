@@ -130,4 +130,28 @@ const loginGoogleUser = async (tokenResponse) => {
   }
 };
 
-export { registerUser, loginUser, getGoogleToken, loginGoogleUser, baseURL };
+const getUserInfo = async () => {
+  try {
+    const response = await fetch(`${baseURL()}/user`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error(text.error);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  getGoogleToken,
+  loginGoogleUser,
+  getUserInfo,
+  baseURL,
+};

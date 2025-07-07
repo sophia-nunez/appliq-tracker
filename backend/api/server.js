@@ -10,6 +10,7 @@ const { PrismaClient } = require("../generated/prisma");
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
+const noteRouter = require("./notes");
 const middleware = require("../middleware/middleware");
 
 const prisma = new PrismaClient();
@@ -47,6 +48,7 @@ server.use(cors());
 server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
+server.use(noteRouter);
 server.use(middleware);
 
 // user authentication
@@ -138,14 +140,12 @@ server.post("/auth/google", async (req, res) => {
 
 // refresh access token for user, set new token based on given google_id
 server.post("/auth/google/refresh-token", async (req, res) => {
-  const { google_id } = req.body;
-  const user = new UserRefreshClient(
-    clientId,
-    clientSecret,
-    req.body.refreshToken
-  );
-  const { credentials } = await user.refreshAccessToken(); // obtain new tokens
-  console.log(credentials);
+  const user = await prisma.user.findUnique({
+    where: { id: req.session.userId },
+  });
+  oAuth2Client.setCredentials({
+    refresh_token: user.refresh_token,
+  });
   // TODO: prisma update with new access token and expiry date
   res.json(credentials);
 });
@@ -241,11 +241,6 @@ server.get("/me", async (req, res) => {
   res.json({ id: user.id, username: user.username });
 });
 
-// [CATCH-ALL]
-server.use((req, res, next) => {
-  res.status(404).json();
-});
-
 server.get("/user", async (req, res) => {
   if (!req.session.userId) {
     return res
@@ -258,19 +253,43 @@ server.get("/user", async (req, res) => {
     select: {
       id: true,
       username: true,
+      email: true,
       auth_provider: true,
       google_id: true,
       access_token: true,
+      emailScanned: true,
     },
   });
 
-  res.json({
-    id: user.id,
-    username: user.username,
-    auth_provider: user.auth_provider,
-    google_id: user.google_id,
-    access_token: user.access_token,
-  });
+  res.json(user);
+});
+
+server.put("/user", async (req, res) => {
+  const { emailScanned } = req.body;
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ message: "Not logged in: " + req.session.userId });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+    });
+
+    if (user) {
+      const updated = await prisma.user.update({
+        data: { emailScanned },
+        where: { id: req.session.userId },
+      });
+    } else {
+      res.status(401).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully" });
+  } catch (error) {
+    return res.status(400).json({ error: "Failed to update account." });
+  }
 });
 
 // [CATCH-ALL]

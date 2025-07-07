@@ -80,7 +80,7 @@ router.get(
 
 // [POST] create category
 router.post("/categories", isAuthenticated, async (req, res, next) => {
-  const newCategory = req.body;
+  const newCategory = { ...req.body, userId: req.session.userId };
   try {
     // Validate that new category has required fields
     // TODO: add user

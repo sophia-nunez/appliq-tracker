@@ -24,7 +24,6 @@ const getNewAccessToken = async (user) => {
       }
     );
 
-    console.log(response);
     if (!response.ok) {
       throw new Error("Token refresh failed.");
     }
@@ -55,7 +54,6 @@ router.use(async (req, res, next) => {
       if (expiration <= deadline) {
         // refresh token
         const credentials = getNewAccessToken(user);
-        console.log(credentials);
       }
     }
   }

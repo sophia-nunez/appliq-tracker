@@ -84,6 +84,28 @@ router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// GET one application by title and company
+// [GET] one application by id
+router.get(
+  "/applications/:company/:title",
+  isAuthenticated,
+  async (req, res, next) => {
+    const companyName = req.params.company;
+    const title = req.params.title;
+    try {
+      const applications = await prisma.application.findMany({
+        where: { title, companyName, userId: req.session.userId },
+      });
+      if (applications.length > 0) {
+        return res.json(applications[0]);
+      }
+      return res.status(200).json({});
+    } catch (err) {
+      return res.status(401).json({ error: "Application not found." });
+    }
+  }
+);
+
 // returns existing category or new one based on name given
 const addCategories = async (userId, category) => {
   // check if already exists
@@ -114,15 +136,17 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
   } else {
     data = { ...req.body };
   }
-  const newApplication = { ...data, userId: req.session.userId };
+  const newApplication = {
+    ...data,
+    user: { connect: { id: req.session.userId } },
+  };
   let categories = { connect: [] };
   try {
     // Validate that new application has required fields
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
-      newApplication.status !== undefined &&
-      newApplication.userId !== undefined;
+      newApplication.status !== undefined;
     if (newApplicationValid) {
       // try to find company to add companyId
       const existingCompany = await prisma.company.findFirst({
