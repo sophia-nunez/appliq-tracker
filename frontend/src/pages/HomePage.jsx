@@ -10,7 +10,9 @@ const HomePage = () => {
   useEffect(() => {
     try {
       const interviews = findInterviewTimes();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
