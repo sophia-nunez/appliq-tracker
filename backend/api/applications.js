@@ -96,14 +96,11 @@ router.get(
       const applications = await prisma.application.findMany({
         where: { title, companyName, userId: req.session.userId },
       });
-      if (applications) {
-        res.json(applications[0]);
-        return;
+      if (applications.length > 0) {
+        return res.json(applications[0]);
       }
-      res.json({});
-      return;
+      return res.status(200).json({});
     } catch (err) {
-      console.log(err);
       return res.status(401).json({ error: "Application not found." });
     }
   }
@@ -139,15 +136,17 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
   } else {
     data = { ...req.body };
   }
-  const newApplication = { ...data, userId: req.session.userId };
+  const newApplication = {
+    ...data,
+    user: { connect: { id: req.session.userId } },
+  };
   let categories = { connect: [] };
   try {
     // Validate that new application has required fields
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
-      newApplication.status !== undefined &&
-      newApplication.userId !== undefined;
+      newApplication.status !== undefined;
     if (newApplicationValid) {
       // try to find company to add companyId
       const existingCompany = await prisma.company.findFirst({
@@ -174,6 +173,7 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to create application." });
   }
 });
