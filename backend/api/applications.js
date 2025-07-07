@@ -130,38 +130,38 @@ const addCategories = async (userId, category) => {
 
 // [POST] create application
 router.post("/applications", isAuthenticated, async (req, res, next) => {
-  let data = {};
-  if (req.body.removedCategories) {
-    const { removedCategories, ...data } = req.body;
-  } else {
-    data = { ...req.body };
-  }
+  const { removedCategories, ...data } = req.body;
   const newApplication = {
     ...data,
     user: { connect: { id: req.session.userId } },
   };
-  let categories = { connect: [] };
+  let categories = { connectOrCreate: [] };
   try {
     // Validate that new application has required fields
     const newApplicationValid =
       newApplication.title !== undefined &&
       newApplication.companyName !== undefined &&
       newApplication.status !== undefined;
+
     if (newApplicationValid) {
       // try to find company to add companyId
       const existingCompany = await prisma.company.findFirst({
         where: { userId: req.session.userId, name: newApplication.companyName },
       });
       if (existingCompany) {
-        newApplication.companyId = existingCompany.id;
+        newApplication.company = { connect: { id: existingCompany.id } };
       }
       // adding categories, either add existing or create new one
       if (newApplication.categories) {
         for (const item of newApplication.categories) {
-          // for each category name, get appropriate category
-          const toAdd = await addCategories(req.session.userId, item);
-          // and add to connection list
-          categories.connect.push({ id: toAdd.id });
+          // connects existing or makes new one
+          categories.connectOrCreate.push({
+            where: { name: item.name },
+            create: {
+              name: item.name,
+              users: { connect: { id: req.session.userId } },
+            },
+          });
         }
         // replace categories
         newApplication.categories = categories;
@@ -182,7 +182,7 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   // separate field of categories to be removed
   const { removedCategories, ...data } = req.body;
   const updatedApp = { ...data, userId: req.session.userId };
-  let categories = { connect: [], disconnect: removedCategories };
+  let categories = { connectOrCreate: [], disconnect: removedCategories };
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
@@ -215,10 +215,14 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
       // add categories as needed
       if (updatedApp.categories) {
         for (const item of updatedApp.categories) {
-          // for each category name, get appropriate category
-          const toAdd = await addCategories(req.session.userId, item);
-          // and add to connection list
-          categories.connect.push({ id: toAdd.id });
+          // connect existing or create new one
+          categories.connectOrCreate.push({
+            where: { name: item.name },
+            create: {
+              name: item.name,
+              users: { connect: { id: req.session.userId } },
+            },
+          });
         }
         // replace categories
         updatedApp.categories = categories;

@@ -53,9 +53,8 @@ model Application {
 
 model Category {
   id Int @id @default(autoincrement())
-  name String
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  name String @unique
+  users User[]
   applications Application[]
   createdAt DateTime @default(now())
 }

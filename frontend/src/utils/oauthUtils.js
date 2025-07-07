@@ -100,7 +100,6 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
-    console.log(error);
     alert("Failed to find interview times.");
   }
 };
