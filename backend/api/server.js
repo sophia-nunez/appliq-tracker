@@ -145,7 +145,6 @@ server.post("/auth/google/refresh-token", async (req, res) => {
     req.body.refreshToken
   );
   const { credentials } = await user.refreshAccessToken(); // obtain new tokens
-  console.log(credentials);
   // TODO: prisma update with new access token and expiry date
   res.json(credentials);
 });
@@ -257,17 +256,11 @@ server.get("/user", async (req, res) => {
       auth_provider: true,
       google_id: true,
       access_token: true,
+      emailScanned: true,
     },
   });
 
-  res.json({
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    auth_provider: user.auth_provider,
-    google_id: user.google_id,
-    access_token: user.access_token,
-  });
+  res.json(user);
 });
 
 server.put("/user", async (req, res) => {
@@ -294,7 +287,6 @@ server.put("/user", async (req, res) => {
 
     res.json({ message: "User updated successfully" });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ error: "Failed to update account." });
   }
 });

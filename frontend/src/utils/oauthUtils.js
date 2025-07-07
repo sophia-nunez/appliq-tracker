@@ -3,7 +3,6 @@ import { baseURL, getUserInfo } from "./authUtils";
 import { DateTime } from "luxon";
 
 const setInterviewTime = async (interviews) => {
-  console.log("setting interviews");
   if (interviews && interviews.length > 0) {
     // only use interviews that have date set
     const interviewDates = interviews.filter((interview) => {
@@ -99,7 +98,6 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
-    console.log(error);
     alert("Failed to find interview times.");
   }
 };
@@ -190,7 +188,8 @@ const getMessages = async (user) => {
   let searchTime = null;
   let apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email}`;
   if (user.emailScanned) {
-    searchTime = Math.floor(user.emailScanned.getTime() / 1000);
+    const scanDate = new Date(user.emailScanned);
+    searchTime = Math.floor(scanDate.getTime() / 1000);
     apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email} after:${searchTime}`;
   }
   try {
@@ -208,7 +207,6 @@ const getMessages = async (user) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -233,7 +231,6 @@ const getMessage = async (user, message) => {
 
     return data;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
