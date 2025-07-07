@@ -36,7 +36,7 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
       <span id="nav-close" className="close">
         <IoMdClose className="close-icon" />
       </span>
-      <section id="modal-content">
+      <section className="modal-content">
         {contents === "application" && (
           <ApplicationModal
             setModalOpen={setModalOpen}

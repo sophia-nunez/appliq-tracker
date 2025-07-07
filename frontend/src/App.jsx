@@ -19,6 +19,7 @@ import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
+import LoadingModal from "./components/LoadingModal";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
@@ -107,6 +108,7 @@ export default function App() {
         <GoogleOAuthProvider clientId={CLIENT_ID}>
           <UserProvider setIsLoading={setIsLoading}>
             <AppContent router={router} />
+            {isLoading && <LoadingModal />}
           </UserProvider>
         </GoogleOAuthProvider>
       </ThemeProvider>
