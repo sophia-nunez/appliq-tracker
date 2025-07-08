@@ -18,12 +18,12 @@ const ApplicationsPage = () => {
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("");
+  const [orderBy, setOrderBy] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter]);
+  }, [query, filter, orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -36,6 +36,7 @@ const ApplicationsPage = () => {
     const currQuery = new URLSearchParams({
       text: query.trim(),
       category: filter,
+      orderBy,
     });
     try {
       const data = await getApplications(currQuery);
@@ -61,6 +62,8 @@ const ApplicationsPage = () => {
           pageName="Applications"
           query={query}
           setQuery={setQuery}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
           handleSearch={loadApplications}
         />
         <section className="list-container">

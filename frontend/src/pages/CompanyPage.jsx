@@ -14,12 +14,12 @@ const CompanyPage = () => {
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("");
+  const [orderBy, setOrderBy] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     loadCompanies();
-  }, [query]);
+  }, [query, orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -32,6 +32,7 @@ const CompanyPage = () => {
     const currQuery = new URLSearchParams({
       name: query.trim(),
       industry: filter,
+      orderBy,
     });
     try {
       const data = await getCompanies(currQuery);
@@ -55,6 +56,8 @@ const CompanyPage = () => {
           pageName="Companies"
           query={query}
           setQuery={setQuery}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
           handleSearch={loadCompanies}
         />
         <section className="list-container">
