@@ -43,6 +43,15 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     };
   }
 
+  // regardless of search, set orderBy takes precendance
+  if (search.orderBy === "alphabetical") {
+    orderBy = [{ isFeatured: "desc" }, { title: "asc" }];
+  } else if (search.orderBy === "recent") {
+    orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
+  } else if (search.orderBy === "interviewDate") {
+    orderBy = [{ isFeatured: "desc" }, { interviewAt: "asc" }];
+  }
+
   if (search.category) {
     // if cat query, search by category
     if (search.category === "all") {

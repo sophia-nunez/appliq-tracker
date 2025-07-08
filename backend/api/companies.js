@@ -41,6 +41,13 @@ router.get("/companies", isAuthenticated, async (req, res, next) => {
     }
   }
 
+  // regardless of search, set orderBy takes precendance
+  if (search.orderBy === "alphabetical") {
+    orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
+  } else if (search.orderBy === "recent") {
+    orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
+  }
+
   try {
     const companies = await prisma.company.findMany({ where, orderBy });
     if (companies) {
