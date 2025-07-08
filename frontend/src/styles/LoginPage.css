@@ -23,7 +23,9 @@
 
   .login-btns,
   .register-btns {
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     hr {
       width: 60vw;

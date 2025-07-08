@@ -100,7 +100,7 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
-    alert("Failed to find interview times.");
+    alert("No new interview times found from email.");
   }
 };
 
