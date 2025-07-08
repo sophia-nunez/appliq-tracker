@@ -58,7 +58,8 @@ const setInterviewTime = async (interviews) => {
       }
     });
   } else {
-    throw Error("No interviews to set.");
+    // no new interviews to set
+    return;
   }
 };
 
@@ -131,6 +132,13 @@ const parseMessage = async (message, data) => {
       newInterview.title = "Unknown Position";
     }
 
+    const companyRegexFormat = /Company:\s*(.*)\s*\n/;
+    if ((matchedText = companyRegexFormat.exec(bodyText))) {
+      newInterview.company = matchedText[1];
+    } else {
+      newInterview.company = "Unknown";
+    }
+
     if ((matchedText = dateRegexFormat.exec(bodyText))) {
       // get each value and separate timezone
       const month = matchedText[1];
@@ -189,7 +197,6 @@ const parseMessage = async (message, data) => {
       newInterview.interviewee = matchedText[2] + matchedText[3];
     }
 
-    newInterview.company = "Unknown";
     return newInterview;
   }
   return null;
