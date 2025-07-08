@@ -5,8 +5,10 @@ import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
+import { useLoading } from "../components/LoadingContext.jsx";
 
 const CompanyPage = () => {
+  const { setIsLoading } = useLoading();
   const [companies, setCompanies] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
   // search and nav
@@ -27,6 +29,7 @@ const CompanyPage = () => {
 
   // loads company based on query state variables (defaults to no search params)
   const loadCompanies = async () => {
+    setIsLoading(true);
     const currQuery = new URLSearchParams({
       name: query.trim(),
       industry: filter,
@@ -37,6 +40,7 @@ const CompanyPage = () => {
     } catch (error) {
       alert(error.message);
     }
+    setIsLoading(false);
   };
 
   // opens modal to add company

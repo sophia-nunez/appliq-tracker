@@ -31,7 +31,16 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       { companyName: { contains: search.text, mode: "insensitive" } },
       { description: { contains: search.text, mode: "insensitive" } },
       { notes: { contains: search.text, mode: "insensitive" } },
+      { status: { contains: search.text, mode: "insensitive" } },
     ];
+    // prioritize matches in position title
+    orderBy = {
+      _relevance: {
+        fields: ["title"],
+        search: search.text,
+        sort: "asc",
+      },
+    };
   }
 
   if (search.category) {

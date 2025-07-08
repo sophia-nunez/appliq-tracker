@@ -19,7 +19,7 @@ import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
-import LoadingModal from "./components/LoadingModal";
+import { LoadingProvider } from "./components/LoadingContext";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
@@ -45,15 +45,17 @@ const AppContent = ({ router }) => {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  // separate loading for user to prevent page re-rendering
+  const [loadingUser, setLoadingUser] = useState(true);
   // can't access main pages if not logged in
-  const ProtectedHome = WithAuth(isLoading, HomePage);
-  const ProtectedApplications = WithAuth(isLoading, ApplicationsPage);
-  const ProtectedApplication = WithAuth(isLoading, ApplicationDetailPage);
-  const ProtectedCompanies = WithAuth(isLoading, CompanyPage);
-  const ProtectedCompany = WithAuth(isLoading, CompanyDetailPage);
-  const ProtectedData = WithAuth(isLoading, DataPage);
-  const ProtectedSettings = WithAuth(isLoading, SettingsPage);
+  const ProtectedHome = WithAuth(loadingUser, HomePage);
+  const ProtectedApplications = WithAuth(loadingUser, ApplicationsPage);
+  const ProtectedApplication = WithAuth(loadingUser, ApplicationDetailPage);
+  const ProtectedCompanies = WithAuth(loadingUser, CompanyPage);
+  const ProtectedCompany = WithAuth(loadingUser, CompanyDetailPage);
+  const ProtectedData = WithAuth(loadingUser, DataPage);
+  const ProtectedSettings = WithAuth(loadingUser, SettingsPage);
 
   // sets up routes for each URL to the respectice component
   const router = createBrowserRouter([
@@ -99,6 +101,7 @@ export default function App() {
     },
   ]);
 
+  // loading provider for loading state
   // wraps in mantine provider for imported component functionality
   // theme provider to give theme for light/dark mode
   // userProvider to give login/user information
@@ -106,9 +109,10 @@ export default function App() {
     <MantineProvider>
       <ThemeProvider>
         <GoogleOAuthProvider clientId={CLIENT_ID}>
-          <UserProvider setIsLoading={setIsLoading}>
-            <AppContent router={router} />
-            {isLoading && <LoadingModal />}
+          <UserProvider setLoadingUser={setLoadingUser}>
+            <LoadingProvider>
+              <AppContent router={router} />
+            </LoadingProvider>
           </UserProvider>
         </GoogleOAuthProvider>
       </ThemeProvider>
