@@ -79,7 +79,7 @@ const findInterviewTimes = async () => {
 
     if (!user.google_id) {
       // not linked to a google account, no action necessary
-      throw Error("User does not have a linked Google account.");
+      return;
     }
 
     const data = await getMessages(user);
