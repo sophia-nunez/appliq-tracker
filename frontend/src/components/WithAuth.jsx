@@ -3,19 +3,19 @@ import { useNavigate } from "react-router";
 import { useUser } from "./UserContext";
 import { loginPath } from "../links.js";
 
-const WithAuth = (isLoading, WrappedComponent) => {
+const WithAuth = (loadingUser, WrappedComponent) => {
   return function ProtectedComponent(props) {
     const { user } = useUser();
 
     // TODO: wait for useUser() to fetch before navigating
     const navigate = useNavigate();
     useEffect(() => {
-      if (!isLoading && !user.id) {
+      if (!loadingUser && !user.id) {
         navigate(loginPath);
       }
     }, [user, navigate]);
 
-    if (isLoading || !user.id) {
+    if (loadingUser || !user.id) {
       return <p>Loading...</p>;
     }
 

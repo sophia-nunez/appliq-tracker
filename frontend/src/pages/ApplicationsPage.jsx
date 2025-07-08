@@ -8,8 +8,10 @@ import { getApplications } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
+import { useLoading } from "../components/LoadingContext";
 
 const ApplicationsPage = () => {
+  const { setIsLoading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,6 +32,7 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
+    setIsLoading(true);
     const currQuery = new URLSearchParams({
       text: query.trim(),
       category: filter,
@@ -43,6 +46,7 @@ const ApplicationsPage = () => {
     } catch (error) {
       alert(error.message);
     }
+    setIsLoading(false);
   };
 
   // opens modal to add application

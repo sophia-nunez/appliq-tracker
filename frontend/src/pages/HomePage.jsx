@@ -4,13 +4,15 @@ import List from "../components/List";
 import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
-import { findInterviewTimes, setInterviewTime } from "../utils/oauthUtils";
+import { findInterviewTimes } from "../utils/oauthUtils";
 
 const HomePage = () => {
   useEffect(() => {
     try {
       const interviews = findInterviewTimes();
-    } catch (error) {}
+    } catch (error) {
+      console.log("Failed to find new interview times.");
+    }
   }, []);
 
   return (
