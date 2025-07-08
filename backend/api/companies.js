@@ -175,8 +175,6 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
     }
 
     // Validate that company has required fields
-    // TODO add companyId from name if possible (find company)
-    // TODO same for category
     const changesValid = changes.userId !== undefined;
     if (changesValid) {
       const updated = await prisma.company.update({

@@ -21,7 +21,6 @@ const CompanyPage = () => {
     loadCompanies();
   }, [query]);
 
-  // TODO: currently on all, move to companies list
   const openPage = (e, id) => {
     e.preventDefault();
     navigate(`${id}`);

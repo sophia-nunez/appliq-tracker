@@ -7,7 +7,7 @@ const WithAuth = (loadingUser, WrappedComponent) => {
   return function ProtectedComponent(props) {
     const { user } = useUser();
 
-    // TODO: wait for useUser() to fetch before navigating
+    // wait for useUser() to fetch before navigating
     const navigate = useNavigate();
     useEffect(() => {
       if (!loadingUser && !user.id) {

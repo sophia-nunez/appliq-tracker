@@ -84,7 +84,6 @@ router.post("/categories", isAuthenticated, async (req, res, next) => {
   };
   try {
     // Validate that new category has required fields
-    // TODO: add user
     const newCategoryValid =
       newCategory.name !== undefined && newCategory.name.length < 21;
     if (newCategoryValid) {
@@ -119,7 +118,5 @@ router.delete("/categories/:id", isAuthenticated, async (req, res, next) => {
     next(err);
   }
 });
-
-// TODO: [PUT] modify category (add Application)
 
 module.exports = router;
