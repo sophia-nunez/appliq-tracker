@@ -115,28 +115,6 @@ router.get(
   }
 );
 
-// returns existing category or new one based on name given
-const addCategories = async (userId, category) => {
-  // check if already exists
-  const existing = await prisma.category.findFirst({
-    where: { name: category.name },
-  });
-  if (existing) {
-    // if category exists, return it
-    return existing;
-  } else {
-    // if new, create category and return
-    const newCategory = await prisma.category.create({
-      data: {
-        userId,
-        name: category.name,
-      },
-    });
-
-    return newCategory;
-  }
-};
-
 // [POST] create application
 router.post("/applications", isAuthenticated, async (req, res, next) => {
   const { removedCategories, ...data } = req.body;

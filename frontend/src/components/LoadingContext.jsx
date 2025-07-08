@@ -4,7 +4,7 @@ import LoadingModal from "./LoadingModal";
 const LoadingContext = createContext();
 
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // avoids infinite render loop
   const setLoading = useCallback((loading) => {
