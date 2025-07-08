@@ -4,33 +4,61 @@ const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("../generated/prisma");
-
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
 
+const DEV = process.env.DEV;
 const prisma = new PrismaClient();
 const server = express();
-let sessionConfig = {
-  name: "session",
-  secret: process.env.SESSION_SECRET,
-  rolling: true,
-  cookie: {
-    httpOnly: true,
-    domain: "localhost",
-    secure: false,
-    sameSite: "lax",
-  },
-  resave: false,
-  saveUninitialized: false,
-};
 
-server.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+let sessionConfig = {};
+if (DEV) {
+  sessionConfig = {
+    name: "session",
+    secret: process.env.SESSION_SECRET,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      domain: "localhost",
+      secure: false,
+      sameSite: "lax",
+      maxAge: 36000000, // 10 hours
+    },
+    resave: false,
+    saveUninitialized: false,
+  };
+} else {
+  sessionConfig = {
+    name: "session",
+    secret: process.env.SESSION_SECRET,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 36000000, // 10 hours
+    },
+    resave: false,
+    saveUninitialized: false,
+  };
+}
+
+if (DEV) {
+  server.use(
+    cors({
+      origin: "https://localhost:5173",
+      credentials: true,
+    })
+  );
+} else {
+  server.use(
+    cors({
+      origin: "https://appliq-tracker.onrender.com",
+      credentials: true,
+    })
+  );
+}
 
 server.use(session(sessionConfig));
 server.use(express.json());
@@ -40,7 +68,10 @@ server.use(categoryRouter);
 server.use(companyRouter);
 
 server.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
+  );
   next();
 });
 
