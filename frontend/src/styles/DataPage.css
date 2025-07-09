@@ -1,0 +1,58 @@
+.data-page {
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    .summary-chart {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      width: 100%;
+    }
+
+    .chart-container {
+      background-color: var(--card-bg-color);
+      box-shadow: 1px 0px 2px 0px var(--primary-color);
+      border-radius: 5px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: start;
+      gap: 70px;
+
+      width: 80vw;
+      min-height: 60vh;
+      padding: 125px 20px;
+
+      .chart-description {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        height: 50%;
+
+        gap: 20px;
+
+        * {
+          color: inherit;
+          background-color: inherit;
+        }
+      }
+
+      .chart {
+        border-radius: 5px;
+        background-color: white;
+      }
+    }
+
+    .chart-title {
+      font-size: 1.2em;
+      font-weight: 500;
+      border: transparent;
+    }
+  }
+}

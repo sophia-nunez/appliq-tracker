@@ -6,9 +6,9 @@
   --primary-color: #121f38;
   --secondary-color: #bccff2;
   --hover-color: #787093;
-  --background-color: rgb(59, 62, 71);
-  --card-bg-color: rgb(72, 73, 83);
-  --text-color: #ffffff;
+  --background-color: rgb(72, 73, 83);
+  --card-bg-color: rgb(59, 62, 71);
+  --text-color: #f9f9f9;
   --delete-red: rgb(122, 40, 34);
   --gray: rgb(198, 198, 198);
 
@@ -22,7 +22,7 @@
 
   [data-theme="light"] {
     --text-color: #000000;
-    --background-color: #ffffff;
+    --background-color: #f9f9f9;
     --card-bg-color: #cad0df;
     --primary-color: #bccff2;
     --secondary-color: #121f38;
@@ -52,7 +52,18 @@ body,
 
 main {
   min-height: 85vh;
+  width: 90vw;
+  margin: 0px auto;
   padding: 10px;
+
+  * {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  select:focus {
+    outline: none; /* Remove default outline */
+  }
 }
 
 h2 {
