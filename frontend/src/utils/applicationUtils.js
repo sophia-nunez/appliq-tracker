@@ -145,13 +145,14 @@ const deleteApplication = async (id) => {
 
 // uses query params to load matching applications
 const getApplicationGroupData = async (type) => {
+  let routeURL = `${baseURL()}/applications/data/group/${type}`;
+  if (type === "year-range") {
+    routeURL = `${baseURL()}/applications/data/dateRange/year`;
+  }
   try {
-    const response = await fetch(
-      `${baseURL()}/applications/data/group/${type}`,
-      {
-        credentials: "include",
-      }
-    );
+    const response = await fetch(routeURL, {
+      credentials: "include",
+    });
     if (!response.ok) {
       const text = await response.json();
       throw new Error(text.error);

@@ -84,28 +84,57 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// [GET] get summary data for main chart
+// [GET] get data --> number of applications group by given type/field
 router.get(
   "/applications/data/group/:type",
   isAuthenticated,
   async (req, res, next) => {
-    const where = { userId: req.session.userId };
     const type = req.params.type;
 
     try {
       const applications = await prisma.application.groupBy({
-        where,
+        where: { userId: req.session.userId },
         by: [type],
         _count: {
           _all: true,
         },
       });
+
       if (applications) {
         res.json(applications);
       } else {
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
+      console.log(err);
+      return res.status(401).json({ error: "Failed to get applications." });
+    }
+  }
+);
+
+// [GET] get data --> number of applications group by given type/field
+router.get(
+  "/applications/data/dateRange/:period",
+  isAuthenticated,
+  async (req, res, next) => {
+    const period = req.params.period;
+
+    try {
+      const applications = await prisma.$queryRaw`
+          SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
+          FROM "Application"
+          WHERE "userId" = ${req.session.userId}
+          GROUP BY day
+          ORDER BY day;
+        `;
+
+      if (applications) {
+        res.json(applications);
+      } else {
+        next({ status: 404, message: `No applications found` });
+      }
+    } catch (err) {
+      console.log(err);
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
