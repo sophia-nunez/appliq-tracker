@@ -31,7 +31,7 @@ const renderCustomizedLabel = ({
 const SummaryChart = ({ data }) => {
   const colors = new Map([
     ["Interview", "#F5A623"],
-    ["Offer", "#7ED321"],
+    ["Offer", "#82ca9d"],
     ["Rejected", "#D0021B"],
     ["Signed", "#560bad"],
     ["Applied", "#4A90E2"],
