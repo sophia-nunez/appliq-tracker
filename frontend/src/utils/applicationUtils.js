@@ -146,9 +146,16 @@ const deleteApplication = async (id) => {
 // uses query params to load matching applications
 const getApplicationGroupData = async (type) => {
   let routeURL = `${baseURL()}/applications/data/group/${type}`;
-  if (type === "year-range") {
+
+  // if searching for activity chart, use dateRange route
+  if (type === "all-range") {
+    routeURL = `${baseURL()}/applications/data/dateRange/all`;
+  } else if (type === "year-range") {
     routeURL = `${baseURL()}/applications/data/dateRange/year`;
+  } else if (type === "month-range") {
+    routeURL = `${baseURL()}/applications/data/dateRange/month`;
   }
+
   try {
     const response = await fetch(routeURL, {
       credentials: "include",

@@ -117,16 +117,38 @@ router.get(
   "/applications/data/dateRange/:period",
   isAuthenticated,
   async (req, res, next) => {
+    const userId = req.session.userId;
     const period = req.params.period;
 
-    try {
-      const applications = await prisma.$queryRaw`
+    if (
+      period !== "all" &&
+      period !== "year" &&
+      period !== "month" &&
+      period !== "day"
+    ) {
+      // invalid period
+      return res.status(422).json({ error: "Invalid date range" });
+    }
+
+    let query = `
           SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
           FROM "Application"
-          WHERE "userId" = ${req.session.userId}
+          WHERE "userId" = ${userId}
           GROUP BY day
           ORDER BY day;
         `;
+    if (period !== "all") {
+      query = `
+          SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
+          FROM "Application"
+          WHERE "userId" = ${userId} AND "appliedAt" >= NOW() - INTERVAL '1 ${period}'
+          GROUP BY day
+          ORDER BY day;
+        `;
+    }
+
+    try {
+      const applications = await prisma.$queryRawUnsafe(query);
 
       if (applications) {
         res.json(applications);

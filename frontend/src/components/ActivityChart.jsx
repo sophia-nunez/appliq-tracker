@@ -15,14 +15,17 @@ const ActivityChart = ({ dateRange }) => {
 
   useEffect(() => {
     loadActivity();
-  }, []);
+  }, [dateRange]);
 
   const loadActivity = async () => {
-    const loadedData = await getApplicationGroupData("year-range");
+    const loadedData = await getApplicationGroupData(dateRange);
     const formattedData = loadedData.map((date) => {
       const fullDate = new Date(date.day);
       // format date to "Month dd, yyyy"
-      const options = { month: "long", day: "numeric", year: "numeric" };
+      let options = { month: "long", day: "numeric" };
+      if (dateRange === "all-range") {
+        options = { month: "long", day: "numeric", year: "numeric" };
+      }
       const formattedDate = fullDate.toLocaleDateString(undefined, options);
 
       return { name: formattedDate, applications: date.count };
@@ -46,7 +49,6 @@ const ActivityChart = ({ dateRange }) => {
       <XAxis dataKey="name" />
       <YAxis />
       <Tooltip />
-      <Legend />
       <Line
         type="monotone"
         dataKey="applications"
