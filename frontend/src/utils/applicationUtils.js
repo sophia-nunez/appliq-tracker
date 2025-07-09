@@ -143,6 +143,24 @@ const deleteApplication = async (id) => {
   }
 };
 
+// uses query params to load matching applications
+const getApplicationSummary = async () => {
+  try {
+    const response = await fetch(`${baseURL()}/applications/summary`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error(text.error);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getApplications,
   getApplication,
@@ -150,4 +168,5 @@ export {
   createApplication,
   editApplication,
   deleteApplication,
+  getApplicationSummary,
 };

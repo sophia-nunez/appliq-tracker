@@ -84,6 +84,28 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// [GET] get summary data for main chart
+router.get("/applications/summary", isAuthenticated, async (req, res, next) => {
+  const where = { userId: req.session.userId };
+
+  try {
+    const applications = await prisma.application.groupBy({
+      where,
+      by: ["status"],
+      _count: {
+        _all: true,
+      },
+    });
+    if (applications) {
+      res.json(applications);
+    } else {
+      next({ status: 404, message: `No applications found` });
+    }
+  } catch (err) {
+    return res.status(401).json({ error: "Failed to get applications." });
+  }
+});
+
 // [GET] one application by id
 router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
