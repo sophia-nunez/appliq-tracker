@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
-import { getApplicationSummary } from "../utils/applicationUtils";
-const data = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
 
 // label to go on outside, middle section, with status and count
 const renderCustomizedLabel = ({
@@ -31,28 +28,15 @@ const renderCustomizedLabel = ({
 };
 
 //
-const SummaryChart = () => {
-  const [data, setData] = useState(Array());
+const SummaryChart = ({ data }) => {
   const colors = new Map([
-    ["Interview", "#F5A623"], // interview
-    ["Offer", "#7ED321"], // offer
-    ["Rejected", "#D0021B"], // rejected
-    ["Signed", "#560bad"], //signed
-    ["Applied", "#4A90E2"], // applied
+    ["Interview", "#F5A623"],
+    ["Offer", "#7ED321"],
+    ["Rejected", "#D0021B"],
+    ["Signed", "#560bad"],
+    ["Applied", "#4A90E2"],
     ["Other", "#9B9B9B"],
   ]);
-
-  useEffect(() => {
-    loadSummary();
-  }, []);
-
-  const loadSummary = async () => {
-    const loadedData = await getApplicationSummary();
-    const formattedData = loadedData.map((type) => {
-      return { name: type.status, value: type._count._all };
-    });
-    setData(formattedData);
-  };
 
   return (
     <PieChart width={730} height={250}>
