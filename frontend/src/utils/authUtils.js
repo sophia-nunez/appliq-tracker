@@ -3,7 +3,7 @@
 function baseURL() {
   return import.meta.env.VITE_DEV
     ? "http://localhost:3000"
-    : "https://backend-sitename-here";
+    : import.meta.env.VITE_BACKEND_URL;
 }
 
 // checks valid login info and unique username, then attempts to POST
