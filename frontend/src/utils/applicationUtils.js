@@ -4,7 +4,28 @@ import { baseURL } from "./authUtils";
 const getApplications = async (query) => {
   try {
     const response = await fetch(
-      `${baseURL()}/applications/?${query.toString()}`
+      `${baseURL()}/applications/?${query.toString()}`,
+      { credentials: "include" }
+    );
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error(text.error);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getFeatured = async () => {
+  const query = new URLSearchParams({ status: "featured" });
+
+  try {
+    const response = await fetch(
+      `${baseURL()}/applications/?${query.toString()}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       const text = await response.json();
@@ -21,7 +42,9 @@ const getApplications = async (query) => {
 // fetches single application by id
 const getApplication = async (id) => {
   try {
-    const response = await fetch(`${baseURL()}/applications/${id}`);
+    const response = await fetch(`${baseURL()}/applications/${id}`, {
+      credentials: "include",
+    });
     if (!response.ok) {
       const text = await response.json();
       throw new Error(text.error);
@@ -71,13 +94,16 @@ const createApplication = async (application) => {
 
 // modifies applciation based on updated information
 const editApplication = async (application, id) => {
-  const appliedDate = new Date(application.appliedAt);
-  let newInfo = {
-    ...application,
-    appliedAt: appliedDate,
-  };
+  let newInfo = { ...application };
+  if (application.appliedAt) {
+    const appliedDate = new Date(application.appliedAt);
+    newInfo = {
+      ...application,
+      appliedAt: appliedDate,
+    };
+  }
 
-  if (application.interviewedAt) {
+  if (application.interviewAt) {
     const interviewDate = new Date(application.interviewAt);
     newInfo = {
       ...application,
@@ -107,6 +133,7 @@ const deleteApplication = async (id) => {
   try {
     const response = await fetch(`${baseURL()}/applications/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -119,6 +146,7 @@ const deleteApplication = async (id) => {
 export {
   getApplications,
   getApplication,
+  getFeatured,
   createApplication,
   editApplication,
   deleteApplication,

@@ -3,8 +3,18 @@ import Featured from "../components/Featured";
 import List from "../components/List";
 import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
+import { useEffect } from "react";
+import { findInterviewTimes, setInterviewTime } from "../utils/oauthUtils";
 
 const HomePage = () => {
+  useEffect(() => {
+    try {
+      const interviews = findInterviewTimes();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
     <main>
       <h2>Home</h2>

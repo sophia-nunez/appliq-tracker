@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
+import { useGoogleLogin, hasGrantedAllScopesGoogle } from "@react-oauth/google";
 import { useUser } from "./UserContext";
-import { loginUser, registerUser } from "../utils/authUtils";
+import {
+  loginGoogleUser,
+  getGoogleToken,
+  loginUser,
+  registerUser,
+} from "../utils/authUtils";
 import { homePath, registerPath } from "../links";
 import "../styles/LoginPage.css";
 
@@ -10,6 +16,52 @@ const AuthForm = ({ type }) => {
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
   const [message, setMessage] = useState(""); // error or success message
+
+  // google login for authorization
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => await handleGoogleLogin(tokenResponse),
+    onError: () => {
+      alert("Login failed. Please try again");
+    },
+    flow: "auth-code",
+    scope:
+      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+    include_granted_scopes: "true",
+  });
+
+  const handleGoogleLogin = async (tokenResponse) => {
+    const hasAccess = hasGrantedAllScopesGoogle(
+      tokenResponse,
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/gmail.readonly",
+      "https://www.googleapis.com/auth/calendar.events"
+    );
+
+    if (hasAccess) {
+      try {
+        const tokens = await getGoogleToken(tokenResponse);
+        const userProfile = await loginGoogleUser(tokens);
+
+        setUser(userProfile);
+        setMessage({
+          type: "success",
+          text: "Successful! Redirecting...",
+        });
+        const timeout = setTimeout(() => {
+          navigate(homePath);
+          clearTimeout(timeout);
+        }, 1000);
+      } catch (err) {
+        setMessage({
+          type: "error",
+          text: err.message || "Google login failed.",
+        });
+      }
+    } else {
+      alert("Login failed due to missing permissions.");
+    }
+  };
 
   // updates corresponding input field
   function handleChange(event) {
@@ -43,10 +95,11 @@ const AuthForm = ({ type }) => {
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
-      // TODO: restrict messages that can be displayed
       setMessage({
         type: "error",
-        text: err.message || "Network issue. Please try again.",
+        text:
+          err.message ||
+          "There was an issue completing your request. Please try again.",
       });
     } finally {
       clearInputs();
@@ -85,6 +138,7 @@ const AuthForm = ({ type }) => {
             <>
               <hr />
               <p>Or</p>
+              <button onClick={() => login()}>Sign in with Google</button>
               <button className="register-btn">
                 <Link to={registerPath} className="register-btn">
                   Register

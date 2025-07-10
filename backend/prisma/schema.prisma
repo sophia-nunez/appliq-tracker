@@ -16,11 +16,20 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  username String @unique
-  password String
+  username String? @unique
+  auth_provider String @default("local")
+  password String?
+  name String?
+  email String?
+  google_id String? @unique
+  access_token String?
+  refresh_token String?
+  token_expiry DateTime?
   applications Application[]
   categories Category[]
+  notes Note[]
   companies Company[]
+  emailScanned DateTime?
 }
 
 model Application {
@@ -39,6 +48,7 @@ model Application {
   appliedAt DateTime @default(now())
   updatedAt DateTime @default(now())
   interviewAt DateTime?
+  emailId String?
 }
 
 model Category {
@@ -61,5 +71,14 @@ model Company {
   user User @relation(fields: [userId], references: [id])
   isFavorite Boolean @default(false)
   favoritedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Note {
+  id Int @id @default(autoincrement())
+  task String
+  description String?
+  userId Int
+  user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

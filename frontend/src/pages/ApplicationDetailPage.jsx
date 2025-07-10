@@ -46,6 +46,7 @@ const ApplicationDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteApplication(appId);
+      // uses navigation history to go back one page
       navigate(-1);
     } catch (error) {
       alert("Failed to delete application");
@@ -82,17 +83,19 @@ const ApplicationDetailPage = () => {
               </article>
               <article className="child tags">
                 <h4>Tags</h4>
-                {!application.categories ? (
-                  <p>No tags</p>
-                ) : (
-                  application.categories.map((category) => {
-                    return (
-                      <p className="tag" key={category.id}>
-                        {category.name}
-                      </p>
-                    );
-                  })
-                )}
+                <div className="category-list">
+                  {!application.categories ? (
+                    <p>No tags</p>
+                  ) : (
+                    application.categories.map((category) => {
+                      return (
+                        <p className="tag" key={category.id}>
+                          {category.name}
+                        </p>
+                      );
+                    })
+                  )}
+                </div>
               </article>
               <article className="child dates">
                 <div>
@@ -120,7 +123,7 @@ const ApplicationDetailPage = () => {
         <Modal
           contents="application"
           setModalOpen={setModalOpen}
-          application={application}
+          item={application}
           reloadPage={loadApplication}
         />
       )}

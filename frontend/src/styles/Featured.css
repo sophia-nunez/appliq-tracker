@@ -16,23 +16,51 @@
   background-color: var(--card-bg-color);
 
   .featured-content {
-    height: 100%;
     display: flex;
     overflow: auto;
+    flex-grow: 1;
     justify-content: start;
     align-items: stretch;
     gap: 1em;
+
+    height: 100%;
+    padding: 10px;
+
+    .no-display {
+      margin: auto;
+      text-align: center;
+
+      a {
+        color: var(--gray);
+        text-decoration: none;
+      }
+    }
   }
 
   .featured {
+    position: relative;
+    overflow: auto;
     margin: auto 0px;
-    padding: 10px;
-    height: 70%;
-    width: 22%;
+    padding: 15px;
+    height: 80%;
+    width: 25%;
     min-width: 150px;
     max-width: 250px;
     border-radius: 3px;
     background-color: var(--background-color);
     box-shadow: 1px 1px 3px 0px var(--primary-color);
+
+    .favorite-status {
+      color: gray;
+      padding: 10px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+
+  .featured:hover {
+    cursor: pointer;
+    transform: scale(1.02);
   }
 }

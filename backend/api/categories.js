@@ -3,16 +3,33 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
+const middleware = require("../middleware/middleware");
+
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ error: "You must be logged in to view this page." });
+  }
+  next();
+};
+
+router.use(middleware);
+
 // [GET] many categories
-router.get("/categories", async (req, res, next) => {
+router.get("/categories", isAuthenticated, async (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({
+      where: { userId: req.session.userId },
+    });
     if (categories) {
       res.json(categories);
     } else {
-      next({ status: 404, message: `No categories found` });
+      return res.status(404).json({
+        error: "Categories not found.",
+      });
     }
   } catch (err) {
     next(err);
@@ -20,37 +37,63 @@ router.get("/categories", async (req, res, next) => {
 });
 
 // [GET] one category by id
-router.get("/categories/:id", async (req, res, next) => {
+router.get("/categories/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
-    const category = await prisma.category.findUnique({ where: { id } });
+    const category = await prisma.category.findUnique({
+      where: { id, userId: req.session.userId },
+    });
     if (category) {
       res.json(category);
     } else {
-      next({ status: 404, message: "Category not found" });
+      return res.status(404).json({
+        error: "Category not found.",
+      });
     }
   } catch (err) {
     next(err);
   }
 });
 
-// TODO: add GET for category by name ?
+// [GET] one category by name
+router.get(
+  "/categories/name/:name",
+  isAuthenticated,
+  async (req, res, next) => {
+    const name = parseInt(req.params.name);
+    try {
+      const category = await prisma.category.findUnique({
+        where: { name, userId: req.session.userId },
+      });
+      if (category) {
+        res.json(category);
+      } else {
+        return res.status(404).json({
+          error: "Category not found.",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // [POST] create category
-router.post("/categories", async (req, res, next) => {
-  const newCategory = req.body;
+router.post("/categories", isAuthenticated, async (req, res, next) => {
+  const newCategory = { ...req.body, userId: req.session.userId };
   try {
     // Validate that new category has required fields
     // TODO: add user
     const newCategoryValid =
-      newCategory.name !== undefined && newCategory.userId !== undefined;
+      newCategory.name !== undefined &&
+      newCategory.name.length < 21 &&
+      newCategory.userId !== undefined;
     if (newCategoryValid) {
       const created = await prisma.category.create({ data: newCategory });
       res.status(201).json(created);
     } else {
-      next({
-        status: 422,
-        message: "name is required",
+      return res.status(422).json({
+        error: "Name is required and must be less than 20 characters.",
       });
     }
   } catch (err) {
@@ -59,15 +102,19 @@ router.post("/categories", async (req, res, next) => {
 });
 
 // [DELETE] delete category
-router.delete("/categories/:id", async (req, res, next) => {
+router.delete("/categories/:id", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.id);
   try {
-    const category = await prisma.category.findUnique({ where: { id } });
+    const category = await prisma.category.findUnique({
+      where: { id, userId: req.session.userId },
+    });
     if (category) {
       const deleted = await prisma.category.delete({ where: { id } });
       res.json(deleted);
     } else {
-      next({ status: 404, message: "Category not found" });
+      return res.status(404).json({
+        error: "Category not found.",
+      });
     }
   } catch (err) {
     next(err);
