@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApplicationGroupData } from "../utils/applicationUtils";
+import { getApplicationGroupData } from "../utils/dataUtils";
 import SummaryChart from "./SummaryChart";
 import SankeyChart from "./SankeyChart";
 

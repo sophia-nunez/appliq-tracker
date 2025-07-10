@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { getApplicationGroupData } from "../utils/applicationUtils";
+import { getApplicationGroupData } from "../utils/dataUtils";
 
 const ActivityChart = ({ dateRange }) => {
   const [data, setData] = useState(Array());
