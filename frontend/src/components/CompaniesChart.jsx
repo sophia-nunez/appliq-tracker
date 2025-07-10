@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { getCompanyData } from "../utils/dataUtils";
 import {
   BarChart,
   Bar,
@@ -8,41 +10,43 @@ import {
   Legend,
 } from "recharts";
 
-const data = [
-  {
-    name: "Page A",
-    applications: 4,
-    interviews: 2,
-    offers: 0,
-  },
-  {
-    name: "Page B",
-    applications: 3,
-    interviews: 1,
-    offers: 1,
-  },
-  {
-    name: "Page C",
-    applications: 2,
-    interviews: 3,
-    offers: 2,
-  },
-  {
-    name: "Page D",
-    applications: 3,
-    interviews: 1,
-    offers: 0,
-  },
-  {
-    name: "Page E",
-    applications: 1,
-    interviews: 0,
-    offers: 0,
-  },
-];
-
-const CompaniesChart = () => {
+const CompaniesChart = ({ orderBy, filter }) => {
   // TODO: get company data dynamically
+  const [data, setData] = useState(Array());
+
+  useEffect(() => {
+    loadCompanies();
+  }, [orderBy]);
+
+  // add second useEffect for filterCompanies when filter changes
+
+  // gets companies is given order
+  const loadCompanies = async () => {
+    // get application count groups by company and status
+    const loadedData = await getCompanyData(orderBy);
+
+    // group all status types for company results
+    const groupedCompanies = Object.groupBy(
+      loadedData,
+      (company) => company.companyName
+    );
+
+    // format into name with fields for each application status
+    const formattedData = Object.keys(groupedCompanies).map((key) => {
+      // set name to companyName
+      let company = { name: key };
+
+      // for each application status the company contains, set this field with the count
+      groupedCompanies[key].forEach((status) => {
+        company[status.status] = status._count._all;
+      });
+
+      // {name: companyName, [status]: int}
+      return company;
+    });
+
+    setData(formattedData);
+  };
 
   return (
     <BarChart
@@ -61,9 +65,12 @@ const CompaniesChart = () => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="applications" stackId="a" fill="#4A90E2" />
-      <Bar dataKey="interviews" stackId="a" fill="#F5A623" />
-      <Bar dataKey="offers" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="Applied" stackId="a" fill="#4A90E2" />
+      <Bar dataKey="Interview" stackId="a" fill="#F5A623" />
+      <Bar dataKey="Offer" stackId="a" fill="#82ca9d" />
+      <Bar dataKey="Rejected" stackId="a" fill="#D0021B" />
+      <Bar dataKey="Signed" stackId="a" fill="#560bad" />
+      <Bar dataKey="Other" stackId="a" fill="#9B9B9B" />
     </BarChart>
   );
 };

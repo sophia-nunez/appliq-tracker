@@ -75,6 +75,7 @@ const DataDisplay = () => {
                         name="orderBy"
                         value="applied"
                         onClick={(e) => setOrderBy(e.target.value)}
+                        defaultChecked
                       />
                       <label htmlFor="applications">Applications</label>
                     </div>
