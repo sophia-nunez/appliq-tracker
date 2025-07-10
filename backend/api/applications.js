@@ -80,7 +80,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to get applications." });
+    return res.status(500).json({ error: "Failed to get applications." });
   }
 });
 
@@ -98,7 +98,7 @@ router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: "Application not found" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Application not found." });
+    return res.status(500).json({ error: "Application not found." });
   }
 });
 
@@ -119,7 +119,7 @@ router.get(
       }
       return res.status(200).json({});
     } catch (err) {
-      return res.status(401).json({ error: "Application not found." });
+      return res.status(404).json({ error: "Application not found." });
     }
   }
 );
@@ -234,7 +234,7 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to update application." });
+    return res.status(500).json({ error: "Failed to update application." });
   }
 });
 
@@ -252,7 +252,7 @@ router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "Application not found" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to delete application." });
+    return res.status(500).json({ error: "Failed to delete application." });
   }
 });
 

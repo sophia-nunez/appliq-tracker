@@ -6,28 +6,15 @@ const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("../generated/prisma");
-
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
 const noteRouter = require("./notes");
 const middleware = require("../middleware/middleware");
 
+const DEV = process.env.DEV;
 const prisma = new PrismaClient();
 const server = express();
-let sessionConfig = {
-  name: "session",
-  secret: process.env.SESSION_SECRET,
-  rolling: true,
-  cookie: {
-    httpOnly: true,
-    domain: "localhost",
-    secure: false,
-    sameSite: "lax",
-  },
-  resave: false,
-  saveUninitialized: false,
-};
 
 const oAuth2Client = new OAuth2Client(
   process.env.CLIENT_ID,
@@ -35,12 +22,53 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
-server.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+let sessionConfig = {};
+if (DEV) {
+  sessionConfig = {
+    name: "session",
+    secret: process.env.SESSION_SECRET,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      domain: "localhost",
+      secure: false,
+      sameSite: "lax",
+      maxAge: 36000000, // 10 hours
+    },
+    resave: false,
+    saveUninitialized: false,
+  };
+} else {
+  sessionConfig = {
+    name: "session",
+    secret: process.env.SESSION_SECRET,
+    rolling: true,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 36000000, // 10 hours
+    },
+    resave: false,
+    saveUninitialized: false,
+  };
+}
+
+if (DEV) {
+  server.use(
+    cors({
+      origin: "https://localhost:5173",
+      credentials: true,
+    })
+  );
+} else {
+  server.use(
+    cors({
+      origin: "https://appliq-tracker.onrender.com",
+      credentials: true,
+    })
+  );
+}
 
 server.use(session(sessionConfig));
 server.use(express.json());
@@ -50,6 +78,23 @@ server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
 server.use(middleware);
+
+server.use((req, res, next) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
+  );
+  next();
+});
+
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.userId) {
+    return res
+      .status(401)
+      .json({ error: "You must be logged in to view this page." });
+  }
+  next();
+};
 
 // user authentication
 server.post("/register", async (req, res) => {
@@ -288,7 +333,7 @@ server.put("/user", async (req, res) => {
         where: { id: req.session.userId },
       });
     } else {
-      res.status(401).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found" });
     }
 
     res.json({ message: "User updated successfully" });

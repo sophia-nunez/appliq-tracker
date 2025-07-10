@@ -44,8 +44,7 @@ const CompanyPage = () => {
   };
 
   // opens modal to add company
-  const addCompany = (e) => {
-    e.preventDefault();
+  const addCompany = () => {
     setModalOpen(true);
   };
 

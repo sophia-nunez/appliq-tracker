@@ -46,6 +46,7 @@ const ApplicationDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteApplication(appId);
+      // uses navigation history to go back one page
       navigate(-1);
     } catch (error) {
       alert("Failed to delete application");
