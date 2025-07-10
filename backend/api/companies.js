@@ -85,7 +85,7 @@ router.get("/companies/:id", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to get company" });
+    return res.status(500).json({ error: "Failed to get company" });
   }
 });
 
@@ -142,7 +142,7 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
       return res.status(422).json({ error: "Company name required" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to create company." });
+    return res.status(500).json({ error: "Failed to create company." });
   }
 });
 
@@ -190,7 +190,7 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Company modifications are invalid" });
     }
   } catch (err) {
-    return res.status(401).json({ error: "Failed to update company." });
+    return res.status(500).json({ error: "Failed to update company." });
   }
 });
 

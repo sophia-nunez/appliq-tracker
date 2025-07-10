@@ -283,7 +283,7 @@ server.put("/user", async (req, res) => {
         where: { id: req.session.userId },
       });
     } else {
-      res.status(401).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found" });
     }
 
     res.json({ message: "User updated successfully" });
