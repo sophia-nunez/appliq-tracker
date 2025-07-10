@@ -3,8 +3,10 @@ import "../styles/List.css";
 import { applicationsPath } from "../links";
 import { useEffect, useState } from "react";
 import { getNotes, createNote, deleteNote } from "../utils/noteUtils";
+import { useLoading } from "./LoadingContext";
 
 const List = () => {
+  const { setIsLoading } = useLoading();
   const [notes, setNotes] = useState(Array());
   const [formInput, setFormInput] = useState({
     task: "",
@@ -26,8 +28,10 @@ const List = () => {
   };
 
   const loadList = async () => {
+    setIsLoading(true);
     const notesList = await getNotes();
     setNotes(notesList);
+    setIsLoading(false);
   };
 
   const handleSubmit = async (e) => {

@@ -16,7 +16,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     categories: Array(),
     removedCategories: Array(),
     appliedAt: new Date(),
-    interviewAt: Date(),
+    interviewAt: null,
   });
 
   // if editing existing application, loads in current data to the form

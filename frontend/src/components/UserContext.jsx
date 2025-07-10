@@ -1,21 +1,22 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { baseURL } from "../utils/authUtils";
+import { useLoading } from "./LoadingContext";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ setIsLoading, children }) => {
+export const UserProvider = ({ setLoadingUser, children }) => {
   const [user, setUser] = useState({});
 
   // on render, fetches current user
   useEffect(() => {
-    setIsLoading(true);
+    setLoadingUser(true);
     fetch(`${baseURL()}/me`, { credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.id) {
           setUser({ ...user, ...data });
         }
-        setIsLoading(false);
+        setLoadingUser(false);
       });
   }, []);
 

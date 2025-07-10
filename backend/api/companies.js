@@ -41,6 +41,13 @@ router.get("/companies", isAuthenticated, async (req, res, next) => {
     }
   }
 
+  // regardless of search, set orderBy takes precendance
+  if (search.orderBy === "alphabetical") {
+    orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
+  } else if (search.orderBy === "recent") {
+    orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
+  }
+
   try {
     const companies = await prisma.company.findMany({ where, orderBy });
     if (companies) {
@@ -49,7 +56,7 @@ router.get("/companies", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    return res.status(404).json({ error: "Failed to get companies." });
+    return res.status(500).json({ error: "Failed to get companies." });
   }
 });
 
@@ -67,7 +74,7 @@ router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    return res.status(404).json({ error: "Failed to get companies." });
+    return res.status(500).json({ error: "Failed to get companies." });
   }
 });
 
@@ -102,7 +109,7 @@ router.get("/companies/:name", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(500).json({ error: "Failed to get company" });
   }
 });
 
@@ -160,7 +167,7 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
     });
 
     if (!company) {
-      return res.status(400).json({ error: "Company not found" });
+      return res.status(404).json({ error: "Company not found" });
     }
 
     // check if isFavorite is changing
@@ -175,8 +182,6 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
     }
 
     // Validate that company has required fields
-    // TODO add companyId from name if possible (find company)
-    // TODO same for category
     const changesValid = changes.userId !== undefined;
     if (changesValid) {
       const updated = await prisma.company.update({
@@ -208,10 +213,8 @@ router.delete("/companies/:id", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(500).json({ error: "Failed to get company" });
   }
 });
-
-// [PUT] modify company
 
 module.exports = router;

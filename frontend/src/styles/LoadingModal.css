@@ -1,0 +1,25 @@
+#loading-modal {
+  .modal-content {
+    height: fit-content;
+
+    place-items: center;
+    display: flex;
+    flex-direction: column;
+
+    .loading-spinner {
+      animation: spin 2s linear infinite;
+      font-size: 150px;
+      color: var(--primary-color);
+      margin: 0.2em auto;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
