@@ -47,7 +47,6 @@ const ApplicationsPage = () => {
 
   // opens modal to add application
   const addApplication = (e) => {
-    e.preventDefault();
     setModalOpen(true);
   };
   return (

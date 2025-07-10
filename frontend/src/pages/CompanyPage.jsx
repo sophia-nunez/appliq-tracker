@@ -19,7 +19,6 @@ const CompanyPage = () => {
     loadCompanies();
   }, [query]);
 
-  // TODO: currently on all, move to companies list
   const openPage = (e, id) => {
     e.preventDefault();
     navigate(`${id}`);
@@ -40,8 +39,7 @@ const CompanyPage = () => {
   };
 
   // opens modal to add company
-  const addCompany = (e) => {
-    e.preventDefault();
+  const addCompany = () => {
     setModalOpen(true);
   };
 
