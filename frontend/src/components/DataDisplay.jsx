@@ -11,6 +11,8 @@ const DataDisplay = () => {
   const [orderBy, setOrderBy] = useState("applied");
   const [filter, setFilter] = useState(["applied", "interview", "offer"]);
 
+  //TODO: add filter/sort functionality for top companies, and a custom date range selector for Activity chart
+
   // updates filter list for application types to show on company chart
   const handleFilter = (e) => {
     const value = e.target.value;
