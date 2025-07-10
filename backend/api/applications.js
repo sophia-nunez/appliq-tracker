@@ -162,6 +162,39 @@ router.get(
   }
 );
 
+// [GET] company data orderBy number of applications of given status
+router.get(
+  "/applications/data/company/:orderBy",
+  isAuthenticated,
+  async (req, res, next) => {
+    const sort = req.params.orderBy;
+    const userId = req.session.userId;
+
+    try {
+      const applications = await prisma.application.groupBy({
+        by: ["companyName", "status"],
+        where: {
+          userId: req.session.userId,
+        },
+        _count: {
+          _all: true,
+        },
+      });
+
+      if (applications) {
+        res.json(applications);
+      } else {
+        return res.status(404).json({ error: "No applications found" });
+      }
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ error: "Failed to get grouped applications." });
+    }
+  }
+);
+
 // [GET] one application by id
 router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
