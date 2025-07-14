@@ -5,6 +5,7 @@ const rateLimit = require("express-rate-limit");
 const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("../generated/prisma");
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
@@ -49,8 +50,13 @@ if (DEV) {
       sameSite: "none",
       maxAge: 36000000, // 10 hours
     },
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   };
 }
 
@@ -73,19 +79,12 @@ if (DEV) {
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
+server.use(middleware);
+
 server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
-server.use(middleware);
-
-server.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
-  );
-  next();
-});
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
