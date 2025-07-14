@@ -106,7 +106,6 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
-      console.log(err);
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -156,7 +155,6 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
-      console.log(err);
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -187,7 +185,6 @@ router.get(
         return res.status(404).json({ error: "No applications found" });
       }
     } catch (err) {
-      console.log(err);
       return res
         .status(500)
         .json({ error: "Failed to get grouped applications." });
@@ -196,7 +193,7 @@ router.get(
 );
 
 // [GET] one application by id
-router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
+router.get("/applications/id/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
     const application = await prisma.application.findUnique({
@@ -216,7 +213,7 @@ router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
 // GET one application by title and company
 // [GET] one application by id
 router.get(
-  "/applications/:company/:title",
+  "/applications/interview/:company/:title",
   isAuthenticated,
   async (req, res, next) => {
     const companyName = req.params.company;
@@ -284,87 +281,95 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
   }
 });
 
-router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
-  const id = Number(req.params.appId);
-  // separate field of categories to be removed
-  const { removedCategories, ...data } = req.body;
-  const updatedApp = { ...data, userId: req.session.userId };
-  let categories = { connectOrCreate: [], disconnect: removedCategories };
-  try {
-    // Make sure the ID is valid
-    const application = await prisma.application.findUnique({
-      where: { id, userId: req.session.userId },
-    });
-
-    if (!application) {
-      return res.status(400).json({ error: "Application not found" });
-    }
-
-    // Validate that application has required fields
-    const updatedAppValid = updatedApp.userId !== undefined;
-    if (updatedAppValid) {
-      if (updatedApp.companyName) {
-        // if companyName is changed, check if that company exists
-        const existingCompany = await prisma.company.findFirst({
-          where: { userId: req.session.userId, name: updatedApp.companyName },
-        });
-        if (existingCompany) {
-          updatedApp.companyId = existingCompany.id;
-        } else {
-          // if no matching company, remove any existing companyId
-          updatedApp.companyId = null;
-        }
-      }
-
-      // set updated time to now
-      updatedApp.updatedAt = new Date();
-
-      // add categories as needed
-      if (updatedApp.categories) {
-        for (const item of updatedApp.categories) {
-          // connect existing or create new one
-          categories.connectOrCreate.push({
-            where: { name: item.name },
-            create: {
-              name: item.name,
-              users: { connect: { id: req.session.userId } },
-            },
-          });
-        }
-        // replace categories
-        updatedApp.categories = categories;
-      }
-      const updated = await prisma.application.update({
-        data: updatedApp,
-        where: { id },
+router.put(
+  "/applications/edit/:appId",
+  isAuthenticated,
+  async (req, res, next) => {
+    const id = Number(req.params.appId);
+    // separate field of categories to be removed
+    const { removedCategories, ...data } = req.body;
+    const updatedApp = { ...data, userId: req.session.userId };
+    let categories = { connectOrCreate: [], disconnect: removedCategories };
+    try {
+      // Make sure the ID is valid
+      const application = await prisma.application.findUnique({
+        where: { id, userId: req.session.userId },
       });
-      return res.status(201).json();
-    } else {
-      return res
-        .status(400)
-        .json({ error: "Application modifications are invalid" });
+
+      if (!application) {
+        return res.status(400).json({ error: "Application not found" });
+      }
+
+      // Validate that application has required fields
+      const updatedAppValid = updatedApp.userId !== undefined;
+      if (updatedAppValid) {
+        if (updatedApp.companyName) {
+          // if companyName is changed, check if that company exists
+          const existingCompany = await prisma.company.findFirst({
+            where: { userId: req.session.userId, name: updatedApp.companyName },
+          });
+          if (existingCompany) {
+            updatedApp.companyId = existingCompany.id;
+          } else {
+            // if no matching company, remove any existing companyId
+            updatedApp.companyId = null;
+          }
+        }
+
+        // set updated time to now
+        updatedApp.updatedAt = new Date();
+
+        // add categories as needed
+        if (updatedApp.categories) {
+          for (const item of updatedApp.categories) {
+            // connect existing or create new one
+            categories.connectOrCreate.push({
+              where: { name: item.name },
+              create: {
+                name: item.name,
+                users: { connect: { id: req.session.userId } },
+              },
+            });
+          }
+          // replace categories
+          updatedApp.categories = categories;
+        }
+        const updated = await prisma.application.update({
+          data: updatedApp,
+          where: { id },
+        });
+        return res.status(201).json();
+      } else {
+        return res
+          .status(400)
+          .json({ error: "Application modifications are invalid" });
+      }
+    } catch (err) {
+      return res.status(500).json({ error: "Failed to update application." });
     }
-  } catch (err) {
-    return res.status(500).json({ error: "Failed to update application." });
   }
-});
+);
 
 // [DELETE] delete application
-router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
-  const id = Number(req.params.id);
-  try {
-    const application = await prisma.application.findUnique({
-      where: { id, userId: req.session.userId },
-    });
-    if (application) {
-      const deleted = await prisma.application.delete({ where: { id } });
-      res.json(deleted);
-    } else {
-      return res.status(404).json({ error: "Application not found" });
+router.delete(
+  "/applications/delete/:id",
+  isAuthenticated,
+  async (req, res, next) => {
+    const id = Number(req.params.id);
+    try {
+      const application = await prisma.application.findUnique({
+        where: { id, userId: req.session.userId },
+      });
+      if (application) {
+        const deleted = await prisma.application.delete({ where: { id } });
+        res.json(deleted);
+      } else {
+        return res.status(404).json({ error: "Application not found" });
+      }
+    } catch (err) {
+      return res.status(500).json({ error: "Failed to delete application." });
     }
-  } catch (err) {
-    return res.status(500).json({ error: "Failed to delete application." });
   }
-});
+);
 
 module.exports = router;

@@ -6,10 +6,13 @@ const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("../generated/prisma");
+
+// api routes
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
 const noteRouter = require("./notes");
+const searchRouter = require("./search");
 const middleware = require("../middleware/middleware");
 
 const DEV = process.env.DEV;
@@ -22,6 +25,7 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
+// set session config based on DEV or PROD
 let sessionConfig = {};
 if (DEV) {
   sessionConfig = {
@@ -54,6 +58,7 @@ if (DEV) {
   };
 }
 
+// set cors config based on DEV or PROD
 if (DEV) {
   server.use(
     cors({
@@ -77,8 +82,10 @@ server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
+server.use(searchRouter);
 server.use(middleware);
 
+// all routes given access control
 server.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",

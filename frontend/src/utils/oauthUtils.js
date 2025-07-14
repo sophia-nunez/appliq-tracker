@@ -12,7 +12,9 @@ const setInterviewTime = async (interviews) => {
     interviewDates.forEach(async (interview) => {
       try {
         const response = await fetch(
-          `${baseURL()}/applications/${interview.company}/${interview.title}`,
+          `${baseURL()}/applications/interview/${interview.company}/${
+            interview.title
+          }`,
           {
             credentials: "include",
           }

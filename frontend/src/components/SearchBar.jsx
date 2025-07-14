@@ -8,7 +8,7 @@ const SearchBar = ({ pageName, query, setQuery, orderBy, setOrderBy }) => {
         <input
           type="search"
           className="search"
-          placeholder="Search Applications..."
+          placeholder={`Search ${pageName}...`}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);

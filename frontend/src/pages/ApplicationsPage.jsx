@@ -33,11 +33,11 @@ const ApplicationsPage = () => {
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
     setIsLoading(true);
-    const currQuery = new URLSearchParams({
+    const currQuery = {
       text: query.trim(),
       category: filter,
       orderBy,
-    });
+    };
     try {
       const data = await getApplications(currQuery);
       const categories = await getCategories();
