@@ -17,9 +17,7 @@ const isAuthenticated = (req, res, next) => {
 router.use(middleware);
 
 // [GET] many categories
-router.get("/categories", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
+router.get("/categories", async (req, res, next) => {
   try {
     const categories = await prisma.category.findMany({
       where: { userId: req.session.userId },

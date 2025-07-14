@@ -16,9 +16,7 @@ const isAuthenticated = (req, res, next) => {
 router.use(middleware);
 
 // [GET] many companies with optional search
-router.get("/companies", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
+router.get("/companies", async (req, res, next) => {
   const search = req.query;
 
   const where = { userId: req.session.userId };
