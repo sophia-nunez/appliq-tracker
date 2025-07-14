@@ -35,7 +35,10 @@ const getNewAccessToken = async (user) => {
 };
 
 router.use(async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
+  );
 
   if (req.session.userId) {
     const user = await prisma.user.findUnique({
