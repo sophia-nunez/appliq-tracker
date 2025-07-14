@@ -8,6 +8,13 @@ footer {
     flex-direction: row;
     justify-content: start;
     gap: 1em;
+
+    a {
+      color: var(--text-color);
+    }
+    a:hover {
+      color: var(--secondary-color);
+    }
   }
 
   p {

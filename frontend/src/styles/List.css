@@ -1,25 +1,31 @@
+/* CSS file for list items, including applications and companies*/
+
 .list-container {
   margin: 20px auto;
+  width: 100%;
 
   .list-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    p {
+    .add-btn {
+      color: var(--text-color);
       cursor: pointer;
-      font-size: 1.3rem;
+      font-size: 2.6rem;
       margin: 0px 5px;
 
-      background-color: rgba(211, 211, 211, 0.342);
-      border-radius: 50px;
       padding: 0px 8px;
+    }
+    .add-btn:hover {
+      color: var(--card-bg-color);
     }
   }
 }
 
 .list-content {
   background-color: var(--card-bg-color);
+  min-height: 50vh;
   padding: 20px;
   border-radius: 3px;
 
@@ -33,6 +39,11 @@
     border-radius: 5px;
     width: 100%;
     padding: 0px 10px;
+  }
+
+  .no-display {
+    margin: auto;
+    text-align: center;
   }
 
   .long {
@@ -59,6 +70,10 @@
       gap: 10px;
 
       align-items: end;
+
+      p {
+        margin: 0px;
+      }
     }
 
     .unknown {
@@ -81,13 +96,15 @@
   }
 }
 
-.application {
+.application,
+.company {
   cursor: pointer;
   animation-name: animatescale;
   animation-duration: 1s;
 }
 
-.application:hover {
+.application:hover,
+.company:hover {
   cursor: pointer;
   animation-name: animatescale;
   animation-direction: reverse;
@@ -103,5 +120,31 @@
   }
   to {
     transform: scale(1);
+  }
+}
+
+.notes-list {
+  .child {
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7em;
+    padding: 5px 15px;
+
+    form {
+      .text {
+        width: 100%;
+      }
+    }
+
+    #task {
+      font-weight: 500;
+      font-size: 1.3em;
+    }
+    input {
+      border: transparent;
+      width: 100%;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router";
+import { googleLogout } from "@react-oauth/google";
 import { useUser } from "./UserContext";
 import { IoMdClose } from "react-icons/io";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -19,6 +20,7 @@ const NavBar = ({ closeNav, reference }) => {
 
   // ends session, resets user, and returns to the login page
   const handleLogout = async () => {
+    googleLogout();
     await fetch(`${baseURL()}/logout`, {
       method: "POST",
       credentials: "include",
