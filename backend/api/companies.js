@@ -5,8 +5,6 @@ const prisma = new PrismaClient();
 
 // [GET] many companies with optional search
 router.get("/companies", async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   const search = req.query;
 
   const where = {};

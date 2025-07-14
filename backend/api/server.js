@@ -69,9 +69,6 @@ if (DEV) {
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
-server.use(applicationRouter);
-server.use(categoryRouter);
-server.use(companyRouter);
 
 server.use((req, res, next) => {
   res.setHeader(
@@ -80,6 +77,10 @@ server.use((req, res, next) => {
   );
   next();
 });
+
+server.use(applicationRouter);
+server.use(categoryRouter);
+server.use(companyRouter);
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {

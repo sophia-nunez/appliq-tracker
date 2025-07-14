@@ -5,8 +5,6 @@ const prisma = new PrismaClient();
 
 // [GET] many categories
 router.get("/categories", async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   try {
     const categories = await prisma.category.findMany();
     if (categories) {
