@@ -79,20 +79,12 @@ if (DEV) {
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
-
-server.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
-  );
-  next();
-});
+server.use(middleware);
 
 server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
-server.use(middleware);
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
