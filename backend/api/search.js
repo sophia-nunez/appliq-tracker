@@ -33,11 +33,16 @@ const isAuthenticated = (req, res, next) => {
 router.get("/applications/search", isAuthenticated, async (req, res, next) => {
   const search = req.query;
 
+  let from = 0;
+  if (search.page) {
+    from = (search.page - 1) * 20;
+  }
+
   let query = {
     bool: {
       must: [
         {
-          simple_query_string: {
+          query_string: {
             query: `${search.text}*`, // search term
             fields: ["public_application_title^2", "*"], // boost title so matches in title are more important
             analyze_wildcard: true,
@@ -52,13 +57,10 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
     },
   };
 
-  if (search.orderBy === "alphabetical") {
-    // should sortBy overwrite relevance
-  }
-
   try {
     const applications = await client.search({
       index: "content-postgresql-ac4b",
+      from,
       size: 20,
       query,
     });
@@ -80,6 +82,7 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });

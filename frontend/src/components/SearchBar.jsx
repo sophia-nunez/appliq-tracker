@@ -14,23 +14,27 @@ const SearchBar = ({ pageName, query, setQuery, orderBy, setOrderBy }) => {
             setQuery(e.target.value);
           }}
         />
-        <select
-          name="sort-by"
-          id="sort-by"
-          value={orderBy}
-          onChange={(e) => {
-            setOrderBy(e.target.value);
-          }}
-        >
-          <option value="all" disabled>
-            Sort By
-          </option>
-          <option value="alphabetical">Name (A-Z)</option>
-          <option value="recent">Most Recent</option>
-          {pageName === "Applications" && (
-            <option value="interviewDate">Interview Date</option>
-          )}
-        </select>
+        {(pageName !== "Applications" || !query) && (
+          <div>
+            <label htmlFor="sort-by">Sort By: </label>
+            <select
+              name="sort-by"
+              id="sort-by"
+              value={orderBy}
+              onChange={(e) => {
+                setOrderBy(e.target.value);
+              }}
+            >
+              <option value="recent">Most Recent</option>
+              {pageName === "Applications" && (
+                <option value="interviewDate">Interview Date</option>
+              )}
+              {(pageName === "Companies" || query === "") && (
+                <option value="alphabetical">Name (A-Z)</option>
+              )}
+            </select>
+          </div>
+        )}
       </search>
     </section>
   );

@@ -18,7 +18,7 @@ const ApplicationsPage = () => {
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("all");
+  const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();
 
   useEffect(() => {
