@@ -267,6 +267,8 @@ const updateEmailScanned = async () => {
 };
 
 // calendar API
+
+// documentation example for creating event
 const createEvent = (interview) => {
   const event = {
     summary: "Interview",

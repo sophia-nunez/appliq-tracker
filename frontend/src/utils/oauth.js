@@ -19,7 +19,7 @@ function oauthSignIn() {
     redirect_uri: REDIRECT_URI,
     response_type: "token",
     scope:
-      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
     include_granted_scopes: "true",
     state: "pass-through value",
   };
