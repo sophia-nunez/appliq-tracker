@@ -9,7 +9,8 @@ import { findInterviewTimes } from "../utils/oauthUtils";
 const HomePage = () => {
   useEffect(() => {
     try {
-      const interviews = findInterviewTimes();
+      // on load, search and set interviews from email
+      findInterviewTimes();
     } catch (error) {
       console.log("Failed to find new interview times.");
     }
