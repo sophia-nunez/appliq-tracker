@@ -37,7 +37,6 @@ const getNewAccessToken = async (user) => {
 };
 
 router.use(async (req, res, next) => {
-
   res.setHeader(
     "Access-Control-Allow-Origin",
     DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
@@ -59,18 +58,17 @@ router.use(async (req, res, next) => {
       const deadline = new Date();
       if (expiration <= deadline) {
         // refresh token
-        const credentials = getNewAccessToken(user);
         try {
+          const credentials = getNewAccessToken(user);
           const updated = await prisma.user.update({
             data: { access_token: credentials },
             where: { id: req.session.userId },
           });
         } catch (error) {
-          await fetch(`${baseURL()}/logout`, {
-            method: "POST",
-            credentials: "include",
+          req.session.destroy(() => {
+            clearCookie("connect.sid");
           });
-          return res.status(400).json({
+          return res.status(401).json({
             error: "Failed to update access token. Please log in again.",
           });
         }
