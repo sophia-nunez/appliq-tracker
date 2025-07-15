@@ -39,6 +39,7 @@ model User {
   notes Note[]
   companies Company[]
   emailScanned DateTime?
+  calendarId String?
 }
 
 model Application {
