@@ -19,6 +19,7 @@ import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import { LoadingProvider } from "./components/LoadingContext";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
@@ -96,6 +97,10 @@ export default function App() {
         {
           path: "register",
           Component: RegisterPage,
+        },
+        {
+          path: "privacy-policy",
+          Component: PrivacyPage,
         },
       ],
     },
