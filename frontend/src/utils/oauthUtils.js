@@ -2,6 +2,58 @@ import { createApplication, editApplication } from "./applicationUtils";
 import { baseURL, getUserInfo } from "./authUtils";
 import { DateTime } from "luxon";
 
+// TODO replace with more extensive list
+const timeZoneAbbr = {
+  EST: "America/New_York",
+  EDT: "America/New_York",
+  PST: "America/Los_Angeles",
+  PDT: "America/Los_Angeles",
+};
+
+// gets new messages for user, parses them, then adds interviews
+// helper methods below
+const findInterviewTimes = async () => {
+  const interviews = [];
+  try {
+    // get user information based on current session
+    const user = await getUserInfo();
+
+    if (!user.google_id) {
+      // not linked to a google account, no action necessary
+      return;
+    }
+
+    // get all new messages from inbox that contain "interview confirmation"
+    const data = await getMessages(user);
+
+    if (data.messages) {
+      // get each message and parse information to find interview time
+      for (const message of data.messages) {
+        const data = await getMessage(user, message);
+        const newInterview = await parseMessage(message, data);
+
+        // if data was able to be obtained from the message, add interview object to list
+        if (newInterview) {
+          interviews.push(newInterview);
+        }
+      }
+    }
+
+    // update stored timestamp for last scan of inbox
+    updateEmailScanned();
+
+    // using the interview list, match interviews to applications to update or create
+    setInterviewTime(interviews);
+
+    // TODO ask to add found interviews to calendar. Waiting for calendar funcionality
+    return;
+  } catch (error) {
+    alert("No new interview times found from email.");
+  }
+};
+
+// using the given interviews, tries to find a matching application and update the interviewAt field
+// if no matching application, creates a new one with provided information
 const setInterviewTime = async (interviews) => {
   if (interviews && interviews.length > 0) {
     // only use interviews that have date set
@@ -10,6 +62,7 @@ const setInterviewTime = async (interviews) => {
     });
 
     interviewDates.forEach(async (interview) => {
+      // try to find application with matching company and title
       try {
         const response = await fetch(
           `${baseURL()}/applications/${interview.company}/${interview.title}`,
@@ -37,8 +90,9 @@ const setInterviewTime = async (interviews) => {
               application.id
             );
           } // if same email already used to set date, don't update
+          // further handling can be added here if overwriting a set interview date is not the desired behavior
         } else {
-          // no matching application found, make new one
+          // if no matching application found, make new one
           const newApplication = {
             appliedAt: new Date(),
             title: interview.title,
@@ -57,54 +111,11 @@ const setInterviewTime = async (interviews) => {
         throw error;
       }
     });
-  } else {
-    // no new interviews to set
-    return;
   }
 };
 
-const timeZoneAbbr = {
-  EST: "America/New_York",
-  EDT: "America/New_York",
-  PST: "America/Los_Angeles",
-  PDT: "America/Los_Angeles",
-};
-
-const findInterviewTimes = async () => {
-  const interviews = [];
-  try {
-    // get user information based on current session
-
-    const user = await getUserInfo();
-
-    if (!user.google_id) {
-      // not linked to a google account, no action necessary
-      return;
-    }
-
-    const data = await getMessages(user);
-
-    if (data.messages) {
-      // get each message and parse information to find interview time
-      for (const message of data.messages) {
-        const data = await getMessage(user, message);
-        const newInterview = await parseMessage(message, data);
-
-        if (newInterview) {
-          interviews.push(newInterview);
-        }
-      }
-    }
-
-    updateEmailScanned();
-    setInterviewTime(interviews);
-
-    return interviews;
-  } catch (error) {
-    alert("No new interview times found from email.");
-  }
-};
-
+// given a message, attempts to read text and extract interview information
+// currently, plain text must match Regex formattting to be read in
 const parseMessage = async (message, data) => {
   let bodyText = null;
   // if plain text email, read directly from body data
@@ -112,8 +123,6 @@ const parseMessage = async (message, data) => {
     const encodedText = data.payload.body.data;
     bodyText = atob(encodedText.replace(/-/g, "+").replace(/_/g, "/"));
   }
-
-  // TODO: set up recursion for multipart email
 
   if (bodyText) {
     const newInterview = { id: message.id, duration: {} };
@@ -199,13 +208,17 @@ const parseMessage = async (message, data) => {
 
     return newInterview;
   }
+  // if information can not be extracted, return null
   return null;
 };
 
+// gets new emails (since email last scanned) from user's inbox containing "interview confirmation" keywords
 const getMessages = async (user) => {
   let searchTime = null;
+  // if first time fetching for this user there will not be emailScanned, so no initial timestamp is given and all emails will be read in
   let apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email}`;
   if (user.emailScanned) {
+    // user has had messages read in previously, only fetch new emails
     const scanDate = new Date(user.emailScanned);
     searchTime = Math.floor(scanDate.getTime() / 1000);
     apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email} after:${searchTime}`;
@@ -229,6 +242,7 @@ const getMessages = async (user) => {
   }
 };
 
+// using email id, gets the data for that message from Gmail API
 const getMessage = async (user, message) => {
   try {
     const response = await fetch(
@@ -253,6 +267,8 @@ const getMessage = async (user, message) => {
   }
 };
 
+// updates the user's emailScanned field to represent the latest timestamp
+// that the inbox has been read from (prevent duplicate scans)
 const updateEmailScanned = async () => {
   try {
     const response = await fetch(`${baseURL()}/user`, {
