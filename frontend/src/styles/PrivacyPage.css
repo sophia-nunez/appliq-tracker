@@ -1,0 +1,14 @@
+.privacy-page {
+  margin: auto;
+  place-items: center;
+  max-width: 800px;
+
+  h1 {
+    margin: 20px auto;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    font-weight: 400;
+  }
+}
