@@ -17,10 +17,10 @@ const isAuthenticated = (req, res, next) => {
 router.use(middleware);
 
 // [GET] many categories
-router.get("/categories", async (req, res, next) => {
+router.get("/categories", isAuthenticated, async (req, res, next) => {
   try {
     const categories = await prisma.category.findMany({
-      where: { userId: req.session.userId },
+      where: { users: { some: { id: req.session.userId } } },
     });
     if (categories) {
       res.json(categories);
@@ -39,7 +39,7 @@ router.get("/categories/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);
   try {
     const category = await prisma.category.findUnique({
-      where: { id, userId: req.session.userId },
+      where: { id, users: { some: { id: req.session.userId } } },
     });
     if (category) {
       res.json(category);
@@ -61,7 +61,7 @@ router.get(
     const name = parseInt(req.params.name);
     try {
       const category = await prisma.category.findUnique({
-        where: { name, userId: req.session.userId },
+        where: { name, users: { some: { id: req.session.userId } } },
       });
       if (category) {
         res.json(category);
@@ -78,14 +78,14 @@ router.get(
 
 // [POST] create category
 router.post("/categories", isAuthenticated, async (req, res, next) => {
-  const newCategory = { ...req.body, userId: req.session.userId };
+  const newCategory = {
+    ...req.body,
+    users: { connect: { id: req.session.userId } },
+  };
   try {
     // Validate that new category has required fields
-    // TODO: add user
     const newCategoryValid =
-      newCategory.name !== undefined &&
-      newCategory.name.length < 21 &&
-      newCategory.userId !== undefined;
+      newCategory.name !== undefined && newCategory.name.length < 21;
     if (newCategoryValid) {
       const created = await prisma.category.create({ data: newCategory });
       res.status(201).json(created);
@@ -104,7 +104,7 @@ router.delete("/categories/:id", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.id);
   try {
     const category = await prisma.category.findUnique({
-      where: { id, userId: req.session.userId },
+      where: { id, users: { some: { id: req.session.userId } } },
     });
     if (category) {
       const deleted = await prisma.category.delete({ where: { id } });
@@ -118,7 +118,5 @@ router.delete("/categories/:id", isAuthenticated, async (req, res, next) => {
     next(err);
   }
 });
-
-// TODO: [PUT] modify category (add Application)
 
 module.exports = router;

@@ -39,6 +39,13 @@ router.get("/companies", async (req, res, next) => {
     }
   }
 
+  // regardless of search, set orderBy takes precendance
+  if (search.orderBy === "alphabetical") {
+    orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
+  } else if (search.orderBy === "recent") {
+    orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
+  }
+
   try {
     const companies = await prisma.company.findMany({ where, orderBy });
     if (companies) {
@@ -173,8 +180,6 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
     }
 
     // Validate that company has required fields
-    // TODO add companyId from name if possible (find company)
-    // TODO same for category
     const changesValid = changes.userId !== undefined;
     if (changesValid) {
       const updated = await prisma.company.update({

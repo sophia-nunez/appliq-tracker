@@ -1,27 +1,33 @@
 .application-detail-page,
 .company-detail-page {
+  place-items: center;
   .page-info {
     margin-bottom: 20px;
   }
 
   .application-header,
   .company-header {
-    place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .list-content {
+    min-height: 10vh;
   }
 
   .application-details,
   .company-details {
-    place-items: center;
+    width: clamp(250px, 80%, 2000px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .application-btns,
     .company-btns {
       display: flex;
       gap: 20px;
     }
-  }
-
-  .user-details {
-    width: clamp(250px, 80%, 2000px);
   }
 
   .tags {

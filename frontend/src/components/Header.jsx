@@ -24,7 +24,6 @@ const Header = () => {
       }
       if (navRef.current && event.target === navRef.current) {
         closeNav();
-        // TODO: cause slideout animation here as well? or only clicking close
       }
     }
 

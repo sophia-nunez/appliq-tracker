@@ -182,9 +182,14 @@ server.post("/login", loginLimiter, async (req, res) => {
 
 // get token information for user
 server.post("/auth/google", async (req, res) => {
-  const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
+  try {
+    const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
 
-  res.json(tokens);
+    res.json(tokens);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Unable to authorize Google account." });
+  }
 });
 
 // refresh access token for user, set new token based on given google_id
