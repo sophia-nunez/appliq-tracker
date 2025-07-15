@@ -36,8 +36,13 @@ if (DEV) {
       sameSite: "lax",
       maxAge: 36000000, // 10 hours
     },
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   };
 } else {
   sessionConfig = {
