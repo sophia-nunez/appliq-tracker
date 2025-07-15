@@ -1,0 +1,66 @@
+.data-page {
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+    .summary-chart {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      width: 100%;
+    }
+
+    .chart-container {
+      background-color: var(--card-bg-color);
+      box-shadow: 1px 0px 2px 0px var(--primary-color);
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 70px;
+
+      width: 80vw;
+      min-height: 60vh;
+      padding: 100px 20px;
+
+      .chart-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: start;
+
+        gap: 20px;
+      }
+
+      .chart {
+        place-items: center;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: white;
+      }
+
+      .chart-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+    }
+
+    .chart-title {
+      font-size: 1.2em;
+      font-weight: 500;
+      border: transparent;
+
+      * {
+        color: inherit;
+        background-color: inherit;
+      }
+    }
+  }
+}

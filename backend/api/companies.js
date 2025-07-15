@@ -54,7 +54,7 @@ router.get("/companies", async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    return res.status(404).json({ error: "Failed to get companies." });
+    return res.status(500).json({ error: "Failed to get companies." });
   }
 });
 
@@ -72,7 +72,7 @@ router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    return res.status(404).json({ error: "Failed to get companies." });
+    return res.status(500).json({ error: "Failed to get companies." });
   }
 });
 
@@ -107,7 +107,7 @@ router.get("/companies/:name", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(500).json({ error: "Failed to get company" });
   }
 });
 
@@ -165,7 +165,7 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
     });
 
     if (!company) {
-      return res.status(400).json({ error: "Company not found" });
+      return res.status(404).json({ error: "Company not found" });
     }
 
     // check if isFavorite is changing
@@ -211,10 +211,8 @@ router.delete("/companies/:id", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
-    next(err);
+    return res.status(500).json({ error: "Failed to get company" });
   }
 });
-
-// [PUT] modify company
 
 module.exports = router;

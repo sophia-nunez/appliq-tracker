@@ -84,6 +84,117 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// [GET] get data --> number of applications group by given type/field
+router.get(
+  "/applications/data/group/:type",
+  isAuthenticated,
+  async (req, res, next) => {
+    const type = req.params.type;
+
+    try {
+      const applications = await prisma.application.groupBy({
+        where: { userId: req.session.userId },
+        by: [type],
+        _count: {
+          _all: true,
+        },
+      });
+
+      if (applications) {
+        res.json(applications);
+      } else {
+        next({ status: 404, message: `No applications found` });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ error: "Failed to get applications." });
+    }
+  }
+);
+
+// [GET] get data --> number of applications group by given type/field
+router.get(
+  "/applications/data/dateRange/:period",
+  isAuthenticated,
+  async (req, res, next) => {
+    const userId = req.session.userId;
+    const period = req.params.period;
+
+    if (
+      period !== "all" &&
+      period !== "year" &&
+      period !== "month" &&
+      period !== "day"
+    ) {
+      // invalid period
+      return res.status(422).json({ error: "Invalid date range" });
+    }
+
+    let query = `
+          SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
+          FROM "Application"
+          WHERE "userId" = ${userId}
+          GROUP BY day
+          ORDER BY day;
+        `;
+    if (period !== "all") {
+      query = `
+          SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
+          FROM "Application"
+          WHERE "userId" = ${userId} AND "appliedAt" >= NOW() - INTERVAL '1 ${period}'
+          GROUP BY day
+          ORDER BY day;
+        `;
+    }
+
+    try {
+      const applications = await prisma.$queryRawUnsafe(query);
+
+      if (applications) {
+        res.json(applications);
+      } else {
+        next({ status: 404, message: `No applications found` });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.status(401).json({ error: "Failed to get applications." });
+    }
+  }
+);
+
+// [GET] company data orderBy number of applications of given status
+router.get(
+  "/applications/data/company/:orderBy",
+  isAuthenticated,
+  async (req, res, next) => {
+    const sort = req.params.orderBy;
+    const userId = req.session.userId;
+
+    try {
+      const applications = await prisma.application.groupBy({
+        by: ["companyName", "status"],
+        where: {
+          userId: req.session.userId,
+        },
+        _count: {
+          _all: true,
+        },
+      });
+
+      if (applications) {
+        res.json(applications);
+      } else {
+        return res.status(404).json({ error: "No applications found" });
+      }
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .json({ error: "Failed to get grouped applications." });
+    }
+  }
+);
+
 // [GET] one application by id
 router.get("/applications/:id", isAuthenticated, async (req, res, next) => {
   const id = parseInt(req.params.id);

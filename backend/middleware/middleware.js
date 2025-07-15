@@ -37,7 +37,7 @@ const getNewAccessToken = async (user) => {
 };
 
 router.use(async (req, res, next) => {
-  console.log("middleware accessed");
+
   res.setHeader(
     "Access-Control-Allow-Origin",
     DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
