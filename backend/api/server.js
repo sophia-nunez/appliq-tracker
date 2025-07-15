@@ -246,7 +246,6 @@ server.post("/auth/google/login", async (req, res) => {
     });
   } else {
     try {
-      console.log("creating calendar");
       // create "Interviews - Appliq" calendar
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars`,
@@ -265,15 +264,12 @@ server.post("/auth/google/login", async (req, res) => {
       );
       if (!response.ok) {
         const text = await response.json();
-        console.log(text);
-        console.log(text.error.errors);
         throw new Error();
       }
 
       // calendar resource - contains information on created calendar, including id
       const calendar = await response.json();
 
-      console.log(calendar);
       // create user with google information including appliq calendar
       const newUser = await prisma.user.create({
         data: {
@@ -343,6 +339,7 @@ server.get("/user", async (req, res) => {
       google_id: true,
       access_token: true,
       emailScanned: true,
+      calendarId: true,
     },
   });
 
