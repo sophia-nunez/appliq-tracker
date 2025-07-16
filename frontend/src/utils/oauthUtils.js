@@ -142,10 +142,6 @@ const parseMessage = async (message, data) => {
 
   if (bodyText) {
     const newInterview = { id: message.id, duration: {} };
-    // from text, find date using formatting for abbreviated or full month names
-    // text needs to be in "Month dd, yyyy hh:mm ampm timezone" format
-    const dateRegexFormat =
-      /\b([A-Za-z]{3,9})\s(\d{1,2}),\s(\d{4})\s(\d{1,2}):(\d{2})\s([AP]M)(?:\s([A-Z]{2,4}))?\b/g;
 
     // TODO: instead search for dateString + timezone separately to avoid separating and then recombining parts
     let matchedText;
@@ -164,6 +160,10 @@ const parseMessage = async (message, data) => {
       newInterview.company = "No Associated Company";
     }
 
+    // from text, find date using formatting for abbreviated or full month names
+    // text needs to be in "Month d, yyyy h:mm ampm timezone" format
+    const dateRegexFormat =
+      /\b([A-Za-z]{3,9})\s(\d{1,2}),\s(\d{4})\s(\d{1,2}):(\d{2})\s([AP]M)(?:\s([A-Z]{2,4}))?\b/g;
     if ((matchedText = dateRegexFormat.exec(bodyText))) {
       // get each value and separate timezone
       const month = matchedText[1];
