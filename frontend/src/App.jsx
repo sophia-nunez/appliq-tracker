@@ -18,6 +18,7 @@ import DataPage from "./pages/DataPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import { LoadingProvider } from "./components/LoadingContext";

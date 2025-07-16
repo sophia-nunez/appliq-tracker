@@ -9,6 +9,7 @@ import {
   loginUser,
   registerUser,
 } from "../utils/authUtils";
+import { TextInput, PasswordInput } from "@mantine/core";
 import { homePath, loginPath, registerPath } from "../links";
 import "../styles/LoginPage.css";
 
@@ -112,8 +113,8 @@ const AuthForm = ({ type }) => {
       <section className={`${type}-container`}>
         <h2>{type === "register" ? "Register" : "Login"}</h2>
         <div className="username-input input-container">
-          <label htmlFor="username">Username: </label>
-          <input
+          <TextInput
+            label="Username:"
             type="text"
             name="username"
             id="username"
@@ -122,14 +123,13 @@ const AuthForm = ({ type }) => {
           />
         </div>
         <div className="password-input input-container">
-          <label htmlFor="password">Password: </label>
-          <input
+          <PasswordInput
+            label="Password:"
             type="password"
             name="password"
             id="password"
             value={formInput.password}
             onChange={handleChange}
-            autoComplete="none"
           />
         </div>
         <div className={`${type}-btns`}>

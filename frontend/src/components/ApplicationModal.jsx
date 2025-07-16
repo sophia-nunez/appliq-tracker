@@ -252,6 +252,7 @@ const ApplicationModal = ({
                   id="appliedAt"
                   name="appliedAt"
                   value={formInput.appliedAt}
+                  valueFormat="MM/DD/YYYY hh:mm A"
                   onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
@@ -264,6 +265,7 @@ const ApplicationModal = ({
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
+                  valueFormat="MM/DD/YYYY hh:mm A"
                   onChange={(value) => {
                     handleDateChange("interviewAt", value);
                     setChange(true);
