@@ -157,7 +157,8 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
   // or should it remove the applications - make decision
 
   const id = Number(req.params.companyId);
-  const changes = { ...req.body, userId: req.session.userId };
+  const { applications, ...rest } = req.body;
+  const changes = { ...rest, userId: req.session.userId };
   try {
     // Make sure the ID is valid
     const company = await prisma.company.findUnique({
@@ -193,6 +194,7 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Company modifications are invalid" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to update company." });
   }
 });
