@@ -1,0 +1,77 @@
+/* CSS for Popup */
+#submission-status {
+  position: absolute; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  right: -5vw;
+  bottom: 0;
+  overflow: auto; /* Enable scroll if needed */
+  align-content: end;
+
+  .success {
+    box-shadow: 1px 1px 1px 1px rgba(10, 169, 16, 0.5);
+  }
+
+  .error {
+    box-shadow: 1px 1px 1px 1px rgba(169, 10, 10, 0.5);
+  }
+}
+
+.popup-content {
+  position: relative;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 10px;
+  padding: 10px;
+  width: 40vw;
+  overflow: auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  animation-name: animatetop;
+  animation-duration: 0.8s;
+
+  .popup-text {
+    place-content: start;
+
+    h5,
+    p {
+      margin: 0px;
+      margin-bottom: 5px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 0.7em;
+    }
+  }
+}
+
+.close-icon {
+  color: var(--secondary-color);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.2em;
+  height: min-content;
+  font-size: 15px;
+}
+
+.close-icon:hover,
+.close-icon:focus {
+  color: var(--primary-color);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@keyframes animatetop {
+  from {
+    top: 100;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}

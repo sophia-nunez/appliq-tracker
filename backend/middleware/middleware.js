@@ -66,7 +66,7 @@ router.use(async (req, res, next) => {
           });
         } catch (error) {
           req.session.destroy(() => {
-            clearCookie("connect.sid");
+            res.clearCookie("connect.sid");
           });
           return res.status(401).json({
             error: "Failed to update access token. Please log in again.",

@@ -16,7 +16,7 @@ const AuthForm = ({ type }) => {
   const { setUser } = useUser();
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
-  const [message, setMessage] = useState(""); // error or success message
+  const [message, setMessage] = useState({}); // error or success message
 
   // google login for authorization
   const login = useGoogleLogin({

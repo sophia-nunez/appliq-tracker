@@ -1,10 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
 import CompanyModal from "./CompanyModal";
 
-const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
+const Modal = ({
+  contents,
+  item,
+  setModalOpen,
+  reloadPage,
+  setStatusOpen,
+  setInterviewChanged,
+  setMessage,
+}) => {
   const modalRef = useRef(null);
 
   // closes modal on window click off of modal or on span
@@ -33,15 +41,19 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
   // modal loads content based on prop passed in by parent page
   return (
     <aside id="modal" className="modal" ref={modalRef}>
-      <span id="nav-close" className="close">
+      <span id="modal-close" className="close">
         <IoMdClose className="close-icon" />
       </span>
       <section className="modal-content">
+        <button onClick={() => setStatusOpen(true)}>Open Status</button>
         {contents === "application" && (
           <ApplicationModal
             setModalOpen={setModalOpen}
             application={item}
             reloadPage={reloadPage}
+            setStatusOpen={setStatusOpen}
+            setInterviewChanged={setInterviewChanged}
+            setMessage={setMessage}
           />
         )}
         {contents === "company" && (
@@ -49,6 +61,8 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
             setModalOpen={setModalOpen}
             company={item}
             reloadPage={reloadPage}
+            setStatusOpen={setStatusOpen}
+            setMessage={setMessage}
           />
         )}
       </section>

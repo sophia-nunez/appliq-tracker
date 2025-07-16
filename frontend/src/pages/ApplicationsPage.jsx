@@ -4,17 +4,28 @@ import { FaCirclePlus } from "react-icons/fa6";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
+import SubmissionStatus from "../components/SubmissionStatus";
 import { getApplications } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
+import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
-import { useLoading } from "../components/LoadingContext";
 
 const ApplicationsPage = () => {
   const { setIsLoading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
+
+  // pop up on form submission
+  const [message, setMessage] = useState({
+    type: "success",
+    text: "Changes saved!",
+  }); // error or success message
+  const [statusOpen, setStatusOpen] = useState(false);
+  // track if interview date is modified for calendar addition
+  const [interviewChanged, setInterviewChanged] = useState(false);
+
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
@@ -114,6 +125,15 @@ const ApplicationsPage = () => {
             )}
           </section>
         </section>
+        {statusOpen && (
+          <SubmissionStatus
+            setStatusOpen={setStatusOpen}
+            setInterviewChanged={setInterviewChanged}
+            interviewChanged={interviewChanged}
+            setMessage={setMessage}
+            message={message}
+          />
+        )}
       </main>
       {modalOpen && (
         <Modal
@@ -121,6 +141,9 @@ const ApplicationsPage = () => {
           setModalOpen={setModalOpen}
           item={{}}
           reloadPage={loadApplications}
+          setStatusOpen={setStatusOpen}
+          setInterviewChanged={setInterviewChanged}
+          setMessage={setMessage}
         />
       )}
     </>

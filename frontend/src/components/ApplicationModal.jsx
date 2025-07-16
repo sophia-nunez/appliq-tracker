@@ -4,7 +4,14 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
-const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
+const ApplicationModal = ({
+  application,
+  setModalOpen,
+  reloadPage,
+  setStatusOpen,
+  setInterviewChanged,
+  setMessage,
+}) => {
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
   const [formInput, setFormInput] = useState({
@@ -92,13 +99,24 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     try {
       if (application.id) {
         const edit = await editApplication(formInput, application.id);
+        setMessage({ type: "success", text: "Application saved!" });
       } else {
         const added = await createApplication(formInput);
+        setMessage({
+          type: "success",
+          text: "Application added successfully!",
+        });
       }
+
       reloadPage();
+      setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message,
+      });
+      setStatusOpen(true);
     }
   };
 
@@ -229,7 +247,10 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
-                  onChange={(value) => handleDateChange("interviewAt", value)}
+                  onChange={(value) => {
+                    handleDateChange("interviewAt", value);
+                    setInterviewChanged(true);
+                  }}
                 />
               </div>
             </article>
