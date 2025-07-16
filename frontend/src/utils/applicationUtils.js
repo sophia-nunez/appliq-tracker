@@ -1,4 +1,4 @@
-import { baseURL } from "./authUtils";
+import { baseURL, checkLogin } from "./authUtils";
 
 // uses query params to load matching applications
 const getApplications = async (query) => {
@@ -9,6 +9,7 @@ const getApplications = async (query) => {
     );
     if (!response.ok) {
       const text = await response.json();
+      checkLogin(response);
       throw new Error(text.error);
     }
 

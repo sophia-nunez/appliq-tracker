@@ -342,7 +342,6 @@ server.get("/user", async (req, res) => {
       calendarId: true,
     },
   });
-
   res.json(user);
 });
 

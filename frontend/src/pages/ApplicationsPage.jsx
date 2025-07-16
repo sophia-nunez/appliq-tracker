@@ -10,6 +10,7 @@ import { getCategories } from "../utils/categoryUtils";
 import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
+import { checkLogin } from "../utils/authUtils";
 
 const ApplicationsPage = () => {
   const { setIsLoading } = useLoading();
