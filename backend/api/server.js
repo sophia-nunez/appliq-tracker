@@ -187,7 +187,6 @@ server.post("/auth/google", async (req, res) => {
 
     res.json(tokens);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Unable to authorize Google account." });
   }
 });
@@ -246,7 +245,6 @@ server.post("/auth/google/login", async (req, res) => {
     });
   } else {
     try {
-      console.log("creating calendar");
       // create "Interviews - Appliq" calendar
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars`,
@@ -265,15 +263,12 @@ server.post("/auth/google/login", async (req, res) => {
       );
       if (!response.ok) {
         const text = await response.json();
-        console.log(text);
-        console.log(text.error.errors);
         throw new Error();
       }
 
       // calendar resource - contains information on created calendar, including id
       const calendar = await response.json();
 
-      console.log(calendar);
       // create user with google information including appliq calendar
       const newUser = await prisma.user.create({
         data: {
@@ -296,7 +291,6 @@ server.post("/auth/google/login", async (req, res) => {
         username: newUser.name,
       });
     } catch (err) {
-      console.log(err);
       return res.status(400).json({ error: "Failed to create account." });
     }
   }
@@ -321,9 +315,9 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true },
+    select: { id: true, username: true, auth_provider: true },
   });
-  res.json({ id: user.id, username: user.username });
+  res.json({ id: user.id, username: user.username, type: user.auth_provider });
 });
 
 server.get("/user", async (req, res) => {
@@ -343,9 +337,9 @@ server.get("/user", async (req, res) => {
       google_id: true,
       access_token: true,
       emailScanned: true,
+      calendarId: true,
     },
   });
-
   res.json(user);
 });
 

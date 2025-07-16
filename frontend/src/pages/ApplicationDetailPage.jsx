@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate, useParams } from "react-router";
+import {
+  NavLink,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Modal from "../components/Modal";
 import Status from "../components/Status";
@@ -9,12 +14,15 @@ import "../styles/ApplicationDetailPage.css";
 
 const ApplicationDetailPage = () => {
   const navigate = useNavigate();
+  const { setStatusOpen, setMessage } = useOutletContext();
+
   // application information
   const { appId } = useParams(); // id of application
   const [application, setApplication] = useState({});
   const [applicationDate, setApplicationDate] = useState("");
   const [interviewDate, setInterviewDate] = useState("");
   const [companyPage, setCompanyPage] = useState("."); // default is current page
+
   // modal visibility
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -47,9 +55,12 @@ const ApplicationDetailPage = () => {
     try {
       const deleted = await deleteApplication(appId);
       // uses navigation history to go back one page
+      setMessage({ type: "success", text: "Application deleted." });
+      setStatusOpen(true);
       navigate(-1);
     } catch (error) {
-      alert("Failed to delete application");
+      setMessage({ type: "error", text: "Failed to delete company." });
+      setStatusOpen(true);
     }
   };
 

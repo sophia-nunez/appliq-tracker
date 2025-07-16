@@ -21,15 +21,43 @@ import "@mantine/core/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import { LoadingProvider } from "./components/LoadingContext";
+import SubmissionStatus from "./components/SubmissionStatus";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 // basic layout to be rendered on all pages
 function Root() {
+  // pop up on form submission
+  const [message, setMessage] = useState({
+    type: "error",
+    text: "Failed to complete action.",
+  }); // error or success message
+  const [statusOpen, setStatusOpen] = useState(false);
+  // track if interview date is modified for calendar addition
+  const [interviewChanged, setInterviewChanged] = useState({});
+
   return (
     <>
       <Header />
-      <Outlet />
+      <Outlet
+        context={{
+          message,
+          setMessage,
+          statusOpen,
+          setStatusOpen,
+          interviewChanged,
+          setInterviewChanged,
+        }}
+      />
+      {statusOpen && (
+        <SubmissionStatus
+          message={message}
+          setMessage={setMessage}
+          setStatusOpen={setStatusOpen}
+          interviewChanged={interviewChanged}
+          setInterviewChanged={setInterviewChanged}
+        />
+      )}
       <Footer />
     </>
   );

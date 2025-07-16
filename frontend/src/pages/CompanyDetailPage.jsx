@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate, useParams } from "react-router";
+import {
+  NavLink,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import ApplicationLong from "../components/ApplicationLong";
 import Modal from "../components/Modal";
@@ -9,6 +14,8 @@ import "../styles/ApplicationDetailPage.css";
 
 const CompanyDetailPage = () => {
   const navigate = useNavigate();
+  const { setStatusOpen, setMessage } = useOutletContext();
+
   // company information
   const { companyId } = useParams(); // id of company
   const [company, setCompany] = useState({});
@@ -36,9 +43,12 @@ const CompanyDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteCompany(companyId);
+      setMessage({ type: "success", text: "Company deleted." });
+      setStatusOpen(true);
       navigate(-1);
     } catch (error) {
-      alert("Failed to delete company");
+      setMessage({ type: "error", text: "Failed to delete company." });
+      setStatusOpen(true);
     }
   };
 

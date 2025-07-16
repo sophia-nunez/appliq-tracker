@@ -59,18 +59,19 @@ router.use(async (req, res, next) => {
       if (expiration <= deadline) {
         // refresh token
         try {
-          const credentials = getNewAccessToken(user);
+          const credentials = await getNewAccessToken(user);
           const updated = await prisma.user.update({
             data: { access_token: credentials },
             where: { id: req.session.userId },
           });
         } catch (error) {
           req.session.destroy(() => {
-            clearCookie("connect.sid");
+            res.clearCookie("connect.sid");
+            res.status(401).json({
+              error: "Failed to update access token. Please log in again.",
+            });
           });
-          return res.status(401).json({
-            error: "Failed to update access token. Please log in again.",
-          });
+          return;
         }
       }
     }

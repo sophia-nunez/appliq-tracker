@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "./UserContext";
 import { loginPath } from "../links.js";
+import LoadingModal from "./LoadingModal.jsx";
 
 const WithAuth = (loadingUser, WrappedComponent) => {
   return function ProtectedComponent(props) {
@@ -16,7 +17,7 @@ const WithAuth = (loadingUser, WrappedComponent) => {
     }, [user, navigate]);
 
     if (loadingUser || !user.id) {
-      return <p>Loading...</p>;
+      return <LoadingModal />;
     }
 
     return <WrappedComponent {...props} />;

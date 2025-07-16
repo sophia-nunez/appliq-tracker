@@ -1,4 +1,4 @@
-import { baseURL } from "./authUtils";
+import { baseURL, checkLogin } from "./authUtils";
 
 // uses query params to load matching applications
 const getApplications = async (query) => {
@@ -9,6 +9,7 @@ const getApplications = async (query) => {
     );
     if (!response.ok) {
       const text = await response.json();
+      checkLogin(response);
       throw new Error(text.error);
     }
 
@@ -87,6 +88,7 @@ const createApplication = async (application) => {
     }
 
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to Create Application");
   }
@@ -123,6 +125,9 @@ const editApplication = async (application, id) => {
     if (!response.ok) {
       throw new Error();
     }
+
+    const data = response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to update application");
   }

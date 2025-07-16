@@ -4,9 +4,17 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 
-const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
+const ApplicationModal = ({
+  application,
+  setModalOpen,
+  reloadPage,
+  setStatusOpen,
+  setInterviewChanged,
+  setMessage,
+}) => {
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
+  const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -90,15 +98,42 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     e.preventDefault();
 
     try {
+      let returnedApplication;
       if (application.id) {
-        const edit = await editApplication(formInput, application.id);
+        returnedApplication = await editApplication(formInput, application.id);
+        setMessage({
+          type: "success",
+          text: change
+            ? "Application saved! A new interview date was added."
+            : "Application saved!",
+        });
       } else {
-        const added = await createApplication(formInput);
+        returnedApplication = await createApplication(formInput);
+        setMessage({
+          type: "success",
+          text: change
+            ? "Application added! A new interview date was added."
+            : "Application added!",
+        });
       }
+      // if the interview date changed, set state var for calendar update
+      if (change) {
+        setInterviewChanged({
+          title: returnedApplication.title,
+          company: returnedApplication.companyName,
+          date: new Date(returnedApplication.interviewAt),
+        });
+      }
+
       reloadPage();
+      setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message,
+      });
+      setStatusOpen(true);
     }
   };
 
@@ -229,7 +264,10 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
-                  onChange={(value) => handleDateChange("interviewAt", value)}
+                  onChange={(value) => {
+                    handleDateChange("interviewAt", value);
+                    setChange(true);
+                  }}
                 />
               </div>
             </article>
