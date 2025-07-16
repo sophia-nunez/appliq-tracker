@@ -67,10 +67,11 @@ router.use(async (req, res, next) => {
         } catch (error) {
           req.session.destroy(() => {
             res.clearCookie("connect.sid");
+            res.status(401).json({
+              error: "Failed to update access token. Please log in again.",
+            });
           });
-          return res.status(401).json({
-            error: "Failed to update access token. Please log in again.",
-          });
+          return;
         }
       }
     }
