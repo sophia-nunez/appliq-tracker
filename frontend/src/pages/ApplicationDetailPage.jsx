@@ -3,6 +3,7 @@ import { NavLink, useNavigate, useParams } from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Modal from "../components/Modal";
 import Status from "../components/Status";
+import SubmissionStatus from "../components/SubmissionStatus";
 import { deleteApplication, getApplication } from "../utils/applicationUtils";
 import "../styles/Subpage.css";
 import "../styles/ApplicationDetailPage.css";
@@ -15,6 +16,16 @@ const ApplicationDetailPage = () => {
   const [applicationDate, setApplicationDate] = useState("");
   const [interviewDate, setInterviewDate] = useState("");
   const [companyPage, setCompanyPage] = useState("."); // default is current page
+
+  // pop up on form submission
+  const [message, setMessage] = useState({
+    type: "success",
+    text: "Changes saved!",
+  }); // error or success message
+  const [statusOpen, setStatusOpen] = useState(false);
+  // track if interview date is modified for calendar addition
+  const [interviewChanged, setInterviewChanged] = useState({});
+
   // modal visibility
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -118,6 +129,16 @@ const ApplicationDetailPage = () => {
             </button>
           </section>
         </section>
+
+        {statusOpen && (
+          <SubmissionStatus
+            setStatusOpen={setStatusOpen}
+            setInterviewChanged={setInterviewChanged}
+            interviewChanged={interviewChanged}
+            setMessage={setMessage}
+            message={message}
+          />
+        )}
       </main>
       {modalOpen && (
         <Modal
@@ -125,6 +146,9 @@ const ApplicationDetailPage = () => {
           setModalOpen={setModalOpen}
           item={application}
           reloadPage={loadApplication}
+          setStatusOpen={setStatusOpen}
+          setInterviewChanged={setInterviewChanged}
+          setMessage={setMessage}
         />
       )}
     </>
