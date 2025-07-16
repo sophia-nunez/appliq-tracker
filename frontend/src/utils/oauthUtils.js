@@ -40,8 +40,7 @@ const findInterviewTimes = async () => {
     // using the interview list, match interviews to applications to update or create
     setInterviewTime(interviews);
 
-    // TODO ask to add found interviews to calendar. Waiting for calendar funcionality
-    return;
+    return interviews;
   } catch (error) {
     alert("No new interview times found from email.");
   }

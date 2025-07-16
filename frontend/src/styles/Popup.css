@@ -1,8 +1,8 @@
 /* CSS for Popup */
 #submission-status {
-  position: absolute; /* Stay in place */
+  position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
-  right: -5vw;
+  right: 0;
   bottom: 0;
   overflow: auto; /* Enable scroll if needed */
   align-content: end;

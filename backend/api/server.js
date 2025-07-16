@@ -187,7 +187,6 @@ server.post("/auth/google", async (req, res) => {
 
     res.json(tokens);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Unable to authorize Google account." });
   }
 });
@@ -292,7 +291,6 @@ server.post("/auth/google/login", async (req, res) => {
         username: newUser.name,
       });
     } catch (err) {
-      console.log(err);
       return res.status(400).json({ error: "Failed to create account." });
     }
   }
@@ -317,9 +315,9 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true },
+    select: { id: true, username: true, auth_provider: true },
   });
-  res.json({ id: user.id, username: user.username });
+  res.json({ id: user.id, username: user.username, type: user.auth_provider });
 });
 
 server.get("/user", async (req, res) => {

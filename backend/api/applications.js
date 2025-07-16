@@ -106,7 +106,6 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
-      console.log(err);
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -156,7 +155,6 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
-      console.log(err);
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -187,7 +185,6 @@ router.get(
         return res.status(404).json({ error: "No applications found" });
       }
     } catch (err) {
-      console.log(err);
       return res
         .status(500)
         .json({ error: "Failed to get grouped applications." });
@@ -338,7 +335,7 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         data: updatedApp,
         where: { id },
       });
-      return res.status(201).json();
+      return res.status(201).json(updated);
     } else {
       return res
         .status(400)

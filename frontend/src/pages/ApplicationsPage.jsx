@@ -10,7 +10,6 @@ import { getCategories } from "../utils/categoryUtils";
 import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
-import { checkLogin } from "../utils/authUtils";
 
 const ApplicationsPage = () => {
   const { setIsLoading } = useLoading();
@@ -25,7 +24,7 @@ const ApplicationsPage = () => {
   }); // error or success message
   const [statusOpen, setStatusOpen] = useState(false);
   // track if interview date is modified for calendar addition
-  const [interviewChanged, setInterviewChanged] = useState(false);
+  const [interviewChanged, setInterviewChanged] = useState({});
 
   // search and nav
   const [filter, setFilter] = useState("all");

@@ -14,6 +14,7 @@ const ApplicationModal = ({
 }) => {
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
+  const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -97,14 +98,30 @@ const ApplicationModal = ({
     e.preventDefault();
 
     try {
+      let returnedApplication;
       if (application.id) {
-        const edit = await editApplication(formInput, application.id);
-        setMessage({ type: "success", text: "Application saved!" });
-      } else {
-        const added = await createApplication(formInput);
+        returnedApplication = await editApplication(formInput, application.id);
         setMessage({
           type: "success",
-          text: "Application added successfully!",
+          text: change
+            ? "Application saved! A new interview date was added."
+            : "Application saved!",
+        });
+      } else {
+        returnedApplication = await createApplication(formInput);
+        setMessage({
+          type: "success",
+          text: change
+            ? "Application added! A new interview date was added."
+            : "Application added!",
+        });
+      }
+      // if the interview date changed, set state var for calendar update
+      if (change) {
+        setInterviewChanged({
+          title: returnedApplication.title,
+          company: returnedApplication.companyName,
+          date: new Date(returnedApplication.interviewAt),
         });
       }
 
@@ -249,7 +266,7 @@ const ApplicationModal = ({
                   value={formInput.interviewAt}
                   onChange={(value) => {
                     handleDateChange("interviewAt", value);
-                    setInterviewChanged(true);
+                    setChange(true);
                   }}
                 />
               </div>

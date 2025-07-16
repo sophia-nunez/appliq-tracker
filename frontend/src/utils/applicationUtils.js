@@ -88,6 +88,7 @@ const createApplication = async (application) => {
     }
 
     const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to Create Application");
   }
@@ -124,6 +125,9 @@ const editApplication = async (application, id) => {
     if (!response.ok) {
       throw new Error();
     }
+
+    const data = response.json();
+    return data;
   } catch (error) {
     throw new Error("Failed to update application");
   }
