@@ -1,21 +1,14 @@
-import { Link } from "react-router";
+import { Link, useOutletContext } from "react-router";
 import Featured from "../components/Featured";
 import List from "../components/List";
 import { applicationsPath, companiesPath, dataPath } from "../links";
 import "../styles/HomePage.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { findInterviewTimes } from "../utils/oauthUtils";
-import SubmissionStatus from "../components/SubmissionStatus";
 
 const HomePage = () => {
   // pop up on form submission
-  const [message, setMessage] = useState({
-    type: "success",
-    text: "Changes saved!",
-  }); // error or success message
-  const [statusOpen, setStatusOpen] = useState(false);
-  // track if interview date is modified for calendar addition
-  const [interviewChanged, setInterviewChanged] = useState({});
+  const { setStatusOpen, setMessage, setInterviewChanged } = useOutletContext();
 
   useEffect(() => {
     try {
@@ -70,15 +63,6 @@ const HomePage = () => {
         <h3>Notes</h3>
         <List />
       </section>
-      {statusOpen && (
-        <SubmissionStatus
-          setStatusOpen={setStatusOpen}
-          setInterviewChanged={setInterviewChanged}
-          interviewChanged={interviewChanged}
-          setMessage={setMessage}
-          message={message}
-        />
-      )}
     </main>
   );
 };

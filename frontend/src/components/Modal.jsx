@@ -3,17 +3,11 @@ import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
 import CompanyModal from "./CompanyModal";
+import { useOutletContext } from "react-router";
 
-const Modal = ({
-  contents,
-  item,
-  setModalOpen,
-  reloadPage,
-  setStatusOpen,
-  setInterviewChanged,
-  setMessage,
-}) => {
+const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
   const modalRef = useRef(null);
+  const { setMessage, setStatusOpen, setInterviewChanged } = useOutletContext();
 
   // closes modal on window click off of modal or on span
   useEffect(() => {

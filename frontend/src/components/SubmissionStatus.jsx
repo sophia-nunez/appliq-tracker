@@ -4,11 +4,11 @@ import { createEvent } from "../utils/oauthUtils";
 import { useUser } from "./UserContext";
 
 const SubmissionStatus = ({
-  setStatusOpen,
-  setInterviewChanged,
-  interviewChanged,
-  setMessage,
   message,
+  setMessage,
+  setStatusOpen,
+  interviewChanged,
+  setInterviewChanged,
 }) => {
   const { user } = useUser();
   // closes popup on span click or after timeout
@@ -17,6 +17,7 @@ const SubmissionStatus = ({
       () => {
         // close itself after time, 3 seconds normally or 6 if interview event
         setStatusOpen(false);
+        setInterviewChanged({});
       },
       interviewChanged.date ? 6000 : 3000
     );
