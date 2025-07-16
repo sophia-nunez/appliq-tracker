@@ -39,7 +39,6 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
         <IoMdClose className="close-icon" />
       </span>
       <section className="modal-content">
-        <button onClick={() => setStatusOpen(true)}>Open Status</button>
         {contents === "application" && (
           <ApplicationModal
             setModalOpen={setModalOpen}
