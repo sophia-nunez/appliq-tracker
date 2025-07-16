@@ -59,7 +59,7 @@ router.use(async (req, res, next) => {
       if (expiration <= deadline) {
         // refresh token
         try {
-          const credentials = getNewAccessToken(user);
+          const credentials = await getNewAccessToken(user);
           const updated = await prisma.user.update({
             data: { access_token: credentials },
             where: { id: req.session.userId },
