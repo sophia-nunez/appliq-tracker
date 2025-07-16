@@ -287,6 +287,7 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   const { removedCategories, ...data } = req.body;
   const updatedApp = { ...data, userId: req.session.userId };
   let categories = { connectOrCreate: [], disconnect: removedCategories };
+
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
