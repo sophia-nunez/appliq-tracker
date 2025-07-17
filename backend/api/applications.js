@@ -239,7 +239,6 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
     ...data,
     user: { connect: { id: req.session.userId } },
   };
-  let categories = { connectOrCreate: [] };
   try {
     // Validate that new application has required fields
     const newApplicationValid =
@@ -255,21 +254,20 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       if (existingCompany) {
         newApplication.company = { connect: { id: existingCompany.id } };
       }
+
+      let categories = { connect: [] };
       // adding categories, either add existing or create new one
       if (newApplication.categories) {
-        for (const item of newApplication.categories) {
-          // connects existing or makes new one
-          categories.connectOrCreate.push({
-            where: { name: item.name },
-            create: {
-              name: item.name,
-              users: { connect: { id: req.session.userId } },
-            },
-          });
-        }
-        // replace categories
-        newApplication.categories = categories;
+        // add categories to connect
+        const connectedCats = await addCategories(
+          req.session.userId,
+          newApplication.categories
+        );
+        // replace categories to connect with matched list of ids
+        categories.connect = connectedCats;
       }
+      // update application category data
+      newApplication.categories = categories;
 
       const created = await prisma.application.create({ data: newApplication });
       return res.status(201).json(created);
@@ -286,7 +284,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   // separate field of categories to be removed
   const { removedCategories, ...data } = req.body;
   const updatedApp = { ...data, userId: req.session.userId };
-  let categories = { connectOrCreate: [], disconnect: removedCategories };
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
@@ -316,21 +313,20 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
       // set updated time to now
       updatedApp.updatedAt = new Date();
 
-      // add categories as needed
+      // object for category connections and removals
+      let categories = { connect: [], disconnect: removedCategories };
       if (updatedApp.categories) {
-        for (const item of updatedApp.categories) {
-          // connect existing or create new one
-          categories.connectOrCreate.push({
-            where: { name: item.name },
-            create: {
-              name: item.name,
-              users: { connect: { id: req.session.userId } },
-            },
-          });
-        }
-        // replace categories
-        updatedApp.categories = categories;
+        // add categories to connect
+        const connectedCats = await addCategories(
+          req.session.userId,
+          updatedApp.categories
+        );
+        // replace categories to connect with matched list of ids
+        categories.connect = connectedCats;
       }
+      // update application data
+      updatedApp.categories = categories;
+
       const updated = await prisma.application.update({
         data: updatedApp,
         where: { id },
@@ -342,9 +338,42 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to update application." });
   }
 });
+
+const addCategories = async (userId, categories) => {
+  let connected = [];
+  for (const item of categories) {
+    // returns category, either existing or new based on name
+    const upsertCategory = await prisma.category.upsert({
+      where: {
+        name: item.name,
+      },
+      update: {},
+      create: {
+        name: item.name,
+      },
+    });
+    // connects category to the user
+    await prisma.category.update({
+      where: { id: upsertCategory.id },
+      data: {
+        users: {
+          connect: { id: userId },
+        },
+      },
+    });
+
+    // adds category to connect for application
+    connected.push({ id: upsertCategory.id });
+  }
+  console.log("successfully connected: ");
+  console.log(connected);
+
+  return connected;
+};
 
 // [DELETE] delete application
 router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
