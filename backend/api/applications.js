@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
+const order = require("../data/enums");
 
 const prisma = new PrismaClient();
 
@@ -44,12 +45,16 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 
   // regardless of search, set orderBy takes precendance
-  if (search.orderBy === "alphabetical") {
-    orderBy = [{ isFeatured: "desc" }, { title: "asc" }];
-  } else if (search.orderBy === "recent") {
-    orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
-  } else if (search.orderBy === "interviewDate") {
-    orderBy = [{ isFeatured: "desc" }, { interviewAt: "asc" }];
+  switch (search.orderBy) {
+    case order.alphabetical:
+      orderBy = [{ isFeatured: "desc" }, { title: "asc" }];
+      break;
+    case order.recent:
+      orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
+      break;
+    case order.interviewDate:
+      orderBy = [{ isFeatured: "desc" }, { interviewAt: "asc" }];
+      break;
   }
 
   if (search.category) {
