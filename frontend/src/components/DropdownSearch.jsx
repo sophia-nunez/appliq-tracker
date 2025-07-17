@@ -3,7 +3,7 @@ import { Combobox, InputBase, useCombobox } from "@mantine/core";
 
 // Generic searchable component from Mantine docs at http://mantine.dev/combobox/?e=SelectCreatable
 const DropdownSearch = ({
-  list,
+  data,
   value,
   setValue,
   addItem,
@@ -13,8 +13,6 @@ const DropdownSearch = ({
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-
-  const [data, setData] = useState(list);
 
   const exactOptionMatch = data.some((item) => item === value);
   const filteredOptions = exactOptionMatch

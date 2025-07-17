@@ -4,6 +4,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 import DropdownSearch from "./DropdownSearch";
+import { getCategories } from "../utils/categoryUtils";
 
 const ApplicationModal = ({
   application,
@@ -16,6 +17,7 @@ const ApplicationModal = ({
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
   const [catError, setCatError] = useState("");
+  const [allCategories, setAllCategories] = useState(Array());
   const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
@@ -35,6 +37,14 @@ const ApplicationModal = ({
       // TODO currently adds userId and all other fields to payload, should this be avoided?
       setFormInput((prev) => ({ ...prev, ...application }));
     }
+
+    // get all categories and set dropdown list to these values
+    const getAllCategories = async () => {
+      const categories = await getCategories();
+      setAllCategories(categories.map((category) => category.name));
+    };
+
+    getAllCategories();
   }, []);
 
   // works for all but date pickers, updates the given formInput field
@@ -56,6 +66,7 @@ const ApplicationModal = ({
     }));
   };
 
+  // TODO data for tags list currently uses formInput, have it draw from db instead (top ~5 results)
   const updateTags = (val) => {
     const newCat = { name: val };
     if (formInput.categories.some((cat) => cat.name === newCat.name)) {
@@ -212,7 +223,7 @@ const ApplicationModal = ({
               <label htmlFor="categories">Tags</label>
               <div className="tag-input">
                 <DropdownSearch
-                  list={formInput.categories}
+                  data={allCategories}
                   id="categories"
                   name="categories"
                   placeholder="Add tag"
