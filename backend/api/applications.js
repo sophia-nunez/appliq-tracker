@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const order = require("../data/enums");
+const { Order, Periods } = require("../data/enums");
 
 const prisma = new PrismaClient();
 
@@ -46,13 +46,13 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
 
   // regardless of search, set orderBy takes precendance
   switch (search.orderBy) {
-    case order.alphabetical:
+    case Order.alphabetical:
       orderBy = [{ isFeatured: "desc" }, { title: "asc" }];
       break;
-    case order.recent:
+    case Order.recent:
       orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
       break;
-    case order.interviewDate:
+    case Order.interviewDate:
       orderBy = [{ isFeatured: "desc" }, { interviewAt: "asc" }];
       break;
   }
@@ -124,12 +124,7 @@ router.get(
     const userId = req.session.userId;
     const period = req.params.period;
 
-    if (
-      period !== "all" &&
-      period !== "year" &&
-      period !== "month" &&
-      period !== "day"
-    ) {
+    if (!Object.values(Periods).includes(period)) {
       // invalid period
       return res.status(422).json({ error: "Invalid date range" });
     }

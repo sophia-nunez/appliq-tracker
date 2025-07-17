@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const order = require("../data/enums");
+const Order = require("../data/enums");
 
 const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
