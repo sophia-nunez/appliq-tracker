@@ -2,11 +2,12 @@ import { useState } from "react";
 import ActivityChart from "./ActivityChart";
 import CompaniesChart from "./CompaniesChart";
 import Checkbox from "./Checkbox";
+import { Periods } from "../data/enums";
 
 const DataDisplay = () => {
   // for activity chart
   const [type, setType] = useState("Activity");
-  const [dateRange, setDateRange] = useState("all-range");
+  const [dateRange, setDateRange] = useState(Periods.ALL);
   // for top company chart
   const [orderBy, setOrderBy] = useState("applied");
   const [filter, setFilter] = useState(["applied", "interview", "offer"]);
@@ -43,7 +44,7 @@ const DataDisplay = () => {
             {type === "Activity" ? (
               <>
                 <ActivityChart dateRange={dateRange} />
-                {dateRange !== "all-range" && (
+                {dateRange !== Periods.ALL && (
                   <h4>{new Date().getFullYear()}</h4>
                 )}
               </>
@@ -56,11 +57,11 @@ const DataDisplay = () => {
               <>
                 <p> Date Range: </p>
                 <div className="chart-buttons">
-                  <button onClick={() => setDateRange("all-range")}>All</button>
-                  <button onClick={() => setDateRange("year-range")}>
+                  <button onClick={() => setDateRange(Periods.ALL)}>All</button>
+                  <button onClick={() => setDateRange(Periods.YEAR)}>
                     1 Year
                   </button>
-                  <button onClick={() => setDateRange("month-range")}>
+                  <button onClick={() => setDateRange(Periods.MONTH)}>
                     1 Month
                   </button>
                 </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { loginPath } from "../links.js";
+import { loginPath } from "../data/links.js";
 
 // checks if in dev to return base API url
 // no real sitename given yet

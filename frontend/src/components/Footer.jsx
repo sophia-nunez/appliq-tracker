@@ -1,5 +1,10 @@
 import { Link } from "react-router";
-import { homePath, applicationsPath, companiesPath, dataPath } from "../links";
+import {
+  homePath,
+  applicationsPath,
+  companiesPath,
+  dataPath,
+} from "../data/links";
 import "../styles/Footer.css";
 
 const Footer = () => {

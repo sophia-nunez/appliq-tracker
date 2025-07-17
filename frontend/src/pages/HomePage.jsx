@@ -1,7 +1,7 @@
 import { Link, useOutletContext } from "react-router";
 import Featured from "../components/Featured";
 import List from "../components/List";
-import { applicationsPath, companiesPath, dataPath } from "../links";
+import { applicationsPath, companiesPath, dataPath } from "../data/links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
 import { findInterviewTimes } from "../utils/oauthUtils";

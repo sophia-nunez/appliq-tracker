@@ -6,7 +6,7 @@ import { useTheme } from "../components/ThemeContext";
 import icon from "../assets/images/icon.png";
 import darkIcon from "../assets/images/icon-dark.png";
 import NavBar from "./NavBar.jsx";
-import { homePath } from "../links.js";
+import { homePath } from "../data/links.js";
 import "../styles/Header.css";
 
 const Header = () => {

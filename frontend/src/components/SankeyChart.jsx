@@ -1,5 +1,6 @@
 import { Sankey } from "recharts";
 import SankeyNode from "./SankeyNode";
+import { Status } from "../data/enums";
 
 const SankeyChart = ({ data }) => {
   // gets number of that status
@@ -21,19 +22,19 @@ const SankeyChart = ({ data }) => {
   const formattedData = {
     nodes: [
       {
-        name: "Applied",
+        name: Status.Applied,
       },
       {
-        name: "Rejected",
+        name: Status.Rejected,
       },
       {
-        name: "Interview",
+        name: Status.Interview,
       },
       {
-        name: "Offer",
+        name: Status.Offer,
       },
       {
-        name: "Signed",
+        name: Status.Signed,
       },
     ],
     links: [
