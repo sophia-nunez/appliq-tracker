@@ -1,11 +1,14 @@
 #loading-modal {
+  margin-top: 10vh;
+  height: calc(100% - 10vh);
+  background-color: var(--background-color);
   .modal-content {
     height: fit-content;
     width: 500px;
     min-width: min-content;
-    background-color: black;
+    background-color: var(--background-color);
     box-shadow: none;
-    border-radius: 5px;
+    border: transparent;
 
     display: flex;
     flex-direction: column;
