@@ -11,7 +11,7 @@ import "../styles/CategoryDropdown.css";
 import { useLoading } from "../components/LoadingContext";
 
 const ApplicationsPage = () => {
-  const { setIsLoading } = useLoading();
+  const { loading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
@@ -32,7 +32,7 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
-    setIsLoading(true);
+    loading.setTrue();
     const currQuery = new URLSearchParams({
       text: query.trim(),
       category: filter,
@@ -47,7 +47,7 @@ const ApplicationsPage = () => {
     } catch (error) {
       alert(error.message);
     }
-    setIsLoading(false);
+    loading.setFalse();
   };
 
   // opens modal to add application

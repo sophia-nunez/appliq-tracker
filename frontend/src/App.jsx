@@ -46,7 +46,6 @@ const AppContent = ({ router }) => {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(false);
   // separate loading for user to prevent page re-rendering
   const [loadingUser, setLoadingUser] = useState(true);
   // can't access main pages if not logged in

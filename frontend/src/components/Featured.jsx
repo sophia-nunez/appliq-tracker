@@ -6,7 +6,7 @@ import "../styles/Featured.css";
 import { useLoading } from "./LoadingContext";
 
 const Featured = () => {
-  const { setIsLoading } = useLoading();
+  const { loading } = useLoading();
   const [featured, setFeatured] = useState(Array());
   // search and nav
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Featured = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
-    setIsLoading(true);
+    loading.setTrue();
     try {
       const data = await getFeatured();
       const slicedFeatured = data.slice(0, 5);
@@ -31,7 +31,7 @@ const Featured = () => {
     } catch (error) {
       alert(error.message);
     }
-    setIsLoading(false);
+    loading.setFalse();
   };
 
   return (

@@ -6,7 +6,7 @@ import { getNotes, createNote, deleteNote } from "../utils/noteUtils";
 import { useLoading } from "./LoadingContext";
 
 const List = () => {
-  const { setIsLoading } = useLoading();
+  const { loading } = useLoading();
   const [notes, setNotes] = useState(Array());
   const [formInput, setFormInput] = useState({
     task: "",
@@ -28,10 +28,10 @@ const List = () => {
   };
 
   const loadList = async () => {
-    setIsLoading(true);
+    loading.setTrue();
     const notesList = await getNotes();
     setNotes(notesList);
-    setIsLoading(false);
+    loading.setFalse();
   };
 
   const handleSubmit = async (e) => {
