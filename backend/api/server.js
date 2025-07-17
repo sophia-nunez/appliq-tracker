@@ -187,7 +187,6 @@ server.post("/auth/google", async (req, res) => {
 
     res.json(tokens);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Unable to authorize Google account." });
   }
 });
