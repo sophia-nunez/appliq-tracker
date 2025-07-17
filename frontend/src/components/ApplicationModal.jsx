@@ -3,6 +3,7 @@ import { DateTimePicker } from "@mantine/dates";
 import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
+import DropdownSearch from "./DropdownSearch";
 
 const ApplicationModal = ({
   application,
@@ -14,6 +15,7 @@ const ApplicationModal = ({
 }) => {
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
+  const [catError, setCatError] = useState("");
   const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
@@ -54,14 +56,11 @@ const ApplicationModal = ({
     }));
   };
 
-  const handleTag = (e) => {
-    setCategory(e.target.value);
-  };
-
-  const updateTags = (e) => {
-    const newCat = { name: category.trim() };
-    if (formInput.categories.includes(newCat)) {
-      alert("Tag cannot be duplicate.");
+  const updateTags = (val) => {
+    const newCat = { name: val };
+    if (formInput.categories.some((cat) => cat.name === newCat.name)) {
+      setCatError("Tag cannot be duplicate.");
+      setCategory("");
       return;
     }
     const newCategories = [...formInput.categories, newCat];
@@ -212,20 +211,17 @@ const ApplicationModal = ({
             <article className="child tags">
               <label htmlFor="categories">Tags</label>
               <div className="tag-input">
-                <input
+                <DropdownSearch
+                  list={formInput.categories}
                   id="categories"
                   name="categories"
                   placeholder="Add tag"
+                  error={catError}
                   value={category}
-                  onChange={handleTag}
+                  setValue={setCategory}
+                  addItem={updateTags}
+                  setError={setCatError}
                 />
-                <FaCirclePlus
-                  className="add-tag-btn"
-                  type="button"
-                  onClick={updateTags}
-                >
-                  +
-                </FaCirclePlus>
               </div>
               <div className="category-list">
                 {formInput.categories &&
