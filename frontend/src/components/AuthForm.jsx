@@ -9,6 +9,7 @@ import {
   loginUser,
   registerUser,
 } from "../utils/authUtils";
+import { TextInput, PasswordInput } from "@mantine/core";
 import { homePath, loginPath, registerPath } from "../links";
 import "../styles/LoginPage.css";
 
@@ -16,7 +17,7 @@ const AuthForm = ({ type }) => {
   const { setUser } = useUser();
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
-  const [message, setMessage] = useState(""); // error or success message
+  const [message, setMessage] = useState({}); // error or success message
 
   // google login for authorization
   const login = useGoogleLogin({
@@ -26,7 +27,7 @@ const AuthForm = ({ type }) => {
     },
     flow: "auth-code",
     scope:
-      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
     include_granted_scopes: "true",
   });
 
@@ -36,7 +37,7 @@ const AuthForm = ({ type }) => {
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/gmail.readonly",
-      "https://www.googleapis.com/auth/calendar.events"
+      "https://www.googleapis.com/auth/calendar.app.created"
     );
 
     if (hasAccess) {
@@ -112,8 +113,8 @@ const AuthForm = ({ type }) => {
       <section className={`${type}-container`}>
         <h2>{type === "register" ? "Register" : "Login"}</h2>
         <div className="username-input input-container">
-          <label htmlFor="username">Username: </label>
-          <input
+          <TextInput
+            label="Username:"
             type="text"
             name="username"
             id="username"
@@ -122,14 +123,13 @@ const AuthForm = ({ type }) => {
           />
         </div>
         <div className="password-input input-container">
-          <label htmlFor="password">Password: </label>
-          <input
+          <PasswordInput
+            label="Password:"
             type="password"
             name="password"
             id="password"
             value={formInput.password}
             onChange={handleChange}
-            autoComplete="none"
           />
         </div>
         <div className={`${type}-btns`}>

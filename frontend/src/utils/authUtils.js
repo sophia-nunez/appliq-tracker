@@ -1,9 +1,19 @@
+import { useNavigate } from "react-router";
+import { loginPath } from "../links.js";
+
 // checks if in dev to return base API url
 // no real sitename given yet
 function baseURL() {
   return import.meta.env.VITE_DEV
     ? "http://localhost:3000"
     : import.meta.env.VITE_BACKEND_URL;
+}
+
+function checkLogin(response) {
+  const navigate = useNavigate();
+  if (response.status === 401) {
+    navigate(loginPath);
+  }
 }
 
 // checks valid login info and unique username, then attempts to POST
@@ -137,6 +147,7 @@ const getUserInfo = async () => {
     });
     if (!response.ok) {
       const text = await response.json();
+      checkLogin(response);
       throw new Error(text.error);
     }
 
@@ -154,4 +165,5 @@ export {
   loginGoogleUser,
   getUserInfo,
   baseURL,
+  checkLogin,
 };

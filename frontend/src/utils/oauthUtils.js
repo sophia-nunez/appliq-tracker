@@ -1,7 +1,53 @@
 import { createApplication, editApplication } from "./applicationUtils";
 import { baseURL, getUserInfo } from "./authUtils";
+import { timeZoneAbbr } from "./timezones";
 import { DateTime } from "luxon";
 
+// gmail API
+
+// gets new messages for user, parses them, then adds interviews
+// helper methods below
+const findInterviewTimes = async () => {
+  const interviews = [];
+  try {
+    // get user information based on current session
+    const user = await getUserInfo();
+
+    if (!user.google_id) {
+      // not linked to a google account, no action necessary
+      return;
+    }
+
+    // get all new messages from inbox that contain "interview confirmation"
+    const data = await getMessages(user);
+
+    if (data.messages) {
+      // get each message and parse information to find interview time
+      for (const message of data.messages) {
+        const data = await getMessage(user, message);
+        const newInterview = await parseMessage(message, data);
+
+        // if data was able to be obtained from the message, add interview object to list
+        if (newInterview) {
+          interviews.push(newInterview);
+        }
+      }
+    }
+
+    // update stored timestamp for last scan of inbox
+    updateEmailScanned();
+
+    // using the interview list, match interviews to applications to update or create
+    setInterviewTime(interviews);
+
+    return interviews;
+  } catch (error) {
+    alert("No new interview times found from email.");
+  }
+};
+
+// using the given interviews, tries to find a matching application and update the interviewAt field
+// if no matching application, creates a new one with provided information
 const setInterviewTime = async (interviews) => {
   if (interviews && interviews.length > 0) {
     // only use interviews that have date set
@@ -10,6 +56,7 @@ const setInterviewTime = async (interviews) => {
     });
 
     interviewDates.forEach(async (interview) => {
+      // try to find application with matching company and title
       try {
         const response = await fetch(
           `${baseURL()}/applications/interview/${interview.company}/${
@@ -39,8 +86,9 @@ const setInterviewTime = async (interviews) => {
               application.id
             );
           } // if same email already used to set date, don't update
+          // further handling can be added here if overwriting a set interview date is not the desired behavior
         } else {
-          // no matching application found, make new one
+          // if no matching application found, make new one
           const newApplication = {
             appliedAt: new Date(),
             title: interview.title,
@@ -59,54 +107,11 @@ const setInterviewTime = async (interviews) => {
         throw error;
       }
     });
-  } else {
-    // no new interviews to set
-    return;
   }
 };
 
-const timeZoneAbbr = {
-  EST: "America/New_York",
-  EDT: "America/New_York",
-  PST: "America/Los_Angeles",
-  PDT: "America/Los_Angeles",
-};
-
-const findInterviewTimes = async () => {
-  const interviews = [];
-  try {
-    // get user information based on current session
-
-    const user = await getUserInfo();
-
-    if (!user.google_id) {
-      // not linked to a google account, no action necessary
-      return;
-    }
-
-    const data = await getMessages(user);
-
-    if (data.messages) {
-      // get each message and parse information to find interview time
-      for (const message of data.messages) {
-        const data = await getMessage(user, message);
-        const newInterview = await parseMessage(message, data);
-
-        if (newInterview) {
-          interviews.push(newInterview);
-        }
-      }
-    }
-
-    updateEmailScanned();
-    setInterviewTime(interviews);
-
-    return interviews;
-  } catch (error) {
-    alert("No new interview times found from email.");
-  }
-};
-
+// given a message, attempts to read text and extract interview information
+// currently, plain text must match Regex formattting to be read in
 const parseMessage = async (message, data) => {
   let bodyText = null;
   // if plain text email, read directly from body data
@@ -114,8 +119,6 @@ const parseMessage = async (message, data) => {
     const encodedText = data.payload.body.data;
     bodyText = atob(encodedText.replace(/-/g, "+").replace(/_/g, "/"));
   }
-
-  // TODO: set up recursion for multipart email
 
   if (bodyText) {
     const newInterview = { id: message.id, duration: {} };
@@ -138,7 +141,7 @@ const parseMessage = async (message, data) => {
     if ((matchedText = companyRegexFormat.exec(bodyText))) {
       newInterview.company = matchedText[1];
     } else {
-      newInterview.company = "Unknown";
+      newInterview.company = "No Associated Company";
     }
 
     if ((matchedText = dateRegexFormat.exec(bodyText))) {
@@ -158,12 +161,12 @@ const parseMessage = async (message, data) => {
 
       // string recombining parts into needed format (minus timezone)
       const date = `${month} ${day}, ${year} ${hour}:${minute} ${ampm}`;
-      // fromFormat(text: string, fmt: string, opts: Object)
       const parsedDate = DateTime.fromFormat(date, "LLLL d, yyyy h:mm a", {
         zone: timeZoneAbbr.timeZone,
       });
       const interviewDate = new Date(parsedDate.toISO());
       newInterview.date = interviewDate;
+      newInterview.timeZone = parsedDate.zoneName;
     }
     // find meeting location as any characters before the next new line
     const locationRegexFormat = /Location:\s*(.*)\s*\n/;
@@ -176,19 +179,23 @@ const parseMessage = async (message, data) => {
     // find duration as "number unit" with optional second "number unit" (if hours and mintutes)
     const durationRegexFormat = /Duration:\s*(\d*)\s*(.*)\s*(\d*\s*.*)?\n/;
     if ((matchedText = durationRegexFormat.exec(bodyText))) {
-      if (
-        matchedText[2] === "hr" ||
-        matchedText[2] === "hour" ||
-        matchedText[2] === "hrs" ||
-        matchedText[2] === "hours"
-      ) {
-        newInterview.duration.hours = matchedText[1];
+      try {
+        if (
+          matchedText[2] === "hr" ||
+          matchedText[2] === "hour" ||
+          matchedText[2] === "hrs" ||
+          matchedText[2] === "hours"
+        ) {
+          newInterview.duration.hours = parseInt(matchedText[1]);
 
-        if (matchedText[3]) {
-          newInterview.duration.minutes = matchedText[3];
+          if (matchedText[3]) {
+            newInterview.duration.minutes = parseInt(matchedText[3]);
+          }
+        } else {
+          newInterview.duration.minutes = parseInt(matchedText[1]);
         }
-      } else {
-        newInterview.duration.minutes = matchedText[1];
+      } catch (err) {
+        // duration formatting unreadable, continue
       }
     }
 
@@ -201,13 +208,17 @@ const parseMessage = async (message, data) => {
 
     return newInterview;
   }
+  // if information can not be extracted, return null
   return null;
 };
 
+// gets new emails (since email last scanned) from user's inbox containing "interview confirmation" keywords
 const getMessages = async (user) => {
   let searchTime = null;
+  // if first time fetching for this user there will not be emailScanned, so no initial timestamp is given and all emails will be read in
   let apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email}`;
   if (user.emailScanned) {
+    // user has had messages read in previously, only fetch new emails
     const scanDate = new Date(user.emailScanned);
     searchTime = Math.floor(scanDate.getTime() / 1000);
     apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email} after:${searchTime}`;
@@ -231,6 +242,7 @@ const getMessages = async (user) => {
   }
 };
 
+// using email id, gets the data for that message from Gmail API
 const getMessage = async (user, message) => {
   try {
     const response = await fetch(
@@ -255,6 +267,8 @@ const getMessage = async (user, message) => {
   }
 };
 
+// updates the user's emailScanned field to represent the latest timestamp
+// that the inbox has been read from (prevent duplicate scans)
 const updateEmailScanned = async () => {
   try {
     const response = await fetch(`${baseURL()}/user`, {
@@ -269,8 +283,82 @@ const updateEmailScanned = async () => {
       throw new Error();
     }
   } catch (error) {
-    throw new Error("Failed to update user profile");
+    throw new Error("Failed to update user profile.");
   }
 };
 
-export { findInterviewTimes, setInterviewTime };
+// calendar API
+
+const createEvent = async (interview) => {
+  // get calendarId and access_token from user
+  const { access_token, calendarId } = await getUserInfo();
+  // default duration is 1 hour
+  let durationMinutes = 60;
+  if (interview.duration) {
+    // otherwise set actual duration
+    durationMinutes = 0;
+    if (interview.duration.hours) {
+      durationMinutes += interview.duration.hours * 60;
+    }
+    if (interview.duration.minutes) {
+      durationMinutes += interview.duration.minutes;
+    }
+  }
+  // set endDate as duration past startDate
+  const endDate = new Date(
+    interview.date.getTime() + durationMinutes * 60000
+  ).toISOString();
+
+  let summary = `Interview: ${interview.title}`;
+  if (interview.company && interview.company !== "No Associated Company") {
+    summary += ` at ${interview.company}`;
+  }
+
+  try {
+    // attempt to make the event object and create it using Calendar API
+    const event = {
+      summary,
+      location: interview.location,
+      description:
+        "Upcoming interview. This event was auto-generated by Appliq - some details may be inaccurate.",
+      start: {
+        dateTime: interview.date,
+        timeZone:
+          interview.timeZone ||
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+      end: {
+        dateTime: endDate,
+        timeZone:
+          interview.timeZone ||
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+    };
+
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify(event),
+      }
+    );
+    if (!response.ok) {
+      const text = await response.json();
+      throw new Error();
+    }
+
+    // event resource - contains information on created event, including link
+    const result = await response.json();
+
+    // return object with event name and link for display to user
+    return { title: result.summary, link: result.htmlLink };
+  } catch (err) {
+    throw new Error("Failed to add interview to calendar.");
+  }
+};
+
+export { findInterviewTimes, setInterviewTime, createEvent };

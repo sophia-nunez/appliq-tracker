@@ -6,15 +6,16 @@ import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
 import { getApplications } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
+import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
-import { useLoading } from "../components/LoadingContext";
 
 const ApplicationsPage = () => {
   const { setIsLoading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
+
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");

@@ -3,10 +3,25 @@ import { DateTimePicker } from "@mantine/dates";
 import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
+import DropdownSearch from "./DropdownSearch";
+import { getCategories } from "../utils/categoryUtils";
+import { getCompanies } from "../utils/companyUtils";
 
-const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
+const ApplicationModal = ({
+  application,
+  setModalOpen,
+  reloadPage,
+  setStatusOpen,
+  setInterviewChanged,
+  setMessage,
+}) => {
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
+  const [catError, setCatError] = useState("");
+  const [companyError, setCompanyError] = useState("");
+  const [allCategories, setAllCategories] = useState(Array());
+  const [allCompanies, setAllCompanies] = useState(Array());
+  const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
     title: "",
@@ -25,9 +40,20 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
       // TODO currently adds userId and all other fields to payload, should this be avoided?
       setFormInput((prev) => ({ ...prev, ...application }));
     }
+
+    // get all categories and set dropdown list to these values
+    const getDropdownLists = async () => {
+      const categories = await getCategories();
+      setAllCategories(categories.map((category) => category.name));
+
+      const companies = await getCompanies("");
+      setAllCompanies(companies.map((company) => company.name));
+    };
+
+    getDropdownLists();
   }, []);
 
-  // works for all but date pickers, updates the given formInput field
+  // works for all but date pickers and dropdowns, updates the given formInput field
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -46,14 +72,18 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     }));
   };
 
-  const handleTag = (e) => {
-    setCategory(e.target.value);
+  const handleCompanyChange = (val) => {
+    setFormInput((previous) => ({
+      ...previous,
+      companyName: val,
+    }));
   };
 
-  const updateTags = (e) => {
-    const newCat = { name: category.trim() };
-    if (formInput.categories.includes(newCat)) {
-      alert("Tag cannot be duplicate.");
+  const updateTags = (val) => {
+    const newCat = { name: val };
+    if (formInput.categories.some((cat) => cat.name === newCat.name)) {
+      setCatError("Tag cannot be duplicate.");
+      setCategory("");
       return;
     }
     const newCategories = [...formInput.categories, newCat];
@@ -90,15 +120,42 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
     e.preventDefault();
 
     try {
+      let returnedApplication;
       if (application.id) {
-        const edit = await editApplication(formInput, application.id);
+        returnedApplication = await editApplication(formInput, application.id);
+        setMessage({
+          type: "success",
+          text: change
+            ? "Application saved! A new interview date was added."
+            : "Application saved!",
+        });
       } else {
-        const added = await createApplication(formInput);
+        returnedApplication = await createApplication(formInput);
+        setMessage({
+          type: "success",
+          text: change
+            ? "Application added! A new interview date was added."
+            : "Application added!",
+        });
       }
+      // if the interview date changed, set state var for calendar update
+      if (change) {
+        setInterviewChanged({
+          title: returnedApplication.title,
+          company: returnedApplication.companyName,
+          date: new Date(returnedApplication.interviewAt),
+        });
+      }
+
       reloadPage();
+      setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message,
+      });
+      setStatusOpen(true);
     }
   };
 
@@ -117,18 +174,20 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
             required
           />
         </h2>
-        <p>
+        <div>
           <label htmlFor="companyName"></label>
-          <input
-            type="text"
+          <DropdownSearch
+            data={allCompanies}
             id="companyName"
             name="companyName"
-            placeholder="Company"
+            label="Company"
             value={formInput.companyName}
-            onChange={handleChange}
-            required
+            setValue={handleCompanyChange}
+            addItem={handleCompanyChange}
+            error={companyError}
+            setError={setCompanyError}
           />
-        </p>
+        </div>
       </section>
       <section className="application-details">
         <div className="description-input">
@@ -177,20 +236,18 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
             <article className="child tags">
               <label htmlFor="categories">Tags</label>
               <div className="tag-input">
-                <input
+                <DropdownSearch
+                  data={allCategories}
                   id="categories"
                   name="categories"
+                  label="Tags"
                   placeholder="Add tag"
+                  error={catError}
                   value={category}
-                  onChange={handleTag}
+                  setValue={setCategory}
+                  addItem={updateTags}
+                  setError={setCatError}
                 />
-                <FaCirclePlus
-                  className="add-tag-btn"
-                  type="button"
-                  onClick={updateTags}
-                >
-                  +
-                </FaCirclePlus>
               </div>
               <div className="category-list">
                 {formInput.categories &&
@@ -217,6 +274,7 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="appliedAt"
                   name="appliedAt"
                   value={formInput.appliedAt}
+                  valueFormat="MM/DD/YYYY hh:mm A"
                   onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
@@ -229,7 +287,11 @@ const ApplicationModal = ({ application, setModalOpen, reloadPage }) => {
                   id="interviewAt"
                   name="interviewAt"
                   value={formInput.interviewAt}
-                  onChange={(value) => handleDateChange("interviewAt", value)}
+                  valueFormat="MM/DD/YYYY hh:mm A"
+                  onChange={(value) => {
+                    handleDateChange("interviewAt", value);
+                    setChange(true);
+                  }}
                 />
               </div>
             </article>

@@ -4,6 +4,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
+import SubmissionStatus from "../components/SubmissionStatus.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
 import { useLoading } from "../components/LoadingContext.jsx";
 
@@ -11,6 +12,16 @@ const CompanyPage = () => {
   const { setIsLoading } = useLoading();
   const [companies, setCompanies] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
+
+  // pop up on form submission
+  const [message, setMessage] = useState({
+    type: "success",
+    text: "Changes saved!",
+  }); // error or success message
+  const [statusOpen, setStatusOpen] = useState(false);
+  // track if interview date is modified for calendar addition
+  const [interviewChanged, setInterviewChanged] = useState(false);
+
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
@@ -90,6 +101,15 @@ const CompanyPage = () => {
             )}
           </section>
         </section>
+        {statusOpen && (
+          <SubmissionStatus
+            setStatusOpen={setStatusOpen}
+            setInterviewChanged={setInterviewChanged}
+            interviewChanged={interviewChanged}
+            setMessage={setMessage}
+            message={message}
+          />
+        )}
       </main>
       {modalOpen && (
         <Modal
@@ -97,6 +117,9 @@ const CompanyPage = () => {
           setModalOpen={setModalOpen}
           item={{}}
           reloadPage={loadCompanies}
+          setStatusOpen={setStatusOpen}
+          setInterviewChanged={setInterviewChanged}
+          setMessage={setMessage}
         />
       )}
     </>
