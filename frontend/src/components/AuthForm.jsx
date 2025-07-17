@@ -9,7 +9,7 @@ import {
   loginUser,
   registerUser,
 } from "../utils/authUtils";
-import { homePath, loginPath, registerPath } from "../links";
+import { homePath, loginPath, registerPath } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {

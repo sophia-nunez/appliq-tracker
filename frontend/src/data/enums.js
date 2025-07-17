@@ -1,3 +1,12 @@
+const Status = {
+  Applied: "Applied",
+  Interview: "Interview",
+  Offer: "Offer",
+  Rejected: "Rejected",
+  Signed: "Signed",
+  Other: "Other",
+};
+
 const Order = {
   ALPHABETICAL: "alphabetical",
   RECENT: "recent",
@@ -11,4 +20,4 @@ const Periods = {
   DAY: "day",
 };
 
-module.exports = { Order, Periods };
+export { Status, Order, Periods };

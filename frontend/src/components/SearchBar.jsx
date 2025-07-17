@@ -1,3 +1,4 @@
+import { Order } from "../data/enums";
 import "../styles/SearchBar.css";
 
 const SearchBar = ({ pageName, query, setQuery, orderBy, setOrderBy }) => {
@@ -25,10 +26,10 @@ const SearchBar = ({ pageName, query, setQuery, orderBy, setOrderBy }) => {
           <option value="all" disabled>
             Sort By
           </option>
-          <option value="alphabetical">Name (A-Z)</option>
-          <option value="recent">Most Recent</option>
+          <option value={Order.ALPHABETICAL}>Name (A-Z)</option>
+          <option value={Order.RECENT}>Most Recent</option>
           {pageName === "Applications" && (
-            <option value="interviewDate">Interview Date</option>
+            <option value={Order.INTERVIEW}>Interview Date</option>
           )}
         </select>
       </search>

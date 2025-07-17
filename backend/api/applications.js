@@ -46,13 +46,13 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
 
   // regardless of search, set orderBy takes precendance
   switch (search.orderBy) {
-    case Order.alphabetical:
+    case Order.ALPHABETICAL:
       orderBy = [{ isFeatured: "desc" }, { title: "asc" }];
       break;
-    case Order.recent:
+    case Order.RECENT:
       orderBy = [{ isFeatured: "desc" }, { appliedAt: "desc" }];
       break;
-    case Order.interviewDate:
+    case Order.INTERVIEW:
       orderBy = [{ isFeatured: "desc" }, { interviewAt: "asc" }];
       break;
   }

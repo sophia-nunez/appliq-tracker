@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "./UserContext";
-import { loginPath } from "../links.js";
+import { loginPath } from "../data/links.js";
 
 const WithAuth = (loadingUser, WrappedComponent) => {
   return function ProtectedComponent(props) {

@@ -42,10 +42,10 @@ router.get("/companies", async (req, res, next) => {
 
   // regardless of search, set orderBy takes precendance
   switch (search.orderBy) {
-    case order.alphabetical:
+    case order.ALPHABETICAL:
       orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
       break;
-    case order.recent:
+    case order.RECENT:
       orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
       break;
   }

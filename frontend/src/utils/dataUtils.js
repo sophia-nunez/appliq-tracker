@@ -1,15 +1,16 @@
 import { baseURL } from "./authUtils";
+import { Periods } from "../data/enums";
 
 // uses query params to load matching applications
 const getApplicationGroupData = async (type) => {
   let routeURL = `${baseURL()}/applications/data/group/${type}`;
 
   // if searching for activity chart, use dateRange route
-  if (type === "all-range") {
+  if (type === Periods.ALL) {
     routeURL = `${baseURL()}/applications/data/dateRange/all`;
-  } else if (type === "year-range") {
+  } else if (type === Periods.YEAR) {
     routeURL = `${baseURL()}/applications/data/dateRange/year`;
-  } else if (type === "month-range") {
+  } else if (type === Periods.MONTH) {
     routeURL = `${baseURL()}/applications/data/dateRange/month`;
   }
 
