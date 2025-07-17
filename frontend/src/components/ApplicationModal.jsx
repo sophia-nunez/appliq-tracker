@@ -5,6 +5,7 @@ import { createApplication, editApplication } from "../utils/applicationUtils";
 import "../styles/Modal.css";
 import DropdownSearch from "./DropdownSearch";
 import { getCategories } from "../utils/categoryUtils";
+import { getCompanies } from "../utils/companyUtils";
 
 const ApplicationModal = ({
   application,
@@ -17,7 +18,9 @@ const ApplicationModal = ({
   // input for application creation/modfication - currently excluded category functionality
   const [category, setCategory] = useState("");
   const [catError, setCatError] = useState("");
+  const [companyError, setCompanyError] = useState("");
   const [allCategories, setAllCategories] = useState(Array());
+  const [allCompanies, setAllCompanies] = useState(Array());
   const [change, setChange] = useState(false);
   const [formInput, setFormInput] = useState({
     companyName: "",
@@ -39,15 +42,18 @@ const ApplicationModal = ({
     }
 
     // get all categories and set dropdown list to these values
-    const getAllCategories = async () => {
+    const getDropdownLists = async () => {
       const categories = await getCategories();
       setAllCategories(categories.map((category) => category.name));
+
+      const companies = await getCompanies("");
+      setAllCompanies(companies.map((company) => company.name));
     };
 
-    getAllCategories();
+    getDropdownLists();
   }, []);
 
-  // works for all but date pickers, updates the given formInput field
+  // works for all but date pickers and dropdowns, updates the given formInput field
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -66,7 +72,13 @@ const ApplicationModal = ({
     }));
   };
 
-  // TODO data for tags list currently uses formInput, have it draw from db instead (top ~5 results)
+  const handleCompanyChange = (val) => {
+    setFormInput((previous) => ({
+      ...previous,
+      companyName: val,
+    }));
+  };
+
   const updateTags = (val) => {
     const newCat = { name: val };
     if (formInput.categories.some((cat) => cat.name === newCat.name)) {
@@ -162,18 +174,20 @@ const ApplicationModal = ({
             required
           />
         </h2>
-        <p>
+        <div>
           <label htmlFor="companyName"></label>
-          <input
-            type="text"
+          <DropdownSearch
+            data={allCompanies}
             id="companyName"
             name="companyName"
-            placeholder="Company"
+            label="Company"
             value={formInput.companyName}
-            onChange={handleChange}
-            required
+            setValue={handleCompanyChange}
+            addItem={handleCompanyChange}
+            error={companyError}
+            setError={setCompanyError}
           />
-        </p>
+        </div>
       </section>
       <section className="application-details">
         <div className="description-input">
@@ -226,6 +240,7 @@ const ApplicationModal = ({
                   data={allCategories}
                   id="categories"
                   name="categories"
+                  label="Tags"
                   placeholder="Add tag"
                   error={catError}
                   value={category}

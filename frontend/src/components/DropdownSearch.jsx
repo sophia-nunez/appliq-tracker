@@ -4,6 +4,7 @@ import { Combobox, InputBase, useCombobox } from "@mantine/core";
 // Generic searchable component from Mantine docs at http://mantine.dev/combobox/?e=SelectCreatable
 const DropdownSearch = ({
   data,
+  label,
   value,
   setValue,
   addItem,
@@ -15,6 +16,7 @@ const DropdownSearch = ({
   });
 
   const exactOptionMatch = data.some((item) => item === value);
+  // TODO slice array to top 6 results
   const filteredOptions = exactOptionMatch
     ? data
     : data.filter((item) =>
@@ -54,7 +56,7 @@ const DropdownSearch = ({
             setValue(value || "");
             setError("");
           }}
-          placeholder="Add"
+          placeholder={`Add ${label}`}
           rightSectionPointerEvents="none"
         />
       </Combobox.Target>
