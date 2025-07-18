@@ -14,6 +14,7 @@ const noteRouter = require("./notes");
 const middleware = require("../middleware/middleware");
 
 const DEV = process.env.DEV;
+const PROD = process.env.PROD;
 const prisma = new PrismaClient();
 const server = express();
 
@@ -65,21 +66,12 @@ if (DEV) {
   };
 }
 
-if (DEV) {
-  server.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-    })
-  );
-} else {
-  server.use(
-    cors({
-      origin: "https://appliq-tracker.onrender.com",
-      credentials: true,
-    })
-  );
-}
+server.use(
+  cors({
+    origin: PROD || DEV,
+    credentials: true,
+  })
+);
 
 server.use(session(sessionConfig));
 server.use(express.json());
