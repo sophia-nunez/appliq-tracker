@@ -17,9 +17,14 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
+const APPS_PER_PAGE = 15;
+
 // [GET] many applications with optional search
 router.get("/applications", isAuthenticated, async (req, res, next) => {
   const search = req.query;
+  // if no page given, default to 0 (initial page)
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
 
   const where = { userId: req.session.userId };
   // order featured first, then by most recent
@@ -59,8 +64,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
 
   if (search.category) {
     // if cat query, search by category
-    if (search.category === "all") {
-    } else {
+    if (search.category !== "all") {
       where.categories = {
         some: { name: search.category },
       };
@@ -78,7 +82,12 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 
   try {
-    const applications = await prisma.application.findMany({ where, orderBy });
+    const applications = await prisma.application.findMany({
+      where,
+      orderBy,
+      skip: page * APPS_PER_PAGE,
+      take: APPS_PER_PAGE,
+    });
     if (applications) {
       res.json(applications);
     } else {
@@ -88,6 +97,61 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
+
+// TODO implement for search on elasticsearch branch, would need to send totalpages for each search
+router.get(
+  "/applications/totalpages",
+  isAuthenticated,
+  async (req, res, next) => {
+    const search = req.query;
+    const where = { userId: req.session.userId };
+
+    if (search.text) {
+      // if given search text, look in title, company, notes, and description for a match
+      where.OR = [
+        { title: { contains: search.text, mode: "insensitive" } },
+        { companyName: { contains: search.text, mode: "insensitive" } },
+        { description: { contains: search.text, mode: "insensitive" } },
+        { notes: { contains: search.text, mode: "insensitive" } },
+        { status: { contains: search.text, mode: "insensitive" } },
+      ];
+    }
+
+    if (search.category) {
+      // if cat query, search by category
+      if (search.category !== "all") {
+        where.categories = {
+          some: { name: search.category },
+        };
+      }
+    }
+
+    if (search.status) {
+      // filter for featured types (favorite, upcoming interview, signed/offer)
+      where.OR = [
+        { isFeatured: true },
+        { interviewAt: { gt: new Date() } },
+        { status: "Offer" },
+        { status: "Signed" },
+      ];
+    }
+
+    // count total application that match
+    try {
+      const count = await prisma.application.count({
+        where,
+      });
+      if (count) {
+        // return total pages based on count
+        return res.json(Math.ceil(count / APPS_PER_PAGE));
+      } else {
+        next({ status: 404, message: `No applications found` });
+      }
+    } catch (err) {
+      return res.status(500).json({ error: "Failed to get applications." });
+    }
+  }
+);
 
 // [GET] get data --> number of applications group by given type/field
 router.get(
