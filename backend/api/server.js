@@ -73,6 +73,7 @@ server.use(
   })
 );
 
+server.set("trust proxy", 1);
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
@@ -307,8 +308,15 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true, auth_provider: true },
+    select: { id: true, username: true, name: true, auth_provider: true },
   });
+  if (user.auth_provider === "google") {
+    return res.json({
+      id: user.id,
+      username: user.name,
+      type: user.auth_provider,
+    });
+  }
   res.json({ id: user.id, username: user.username, type: user.auth_provider });
 });
 
@@ -324,6 +332,7 @@ server.get("/user", async (req, res) => {
     select: {
       id: true,
       username: true,
+      name: true,
       email: true,
       auth_provider: true,
       google_id: true,
