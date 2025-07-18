@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { FaCirclePlus } from "react-icons/fa6";
+// Pagination component from https://mantine.dev/core/pagination/
+import { Pagination } from "@mantine/core";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
-import { getApplications } from "../utils/applicationUtils";
+import { getApplications, getTotalPages } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
 import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
@@ -14,6 +16,8 @@ const ApplicationsPage = () => {
   const { loading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
+  const [activePage, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
 
   // search and nav
@@ -24,7 +28,22 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter, orderBy]);
+  }, [query, filter, orderBy, activePage]);
+
+  // gets total pages
+  useEffect(() => {
+    async function getPages() {
+      const pages = await getTotalPages(
+        new URLSearchParams({
+          text: query.trim(),
+          category: filter,
+        })
+      );
+      setTotalPages(pages);
+    }
+
+    getPages();
+  }, [query]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -35,6 +54,7 @@ const ApplicationsPage = () => {
   const loadApplications = async () => {
     loading.setTrue();
     const currQuery = new URLSearchParams({
+      page: activePage,
       text: query.trim(),
       category: filter,
       orderBy,
@@ -113,6 +133,13 @@ const ApplicationsPage = () => {
                 </p>
               </div>
             )}
+          </section>
+          <section className="page-numbers">
+            <Pagination
+              value={activePage}
+              onChange={setPage}
+              total={totalPages}
+            />
           </section>
         </section>
       </main>
