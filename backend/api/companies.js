@@ -20,6 +20,10 @@ router.use(middleware);
 router.get("/companies", async (req, res, next) => {
   const search = req.query;
 
+  // if no page given, default to 0 (initial page)
+  const page = Number(search.page - 1 || 0);
+  const perPage = Number(search.perPage || 5);
+
   const where = { userId: req.session.userId };
   // order favorite first, then by most recent
   let orderBy = [{ isFavorite: "desc" }, { favoritedAt: "desc" }];
@@ -42,22 +46,38 @@ router.get("/companies", async (req, res, next) => {
 
   // regardless of search, set orderBy takes precendance
   switch (search.orderBy) {
-    case order.ALPHABETICAL:
+    case Order.ALPHABETICAL:
       orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
       break;
-    case order.RECENT:
+    case Order.RECENT:
       orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
       break;
   }
 
   try {
-    const companies = await prisma.company.findMany({ where, orderBy });
+    let totalPages = 1;
+    const count = await prisma.company.count({
+      where,
+    });
+    if (count) {
+      // return total pages based on count
+      totalPages = Math.ceil(count / perPage);
+    }
+
+    const companies = await prisma.company.findMany({
+      where,
+      orderBy,
+      skip: page * perPage,
+      take: perPage,
+    });
     if (companies) {
-      res.json(companies);
+      const data = { companies, totalPages };
+      res.json(data);
     } else {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to get companies." });
   }
 });

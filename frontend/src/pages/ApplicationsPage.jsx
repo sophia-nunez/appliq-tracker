@@ -15,10 +15,12 @@ import "../styles/CategoryDropdown.css";
 const ApplicationsPage = () => {
   const { loading } = useLoading();
   const [applications, setApplications] = useState(Array());
+  const [modalOpen, setModalOpen] = useState(false);
   const [categoriesList, setCategoriesList] = useState(Array());
+
+  // page management
   const [activePage, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
 
   // search and nav
   const [filter, setFilter] = useState("all");
@@ -134,13 +136,12 @@ const ApplicationsPage = () => {
               </div>
             )}
           </section>
-          <section className="page-numbers">
-            <Pagination
-              value={activePage}
-              onChange={setPage}
-              total={totalPages}
-            />
-          </section>
+          <Pagination
+            className="page-numbers"
+            value={activePage}
+            onChange={setPage}
+            total={totalPages}
+          />
         </section>
       </main>
       {modalOpen && (
