@@ -5,19 +5,21 @@ import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
+import { useLoading } from "../components/LoadingContext.jsx";
 
 const CompanyPage = () => {
+  const { loading } = useLoading();
   const [companies, setCompanies] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("");
+  const [orderBy, setOrderBy] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     loadCompanies();
-  }, [query]);
+  }, [query, orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -26,9 +28,11 @@ const CompanyPage = () => {
 
   // loads company based on query state variables (defaults to no search params)
   const loadCompanies = async () => {
+    loading.setTrue();
     const currQuery = new URLSearchParams({
       name: query.trim(),
       industry: filter,
+      orderBy,
     });
     try {
       const data = await getCompanies(currQuery);
@@ -36,6 +40,7 @@ const CompanyPage = () => {
     } catch (error) {
       alert(error.message);
     }
+    loading.setFalse();
   };
 
   // opens modal to add company
@@ -50,6 +55,8 @@ const CompanyPage = () => {
           pageName="Companies"
           query={query}
           setQuery={setQuery}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
           handleSearch={loadCompanies}
         />
         <section className="list-container">

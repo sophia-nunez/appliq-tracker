@@ -1,17 +1,17 @@
 import { Link } from "react-router";
 import Featured from "../components/Featured";
 import List from "../components/List";
-import { applicationsPath, companiesPath, dataPath } from "../links";
+import { applicationsPath, companiesPath, dataPath } from "../data/links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
-import { findInterviewTimes, setInterviewTime } from "../utils/oauthUtils";
+import { findInterviewTimes } from "../utils/oauthUtils";
 
 const HomePage = () => {
   useEffect(() => {
     try {
       const interviews = findInterviewTimes();
     } catch (error) {
-      console.log(error);
+      console.log("Failed to find new interview times.");
     }
   }, []);
 

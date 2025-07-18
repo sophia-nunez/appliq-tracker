@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { useGoogleLogin, hasGrantedAllScopesGoogle } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 import { useUser } from "./UserContext";
 import {
   loginGoogleUser,
@@ -8,7 +9,7 @@ import {
   loginUser,
   registerUser,
 } from "../utils/authUtils";
-import { homePath, registerPath } from "../links";
+import { homePath, loginPath, registerPath } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {
@@ -128,24 +129,33 @@ const AuthForm = ({ type }) => {
             id="password"
             value={formInput.password}
             onChange={handleChange}
+            autoComplete="none"
           />
         </div>
         <div className={`${type}-btns`}>
           <button className={`${type}-btn`} onClick={handleSubmit}>
-            {type === "register" ? "Register" : "Login"}
+            {type === "login" ? "Login" : "Register"}
           </button>
-          {type === "login" && (
-            <>
-              <hr />
-              <p>Or</p>
-              <button onClick={() => login()}>Sign in with Google</button>
+          <section className="alt-login">
+            <hr />
+            <p>Or</p>
+            <button className="google-btn" onClick={() => login()}>
+              <FcGoogle className="google-logo" /> Sign in with Google
+            </button>
+            {type === "login" ? (
               <button className="register-btn">
                 <Link to={registerPath} className="register-btn">
                   Register
                 </Link>
               </button>
-            </>
-          )}
+            ) : (
+              <button className="login-btn">
+                <Link to={loginPath} className="login-btn">
+                  Login
+                </Link>
+              </button>
+            )}
+          </section>
         </div>
         {message && <p className={`${message.type}-text`}>{message.text}</p>}
       </section>

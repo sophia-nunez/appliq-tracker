@@ -35,7 +35,6 @@ const createNote = async (note) => {
 
     const data = await response.json();
   } catch (error) {
-    console.log(error);
     throw new Error("Failed to create note");
   }
 };

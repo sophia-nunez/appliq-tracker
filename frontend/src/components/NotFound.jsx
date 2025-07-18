@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { homePath } from "../links";
+import { homePath } from "../data/links";
 
 const NotFound = () => {
   return (

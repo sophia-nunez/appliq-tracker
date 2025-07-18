@@ -12,7 +12,7 @@ import {
   dataPath,
   settingsPath,
   loginPath,
-} from "../links";
+} from "../data/links";
 
 const NavBar = ({ closeNav, reference }) => {
   const { user, setUser } = useUser();
@@ -40,10 +40,18 @@ const NavBar = ({ closeNav, reference }) => {
           </span>
         </div>
         <nav>
-          <Link to={homePath}>Home</Link>
-          <Link to={applicationsPath}>Applications</Link>
-          <Link to={companiesPath}>Companies</Link>
-          <Link to={dataPath}>Data</Link>
+          <Link to={homePath} onClick={closeNav}>
+            Home
+          </Link>
+          <Link to={applicationsPath} onClick={closeNav}>
+            Applications
+          </Link>
+          <Link to={companiesPath} onClick={closeNav}>
+            Companies
+          </Link>
+          <Link to={dataPath} onClick={closeNav}>
+            Data
+          </Link>
           <div className="bottom-nav">
             <span>
               Signed in as <strong>{user.username}</strong>

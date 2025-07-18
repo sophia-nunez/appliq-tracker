@@ -8,20 +8,22 @@ import { getApplications } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
+import { useLoading } from "../components/LoadingContext";
 
 const ApplicationsPage = () => {
+  const { loading } = useLoading();
   const [applications, setApplications] = useState(Array());
   const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("");
+  const [orderBy, setOrderBy] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter]);
+  }, [query, filter, orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -30,9 +32,11 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
+    loading.setTrue();
     const currQuery = new URLSearchParams({
       text: query.trim(),
       category: filter,
+      orderBy,
     });
     try {
       const data = await getApplications(currQuery);
@@ -43,6 +47,7 @@ const ApplicationsPage = () => {
     } catch (error) {
       alert(error.message);
     }
+    loading.setFalse();
   };
 
   // opens modal to add application
@@ -56,6 +61,8 @@ const ApplicationsPage = () => {
           pageName="Applications"
           query={query}
           setQuery={setQuery}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
           handleSearch={loadApplications}
         />
         <section className="list-container">

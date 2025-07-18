@@ -36,8 +36,13 @@ if (DEV) {
       sameSite: "lax",
       maxAge: 36000000, // 10 hours
     },
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   };
 } else {
   sessionConfig = {
@@ -177,9 +182,13 @@ server.post("/login", loginLimiter, async (req, res) => {
 
 // get token information for user
 server.post("/auth/google", async (req, res) => {
-  const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
+  try {
+    const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
 
-  res.json(tokens);
+    res.json(tokens);
+  } catch (err) {
+    res.status(500).json({ message: "Unable to authorize Google account." });
+  }
 });
 
 // refresh access token for user, set new token based on given google_id
