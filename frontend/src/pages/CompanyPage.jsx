@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { FaCirclePlus } from "react-icons/fa6";
+// Pagination component from https://mantine.dev/core/pagination/
+import { Pagination } from "@mantine/core";
 import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
@@ -12,6 +14,10 @@ const CompanyPage = () => {
   const { loading } = useLoading();
   const [companies, setCompanies] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
+
+  // page management
+  const [activePage, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // pop up on form submission
   const [message, setMessage] = useState({
@@ -41,13 +47,15 @@ const CompanyPage = () => {
   const loadCompanies = async () => {
     loading.setTrue();
     const currQuery = new URLSearchParams({
+      page: activePage,
+      perPage: 15,
       name: query.trim(),
       industry: filter,
       orderBy,
     });
     try {
       const data = await getCompanies(currQuery);
-      setCompanies(data);
+      setCompanies(data.companies);
     } catch (error) {
       alert(error.message);
     }
@@ -100,6 +108,12 @@ const CompanyPage = () => {
               </div>
             )}
           </section>
+          <Pagination
+            className="page-numbers"
+            value={activePage}
+            onChange={setPage}
+            total={totalPages}
+          />
         </section>
         {statusOpen && (
           <SubmissionStatus

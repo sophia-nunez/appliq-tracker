@@ -21,13 +21,15 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
 import PrivacyPage from "./pages/PrivacyPage";
-import { LoadingProvider } from "./components/LoadingContext";
+import { LoadingProvider, useLoading } from "./components/LoadingContext";
 import SubmissionStatus from "./components/SubmissionStatus";
+import LoadingModal from "./components/LoadingModal";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 // basic layout to be rendered on all pages
 function Root() {
+  const { isLoading } = useLoading();
   // pop up on form submission
   const [message, setMessage] = useState({
     type: "error",
@@ -40,6 +42,11 @@ function Root() {
   return (
     <>
       <Header />
+      {isLoading && (
+        <main>
+          <LoadingModal />
+        </main>
+      )}
       <Outlet
         context={{
           message,

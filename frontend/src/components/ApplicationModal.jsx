@@ -47,8 +47,8 @@ const ApplicationModal = ({
       const categories = await getCategories();
       setAllCategories(categories.map((category) => category.name));
 
-      const companies = await getCompanies("");
-      setAllCompanies(companies.map((company) => company.name));
+      const companyData = await getCompanies("");
+      setAllCompanies(companyData.companies.map((company) => company.name));
     };
 
     getDropdownLists();
