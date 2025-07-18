@@ -23,7 +23,8 @@ const APPS_PER_PAGE = 15;
 router.get("/applications", isAuthenticated, async (req, res, next) => {
   const search = req.query;
   // if no page given, default to 0 (initial page)
-  const page = search.page - 1 || 0;
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
 
   const where = { userId: req.session.userId };
   // order featured first, then by most recent

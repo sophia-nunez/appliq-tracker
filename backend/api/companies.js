@@ -21,8 +21,11 @@ router.get("/companies", async (req, res, next) => {
   const search = req.query;
 
   // if no page given, default to 0 (initial page)
-  const page = Number(search.page - 1 || 0);
-  const perPage = Number(search.perPage || 5);
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum : 0;
+  // perPage minimum is 5
+  const perPageNum = Number(search.perPage);
+  const perPage = isFinite(perPageNum) && perPageNum > 5 ? perPageNum : 5;
 
   const where = { userId: req.session.userId };
   // order favorite first, then by most recent
