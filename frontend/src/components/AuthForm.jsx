@@ -10,7 +10,7 @@ import {
   registerUser,
 } from "../utils/authUtils";
 import { TextInput, PasswordInput } from "@mantine/core";
-import { homePath, loginPath, registerPath } from "../links";
+import { homePath, loginPath, registerPath } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {

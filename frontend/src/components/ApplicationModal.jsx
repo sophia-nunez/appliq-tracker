@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { DateTimePicker } from "@mantine/dates";
 import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
+import { Status } from "../data/enums";
 import "../styles/Modal.css";
 import DropdownSearch from "./DropdownSearch";
 import { getCategories } from "../utils/categoryUtils";
@@ -215,12 +216,12 @@ const ApplicationModal = ({
               <option value="" disabled={true}>
                 Select
               </option>
-              <option value="Applied">Applied</option>
-              <option value="Interview">Interview</option>
-              <option value="Offer">Offer</option>
-              <option value="Rejected">Rejected</option>
-              <option value="Signed">Signed</option>
-              <option value="Other">Other</option>
+              <option value={Status.Applied}>Applied</option>
+              <option value={Status.Interview}>Interview</option>
+              <option value={Status.Offer}>Offer</option>
+              <option value={Status.Rejected}>Rejected</option>
+              <option value={Status.Signed}>Signed</option>
+              <option value={Status.Other}>Other</option>
             </select>
           </section>
           <section className="list-content">

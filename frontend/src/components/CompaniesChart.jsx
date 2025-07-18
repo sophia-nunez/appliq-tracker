@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCompanyData } from "../utils/dataUtils";
+import { Status } from "../data/enums";
 import {
   BarChart,
   Bar,
@@ -11,7 +12,7 @@ import {
 } from "recharts";
 
 const CompaniesChart = ({ orderBy, filter }) => {
-  // TODO: get company data dynamically
+  // TODO: filter data by application status
   const [data, setData] = useState(Array());
 
   useEffect(() => {
@@ -65,12 +66,12 @@ const CompaniesChart = ({ orderBy, filter }) => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="Applied" stackId="a" fill="#4A90E2" />
-      <Bar dataKey="Interview" stackId="a" fill="#F5A623" />
-      <Bar dataKey="Offer" stackId="a" fill="#82ca9d" />
-      <Bar dataKey="Rejected" stackId="a" fill="#D0021B" />
-      <Bar dataKey="Signed" stackId="a" fill="#560bad" />
-      <Bar dataKey="Other" stackId="a" fill="#9B9B9B" />
+      <Bar dataKey={Status.Applied} stackId="a" fill="#4A90E2" />
+      <Bar dataKey={Status.Interview} stackId="a" fill="#F5A623" />
+      <Bar dataKey={Status.Offer} stackId="a" fill="#82ca9d" />
+      <Bar dataKey={Status.Rejected} stackId="a" fill="#D0021B" />
+      <Bar dataKey={Status.Signed} stackId="a" fill="#560bad" />
+      <Bar dataKey={Status.Other} stackId="a" fill="#9B9B9B" />
     </BarChart>
   );
 };

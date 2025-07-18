@@ -12,7 +12,7 @@ import {
   dataPath,
   settingsPath,
   loginPath,
-} from "../links";
+} from "../data/links";
 
 const NavBar = ({ closeNav, reference }) => {
   const { user, setUser } = useUser();
