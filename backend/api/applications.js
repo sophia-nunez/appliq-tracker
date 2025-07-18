@@ -141,12 +141,7 @@ router.get(
       const count = await prisma.application.count({
         where,
       });
-      if (count) {
-        // return total pages based on count
-        return res.json(Math.ceil(count / APPS_PER_PAGE));
-      } else {
-        next({ status: 404, message: `No applications found` });
-      }
+      return res.json(Math.ceil(count / APPS_PER_PAGE));
     } catch (err) {
       return res.status(500).json({ error: "Failed to get applications." });
     }
@@ -402,7 +397,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Application modifications are invalid" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to update application." });
   }
 });
@@ -433,8 +427,6 @@ const addCategories = async (userId, categories) => {
     // adds category to connect for application
     connected.push({ id: upsertCategory.id });
   }
-  console.log("successfully connected: ");
-  console.log(connected);
 
   return connected;
 };

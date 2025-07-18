@@ -13,8 +13,11 @@ const companyRouter = require("./companies");
 const noteRouter = require("./notes");
 const middleware = require("../middleware/middleware");
 
+// node environment indicators
 const DEV = process.env.DEV;
 const PROD = process.env.PROD;
+const CURR_ENV = process.env.NODE_ENV;
+
 const prisma = new PrismaClient();
 const server = express();
 
@@ -25,7 +28,7 @@ const oAuth2Client = new OAuth2Client(
 );
 
 let sessionConfig = {};
-if (DEV) {
+if (CURR_ENV === "local") {
   sessionConfig = {
     name: "session",
     secret: process.env.SESSION_SECRET,

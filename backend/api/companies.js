@@ -80,7 +80,6 @@ router.get("/companies", async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to get companies." });
   }
 });
@@ -219,7 +218,6 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Company modifications are invalid" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to update company." });
   }
 });
