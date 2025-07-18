@@ -29,14 +29,16 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
+const APPS_PER_PAGE = 10;
+
 // [GET] many applications with search
 router.get("/applications/search", isAuthenticated, async (req, res, next) => {
   const search = req.query;
 
-  let from = 0;
-  if (search.page) {
-    from = (search.page - 1) * 20;
-  }
+  // if no page given, default to 0 (initial page)
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
+  const from = page * 20;
 
   let query = {
     bool: {
@@ -59,9 +61,10 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
 
   try {
     const applications = await client.search({
+      track_total_hits: true,
       index: "content-postgresql-ac4b",
       from,
-      size: 20,
+      size: APPS_PER_PAGE,
       query,
     });
     if (applications) {
@@ -77,7 +80,10 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
         },
       });
 
-      res.json(fullApplications);
+      res.json({
+        totalPages: Math.ceil(applications.hits.total.value / APPS_PER_PAGE),
+        applications: fullApplications,
+      });
     } else {
       next({ status: 404, message: `No applications found` });
     }
@@ -85,7 +91,5 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
-
-// TODO pages by having page number, then (20*pagenumber - 20) to get "from" field
 
 module.exports = router;

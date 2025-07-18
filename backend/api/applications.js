@@ -17,7 +17,7 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
-const APPS_PER_PAGE = 15;
+const APPS_PER_PAGE = 10;
 
 // [GET] many applications with optional search
 router.get("/applications", isAuthenticated, async (req, res, next) => {
@@ -378,36 +378,37 @@ router.put(
           }
         }
 
-      // set updated time to now
-      updatedApp.updatedAt = new Date();
+        // set updated time to now
+        updatedApp.updatedAt = new Date();
 
-      // object for category connections and removals
-      let categories = { connect: [], disconnect: removedCategories };
-      if (updatedApp.categories) {
-        // add categories to connect
-        const connectedCats = await addCategories(
-          req.session.userId,
-          updatedApp.categories
-        );
-        // replace categories to connect with matched list of ids
-        categories.connect = connectedCats;
+        // object for category connections and removals
+        let categories = { connect: [], disconnect: removedCategories };
+        if (updatedApp.categories) {
+          // add categories to connect
+          const connectedCats = await addCategories(
+            req.session.userId,
+            updatedApp.categories
+          );
+          // replace categories to connect with matched list of ids
+          categories.connect = connectedCats;
+        }
+        // update application data
+        updatedApp.categories = categories;
+
+        const updated = await prisma.application.update({
+          data: updatedApp,
+          where: { id },
+        });
+        return res.status(201).json(updated);
+      } else {
+        return res
+          .status(400)
+          .json({ error: "Application modifications are invalid" });
       }
-      // update application data
-      updatedApp.categories = categories;
-
-      const updated = await prisma.application.update({
-        data: updatedApp,
-        where: { id },
-      });
-      return res.status(201).json(updated);
-    } else {
-      return res
-        .status(400)
-        .json({ error: "Application modifications are invalid" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Failed to update application." });
     }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Failed to update application." });
   }
 );
 

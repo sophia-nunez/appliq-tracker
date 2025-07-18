@@ -32,7 +32,7 @@ const getApplications = async (query) => {
       }
 
       const data = await response.json();
-      return data;
+      return { applications: data };
     } catch (error) {
       throw error;
     }

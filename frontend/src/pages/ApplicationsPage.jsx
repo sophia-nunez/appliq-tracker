@@ -55,7 +55,7 @@ const ApplicationsPage = () => {
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
     loading.setTrue();
-    const currQuery = new URLSearchParams({
+    const currQuery = {
       page: activePage,
       text: query.trim(),
       category: filter,
@@ -66,7 +66,10 @@ const ApplicationsPage = () => {
       const categories = await getCategories();
 
       setCategoriesList(categories);
-      setApplications(data);
+      setApplications(data.applications);
+      if (data.totalPages) {
+        setTotalPages(data.totalPages);
+      }
     } catch (error) {
       alert(error.message);
     }
