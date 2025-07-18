@@ -64,8 +64,6 @@ router.get("/companies", async (req, res, next) => {
 
 // [GET] many companies with optional search
 router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   const where = { userId: req.session.userId };
 
   try {

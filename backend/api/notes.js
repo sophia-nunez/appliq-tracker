@@ -18,8 +18,6 @@ router.use(middleware);
 
 // [GET] many notes
 router.get("/notes", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   try {
     const notes = await prisma.note.findMany({
       where: { userId: req.session.userId },
