@@ -23,7 +23,10 @@ const AuthForm = ({ type }) => {
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => await handleGoogleLogin(tokenResponse),
     onError: () => {
-      alert("Login failed. Please try again");
+      setMessage({
+        type: "error",
+        text: err.message || "Google login failed. Please try again.",
+      });
     },
     flow: "auth-code",
     scope:
@@ -57,11 +60,14 @@ const AuthForm = ({ type }) => {
       } catch (err) {
         setMessage({
           type: "error",
-          text: err.message || "Google login failed.",
+          text: "Google login failed.",
         });
       }
     } else {
-      alert("Login failed due to missing permissions.");
+      setMessage({
+        type: "error",
+        text: err.message || "Google login failed due to missing permissions.",
+      });
     }
   };
 

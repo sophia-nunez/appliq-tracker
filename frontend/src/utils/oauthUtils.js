@@ -42,7 +42,7 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
-    alert("No new interview times found from email.");
+    throw new Error("Failed to find interview times from email.");
   }
 };
 
