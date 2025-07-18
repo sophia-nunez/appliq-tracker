@@ -25,7 +25,7 @@ const AuthForm = ({ type }) => {
     onError: () => {
       setMessage({
         type: "error",
-        text: err.message || "Google login failed. Please try again.",
+        text: "Google login failed. Please try again.",
       });
     },
     flow: "auth-code",
@@ -60,13 +60,13 @@ const AuthForm = ({ type }) => {
       } catch (err) {
         setMessage({
           type: "error",
-          text: "Google login failed.",
+          text: err.message || "Google login failed.",
         });
       }
     } else {
       setMessage({
         type: "error",
-        text: err.message || "Google login failed due to missing permissions.",
+        text: "Google login failed due to missing permissions.",
       });
     }
   };

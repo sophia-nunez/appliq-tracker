@@ -72,7 +72,7 @@ const ApplicationsPage = () => {
     } catch (error) {
       setMessage({
         type: "error",
-        text: err.message || "Failed to load applications.",
+        text: error.message || "Failed to load applications.",
       });
       setStatusOpen(true);
     }

@@ -51,7 +51,7 @@ const CompanyPage = () => {
     } catch (error) {
       setMessage({
         type: "error",
-        text: err.message || "Failed to load companies.",
+        text: error.message || "Failed to load companies.",
       });
       setStatusOpen(true);
     }
