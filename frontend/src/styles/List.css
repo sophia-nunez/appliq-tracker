@@ -21,6 +21,11 @@
       color: var(--card-bg-color);
     }
   }
+
+  .page-numbers {
+    padding: 15px;
+    place-items: center;
+  }
 }
 
 .list-content {

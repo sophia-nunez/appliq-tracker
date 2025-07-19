@@ -20,6 +20,13 @@ router.use(middleware);
 router.get("/companies", async (req, res, next) => {
   const search = req.query;
 
+  // if no page given, default to 0 (initial page)
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
+  // perPage minimum is 5
+  const perPageNum = Number(search.perPage);
+  const perPage = isFinite(perPageNum) && perPageNum > 5 ? perPageNum : 5;
+
   const where = { userId: req.session.userId };
   // order favorite first, then by most recent
   let orderBy = [{ isFavorite: "desc" }, { favoritedAt: "desc" }];
@@ -34,26 +41,41 @@ router.get("/companies", async (req, res, next) => {
 
   if (search.industry) {
     // if industry query, search by industry
-    if (search.industry === "all") {
-    } else {
+    if (search.industry !== "all") {
       where.industry = search.industry;
     }
   }
 
   // regardless of search, set orderBy takes precendance
   switch (search.orderBy) {
-    case order.ALPHABETICAL:
+    case Order.ALPHABETICAL:
       orderBy = [{ isFavorite: "desc" }, { name: "asc" }];
       break;
-    case order.RECENT:
+    case Order.RECENT:
       orderBy = [{ isFavorite: "desc" }, { createdAt: "desc" }];
       break;
   }
 
   try {
-    const companies = await prisma.company.findMany({ where, orderBy });
+    let totalPages = 1;
+    const count = await prisma.company.count({
+      where,
+    });
+    if (count) {
+      // return total pages based on count
+      totalPages = Math.ceil(count / perPage);
+    }
+
+    const companies = await prisma.company.findMany({
+      where,
+      orderBy,
+      skip: page * perPage,
+      take: perPage,
+    });
+
     if (companies) {
-      res.json(companies);
+      const data = { companies, totalPages };
+      res.json(data);
     } else {
       return res.status(404).json({ error: "No companies found" });
     }
@@ -159,7 +181,8 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
   // or should it remove the applications - make decision
 
   const id = Number(req.params.companyId);
-  const changes = { ...req.body, userId: req.session.userId };
+  const { applications, ...rest } = req.body;
+  const changes = { ...rest, userId: req.session.userId };
   try {
     // Make sure the ID is valid
     const company = await prisma.company.findUnique({

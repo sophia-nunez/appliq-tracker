@@ -12,11 +12,11 @@ export const LoadingProvider = ({ children }) => {
   const setTrue = useCallback(() => setIsLoading(true), []);
   const setFalse = useCallback(() => setIsLoading(false), []);
 
-  // only give set value, no isLoading
   return (
-    <LoadingContext.Provider value={{ loading: { toggle, setTrue, setFalse } }}>
+    <LoadingContext.Provider
+      value={{ isLoading, loading: { toggle, setTrue, setFalse } }}
+    >
       {children}
-      {isLoading && <LoadingModal />}
     </LoadingContext.Provider>
   );
 };

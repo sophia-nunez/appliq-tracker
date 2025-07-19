@@ -18,18 +18,54 @@ import DataPage from "./pages/DataPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
 import PrivacyPage from "./pages/PrivacyPage";
-import { LoadingProvider } from "./components/LoadingContext";
+import { LoadingProvider, useLoading } from "./components/LoadingContext";
+import SubmissionStatus from "./components/SubmissionStatus";
+import LoadingModal from "./components/LoadingModal";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 // basic layout to be rendered on all pages
 function Root() {
+  const { isLoading } = useLoading();
+  // pop up on form submission
+  const [message, setMessage] = useState({
+    type: "error",
+    text: "Failed to complete action.",
+  }); // error or success message
+  const [statusOpen, setStatusOpen] = useState(false);
+  // track if interview date is modified for calendar addition
+  const [interviewChanged, setInterviewChanged] = useState({});
+
   return (
     <>
       <Header />
-      <Outlet />
+      {isLoading && (
+        <main>
+          <LoadingModal />
+        </main>
+      )}
+      <Outlet
+        context={{
+          message,
+          setMessage,
+          statusOpen,
+          setStatusOpen,
+          interviewChanged,
+          setInterviewChanged,
+        }}
+      />
+      {statusOpen && (
+        <SubmissionStatus
+          message={message}
+          setMessage={setMessage}
+          setStatusOpen={setStatusOpen}
+          interviewChanged={interviewChanged}
+          setInterviewChanged={setInterviewChanged}
+        />
+      )}
       <Footer />
     </>
   );

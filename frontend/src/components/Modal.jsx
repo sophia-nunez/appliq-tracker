@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import ApplicationModal from "./ApplicationModal";
 import "../styles/Modal.css";
 import CompanyModal from "./CompanyModal";
+import { useOutletContext } from "react-router";
 
 const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
   const modalRef = useRef(null);
+  const { setMessage, setStatusOpen, setInterviewChanged } = useOutletContext();
 
   // closes modal on window click off of modal or on span
   useEffect(() => {
@@ -33,7 +35,7 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
   // modal loads content based on prop passed in by parent page
   return (
     <aside id="modal" className="modal" ref={modalRef}>
-      <span id="nav-close" className="close">
+      <span id="modal-close" className="close">
         <IoMdClose className="close-icon" />
       </span>
       <section className="modal-content">
@@ -42,6 +44,9 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
             setModalOpen={setModalOpen}
             application={item}
             reloadPage={reloadPage}
+            setStatusOpen={setStatusOpen}
+            setInterviewChanged={setInterviewChanged}
+            setMessage={setMessage}
           />
         )}
         {contents === "company" && (
@@ -49,6 +54,8 @@ const Modal = ({ contents, item, setModalOpen, reloadPage }) => {
             setModalOpen={setModalOpen}
             company={item}
             reloadPage={reloadPage}
+            setStatusOpen={setStatusOpen}
+            setMessage={setMessage}
           />
         )}
       </section>

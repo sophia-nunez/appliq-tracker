@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { createCompany, editCompany } from "../utils/companyUtils";
 import "../styles/Modal.css";
 
-const CompanyModal = ({ company, setModalOpen, reloadPage }) => {
+const CompanyModal = ({
+  company,
+  setModalOpen,
+  reloadPage,
+  setMessage,
+  setStatusOpen,
+}) => {
   // input for company creation/modfication - currently excluded category functionality
   const [formInput, setFormInput] = useState({
     name: "",
@@ -35,13 +41,23 @@ const CompanyModal = ({ company, setModalOpen, reloadPage }) => {
     try {
       if (company.id) {
         const edit = await editCompany(formInput, company.id);
+        setMessage({ type: "success", text: "Company saved!" });
       } else {
         const added = await createCompany(formInput);
+        setMessage({
+          type: "success",
+          text: "Company added successfully!",
+        });
       }
       reloadPage();
+      setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message,
+      });
+      setStatusOpen(true);
     }
   };
 

@@ -89,6 +89,13 @@
 .company-form {
   place-items: center;
 
+  .application-header,
+  .company-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .application-details,
   .company-details {
     width: 100%;

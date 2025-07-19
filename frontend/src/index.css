@@ -51,6 +51,7 @@ body,
 }
 
 main {
+  position: relative;
   min-height: 85vh;
   width: 90vw;
   margin: 0px auto;

@@ -17,9 +17,14 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
+const APPS_PER_PAGE = 15;
+
 // [GET] many applications with optional search
 router.get("/applications", isAuthenticated, async (req, res, next) => {
   const search = req.query;
+  // if no page given, default to 0 (initial page)
+  const pageNum = Number(search.page);
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
 
   const where = { userId: req.session.userId };
   // order featured first, then by most recent
@@ -59,8 +64,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
 
   if (search.category) {
     // if cat query, search by category
-    if (search.category === "all") {
-    } else {
+    if (search.category !== "all") {
       where.categories = {
         some: { name: search.category },
       };
@@ -78,7 +82,12 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 
   try {
-    const applications = await prisma.application.findMany({ where, orderBy });
+    const applications = await prisma.application.findMany({
+      where,
+      orderBy,
+      skip: page * APPS_PER_PAGE,
+      take: APPS_PER_PAGE,
+    });
     if (applications) {
       res.json(applications);
     } else {
@@ -88,6 +97,56 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
+
+// TODO implement for search on elasticsearch branch, would need to send totalpages for each search
+router.get(
+  "/applications/totalpages",
+  isAuthenticated,
+  async (req, res, next) => {
+    const search = req.query;
+    const where = { userId: req.session.userId };
+
+    if (search.text) {
+      // if given search text, look in title, company, notes, and description for a match
+      where.OR = [
+        { title: { contains: search.text, mode: "insensitive" } },
+        { companyName: { contains: search.text, mode: "insensitive" } },
+        { description: { contains: search.text, mode: "insensitive" } },
+        { notes: { contains: search.text, mode: "insensitive" } },
+        { status: { contains: search.text, mode: "insensitive" } },
+      ];
+    }
+
+    if (search.category) {
+      // if cat query, search by category
+      if (search.category !== "all") {
+        where.categories = {
+          some: { name: search.category },
+        };
+      }
+    }
+
+    if (search.status) {
+      // filter for featured types (favorite, upcoming interview, signed/offer)
+      where.OR = [
+        { isFeatured: true },
+        { interviewAt: { gt: new Date() } },
+        { status: "Offer" },
+        { status: "Signed" },
+      ];
+    }
+
+    // count total application that match
+    try {
+      const count = await prisma.application.count({
+        where,
+      });
+      return res.json(Math.ceil(count / APPS_PER_PAGE));
+    } catch (err) {
+      return res.status(500).json({ error: "Failed to get applications." });
+    }
+  }
+);
 
 // [GET] get data --> number of applications group by given type/field
 router.get(
@@ -239,7 +298,6 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
     ...data,
     user: { connect: { id: req.session.userId } },
   };
-  let categories = { connectOrCreate: [] };
   try {
     // Validate that new application has required fields
     const newApplicationValid =
@@ -255,21 +313,20 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       if (existingCompany) {
         newApplication.company = { connect: { id: existingCompany.id } };
       }
+
+      let categories = { connect: [] };
       // adding categories, either add existing or create new one
       if (newApplication.categories) {
-        for (const item of newApplication.categories) {
-          // connects existing or makes new one
-          categories.connectOrCreate.push({
-            where: { name: item.name },
-            create: {
-              name: item.name,
-              users: { connect: { id: req.session.userId } },
-            },
-          });
-        }
-        // replace categories
-        newApplication.categories = categories;
+        // add categories to connect
+        const connectedCats = await addCategories(
+          req.session.userId,
+          newApplication.categories
+        );
+        // replace categories to connect with matched list of ids
+        categories.connect = connectedCats;
       }
+      // update application category data
+      newApplication.categories = categories;
 
       const created = await prisma.application.create({ data: newApplication });
       return res.status(201).json(created);
@@ -286,7 +343,6 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
   // separate field of categories to be removed
   const { removedCategories, ...data } = req.body;
   const updatedApp = { ...data, userId: req.session.userId };
-  let categories = { connectOrCreate: [], disconnect: removedCategories };
   try {
     // Make sure the ID is valid
     const application = await prisma.application.findUnique({
@@ -316,26 +372,25 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
       // set updated time to now
       updatedApp.updatedAt = new Date();
 
-      // add categories as needed
+      // object for category connections and removals
+      let categories = { connect: [], disconnect: removedCategories };
       if (updatedApp.categories) {
-        for (const item of updatedApp.categories) {
-          // connect existing or create new one
-          categories.connectOrCreate.push({
-            where: { name: item.name },
-            create: {
-              name: item.name,
-              users: { connect: { id: req.session.userId } },
-            },
-          });
-        }
-        // replace categories
-        updatedApp.categories = categories;
+        // add categories to connect
+        const connectedCats = await addCategories(
+          req.session.userId,
+          updatedApp.categories
+        );
+        // replace categories to connect with matched list of ids
+        categories.connect = connectedCats;
       }
+      // update application data
+      updatedApp.categories = categories;
+
       const updated = await prisma.application.update({
         data: updatedApp,
         where: { id },
       });
-      return res.status(201).json();
+      return res.status(201).json(updated);
     } else {
       return res
         .status(400)
@@ -345,6 +400,36 @@ router.put("/applications/:appId", isAuthenticated, async (req, res, next) => {
     return res.status(500).json({ error: "Failed to update application." });
   }
 });
+
+const addCategories = async (userId, categories) => {
+  let connected = [];
+  for (const item of categories) {
+    // returns category, either existing or new based on name
+    const upsertCategory = await prisma.category.upsert({
+      where: {
+        name: item.name,
+      },
+      update: {},
+      create: {
+        name: item.name,
+      },
+    });
+    // connects category to the user
+    await prisma.category.update({
+      where: { id: upsertCategory.id },
+      data: {
+        users: {
+          connect: { id: userId },
+        },
+      },
+    });
+
+    // adds category to connect for application
+    connected.push({ id: upsertCategory.id });
+  }
+
+  return connected;
+};
 
 // [DELETE] delete application
 router.delete("/applications/:id", isAuthenticated, async (req, res, next) => {
