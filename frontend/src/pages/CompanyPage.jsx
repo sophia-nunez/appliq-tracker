@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { FaCirclePlus } from "react-icons/fa6";
 // Pagination component from https://mantine.dev/core/pagination/
 import { Pagination } from "@mantine/core";
 import Modal from "../components/Modal.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
-import SubmissionStatus from "../components/SubmissionStatus.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
 import { useLoading } from "../components/LoadingContext.jsx";
 
@@ -19,14 +18,7 @@ const CompanyPage = () => {
   const [activePage, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // pop up on form submission
-  const [message, setMessage] = useState({
-    type: "success",
-    text: "Changes saved!",
-  }); // error or success message
-  const [statusOpen, setStatusOpen] = useState(false);
-  // track if interview date is modified for calendar addition
-  const [interviewChanged, setInterviewChanged] = useState(false);
+  const { setMessage, setStatusOpen, setInterviewChanged } = useOutletContext();
 
   // search and nav
   const [filter, setFilter] = useState("all");
@@ -57,7 +49,11 @@ const CompanyPage = () => {
       const data = await getCompanies(currQuery);
       setCompanies(data.companies);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to load companies.",
+      });
+      setStatusOpen(true);
     }
     loading.setFalse();
   };
@@ -115,15 +111,6 @@ const CompanyPage = () => {
             total={totalPages}
           />
         </section>
-        {statusOpen && (
-          <SubmissionStatus
-            setStatusOpen={setStatusOpen}
-            setInterviewChanged={setInterviewChanged}
-            interviewChanged={interviewChanged}
-            setMessage={setMessage}
-            message={message}
-          />
-        )}
       </main>
       {modalOpen && (
         <Modal
@@ -131,9 +118,6 @@ const CompanyPage = () => {
           setModalOpen={setModalOpen}
           item={{}}
           reloadPage={loadCompanies}
-          setStatusOpen={setStatusOpen}
-          setInterviewChanged={setInterviewChanged}
-          setMessage={setMessage}
         />
       )}
     </>

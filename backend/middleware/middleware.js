@@ -4,6 +4,7 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 const DEV = process.env.DEV;
+const PROD = process.env.PROD;
 
 const getNewAccessToken = async (user) => {
   // get new access token using refresh token
@@ -37,10 +38,7 @@ const getNewAccessToken = async (user) => {
 };
 
 router.use(async (req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    DEV ? "http://localhost:5173" : "https://appliq-tracker.onrender.com"
-  );
+  res.setHeader("Access-Control-Allow-Origin", PROD || DEV);
 
   if (req.session.userId) {
     const user = await prisma.user.findUnique({

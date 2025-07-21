@@ -7,25 +7,34 @@
 
   margin: auto;
   width: 60%;
+  max-width: 900px;
   border-radius: 3px;
 
   .input-container {
-    width: clamp(100px, 50vw, 400px);
+    width: 100%;
   }
 
   input {
     background-color: var(--background-color);
     color: var(--text-color);
-    border-radius: 3px;
-    border: 1px solid var(--secondary-color);
-    width: 100%;
+  }
+
+  .subtitle {
+    color: var(--mantine-color-dimmed);
+    text-align: center;
+    margin-top: 5px;
   }
 
   .login-btns,
   .register-btns {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    margin-top: 1rem;
 
     hr {
       width: 60vw;
@@ -33,23 +42,15 @@
     }
 
     .login-btn,
-    .register-btn {
-      color: var(--text-color);
-      width: clamp(100px, 20vw, 200px);
-      text-decoration: none;
-    }
-
+    .register-btn,
     .google-btn {
-      display: flex;
-      gap: 0.7em;
-      align-items: center;
+      width: 47%;
+      min-width: 130px;
+      padding: 5px;
+      place-content: center;
+      color: var(--text-color);
 
-      .google-logo {
-        background-color: var(--background-color);
-        border-radius: 10px;
-        font-size: x-large;
-        margin: auto 0px;
-      }
+      text-decoration: none;
     }
 
     .alt-login {
@@ -68,13 +69,24 @@
   .error-text {
     padding: 10px 20px;
     border-radius: 3px;
-    background-color: var(--delete-red);
+    color: var(--delete-red);
   }
 
   .success-text {
     padding: 10px 20px;
     border-radius: 3px;
-    color: black;
-    background-color: rgb(193, 223, 193);
+    color: green;
+  }
+
+  .google-btn {
+    display: flex;
+    gap: 0.7em;
+    align-items: center;
+
+    .google-logo {
+      border-radius: 10px;
+      font-size: x-large;
+      margin: auto 0px;
+    }
   }
 }

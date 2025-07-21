@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { FaCirclePlus } from "react-icons/fa6";
 // Pagination component from https://mantine.dev/core/pagination/
 import { Pagination } from "@mantine/core";
@@ -27,6 +27,8 @@ const ApplicationsPage = () => {
   const [query, setQuery] = useState("");
   const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();
+
+  const { setMessage, setStatusOpen } = useOutletContext();
 
   useEffect(() => {
     loadApplications();
@@ -71,7 +73,11 @@ const ApplicationsPage = () => {
         setTotalPages(data.totalPages);
       }
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to load applications.",
+      });
+      setStatusOpen(true);
     }
     loading.setFalse();
   };

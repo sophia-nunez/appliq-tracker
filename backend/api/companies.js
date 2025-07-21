@@ -22,7 +22,7 @@ router.get("/companies", async (req, res, next) => {
 
   // if no page given, default to 0 (initial page)
   const pageNum = Number(search.page);
-  const page = isFinite(pageNum) && pageNum > 0 ? pageNum : 0;
+  const page = isFinite(pageNum) && pageNum > 0 ? pageNum - 1 : 0;
   // perPage minimum is 5
   const perPageNum = Number(search.perPage);
   const perPage = isFinite(perPageNum) && perPageNum > 5 ? perPageNum : 5;
@@ -41,8 +41,7 @@ router.get("/companies", async (req, res, next) => {
 
   if (search.industry) {
     // if industry query, search by industry
-    if (search.industry === "all") {
-    } else {
+    if (search.industry !== "all") {
       where.industry = search.industry;
     }
   }
@@ -73,6 +72,7 @@ router.get("/companies", async (req, res, next) => {
       skip: page * perPage,
       take: perPage,
     });
+
     if (companies) {
       const data = { companies, totalPages };
       res.json(data);
@@ -80,15 +80,12 @@ router.get("/companies", async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to get companies." });
   }
 });
 
 // [GET] many companies with optional search
 router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-
   const where = { userId: req.session.userId };
 
   try {
@@ -221,7 +218,6 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Company modifications are invalid" });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to update company." });
   }
 });

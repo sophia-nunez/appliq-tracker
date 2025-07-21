@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useOutletContext } from "react-router";
 import { getFeatured } from "../utils/applicationUtils";
 import Status from "./Status";
 import "../styles/Featured.css";
@@ -8,6 +8,8 @@ import { useLoading } from "./LoadingContext";
 const Featured = () => {
   const { loading } = useLoading();
   const [featured, setFeatured] = useState(Array());
+  const { setMessage, setStatusOpen } = useOutletContext();
+
   // search and nav
   const navigate = useNavigate();
 
@@ -29,7 +31,11 @@ const Featured = () => {
 
       setFeatured(slicedFeatured);
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to load featured applications.",
+      });
+      setStatusOpen(true);
     }
     loading.setFalse();
   };

@@ -124,6 +124,10 @@ nav {
       width: min-content;
       font-size: 1.3rem;
     }
+    .logout-btn:hover {
+      cursor: pointer;
+      color: #747bff;
+    }
   }
 }
 

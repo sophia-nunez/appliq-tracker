@@ -16,7 +16,11 @@ const noteRouter = require("./notes");
 const searchRouter = require("./search");
 const middleware = require("../middleware/middleware");
 
+// node environment indicators
 const DEV = process.env.DEV;
+const PROD = process.env.PROD;
+const CURR_ENV = process.env.NODE_ENV;
+
 const prisma = new PrismaClient();
 const server = express();
 
@@ -28,7 +32,7 @@ const oAuth2Client = new OAuth2Client(
 
 // set session config based on DEV or PROD
 let sessionConfig = {};
-if (DEV) {
+if (CURR_ENV === "local") {
   sessionConfig = {
     name: "session",
     secret: process.env.SESSION_SECRET,
@@ -40,8 +44,8 @@ if (DEV) {
       sameSite: "lax",
       maxAge: 36000000, // 10 hours
     },
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new PrismaSessionStore(new PrismaClient(), {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
@@ -59,8 +63,8 @@ if (DEV) {
       sameSite: "none",
       maxAge: 36000000, // 10 hours
     },
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new PrismaSessionStore(new PrismaClient(), {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
@@ -69,23 +73,14 @@ if (DEV) {
   };
 }
 
-// set cors config based on DEV or PROD
-if (DEV) {
-  server.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-    })
-  );
-} else {
-  server.use(
-    cors({
-      origin: "https://appliq-tracker.onrender.com",
-      credentials: true,
-    })
-  );
-}
+server.use(
+  cors({
+    origin: PROD || DEV,
+    credentials: true,
+  })
+);
 
+server.set("trust proxy", 1);
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
@@ -96,15 +91,6 @@ server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
 server.use(searchRouter);
-
-const isAuthenticated = (req, res, next) => {
-  if (!req.session.userId) {
-    return res
-      .status(401)
-      .json({ error: "You must be logged in to view this page." });
-  }
-  next();
-};
 
 // user authentication
 server.post("/register", async (req, res) => {
@@ -321,8 +307,15 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true, auth_provider: true },
+    select: { id: true, username: true, name: true, auth_provider: true },
   });
+  if (user.auth_provider === "google") {
+    return res.json({
+      id: user.id,
+      username: user.name,
+      type: user.auth_provider,
+    });
+  }
   res.json({ id: user.id, username: user.username, type: user.auth_provider });
 });
 
@@ -338,6 +331,7 @@ server.get("/user", async (req, res) => {
     select: {
       id: true,
       username: true,
+      name: true,
       email: true,
       auth_provider: true,
       google_id: true,
