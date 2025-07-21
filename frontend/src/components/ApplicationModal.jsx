@@ -39,7 +39,15 @@ const ApplicationModal = ({
   useEffect(() => {
     if (application.id) {
       // TODO currently adds userId and all other fields to payload, should this be avoided?
-      setFormInput((prev) => ({ ...prev, ...application }));
+      const linkedCompanyName =
+        application.company && application.company.name
+          ? application.company.name
+          : "";
+      setFormInput((prev) => ({
+        ...prev,
+        ...application,
+        companyName: linkedCompanyName,
+      }));
     }
 
     // get all categories and set dropdown list to these values
@@ -143,7 +151,7 @@ const ApplicationModal = ({
       if (change) {
         setInterviewChanged({
           title: returnedApplication.title,
-          company: returnedApplication.companyName,
+          company: returnedApplication.company.name,
           date: new Date(returnedApplication.interviewAt),
         });
       }
@@ -165,6 +173,7 @@ const ApplicationModal = ({
       <section className="application-header">
         <h2>
           <label htmlFor="title"></label>
+          <span style={{ color: "red" }}>*</span>
           <input
             type="text"
             id="title"
@@ -187,6 +196,7 @@ const ApplicationModal = ({
             addItem={handleCompanyChange}
             error={companyError}
             setError={setCompanyError}
+            required
           />
         </div>
       </section>
@@ -204,7 +214,9 @@ const ApplicationModal = ({
         <div className="list-container user-details">
           <section className="status-details">
             <label htmlFor="status">
-              <h3>Status | </h3>
+              <h3>
+                <span style={{ color: "red" }}>*</span>Status |
+              </h3>
             </label>
             <select
               id="status"

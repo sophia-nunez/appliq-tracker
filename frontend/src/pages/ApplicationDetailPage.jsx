@@ -74,8 +74,8 @@ const ApplicationDetailPage = () => {
           <div className="application-header">
             <h2>{application.title}</h2>
             <button onClick={() => navigate(companyPage)}>
-              {application.companyName
-                ? application.companyName
+              {application.company && application.company.name
+                ? application.company.name
                 : "No Company Assigned"}
             </button>
           </div>

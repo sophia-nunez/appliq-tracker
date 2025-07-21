@@ -127,7 +127,11 @@ const ApplicationsPage = () => {
                     reloadPage={loadApplications}
                     key={application.id}
                     id={application.id}
-                    companyName={application.companyName}
+                    companyName={
+                      application.company && application.company.name
+                        ? application.company.name
+                        : "No Company Assigned"
+                    }
                     title={application.title}
                     description={application.description}
                     appliedAt={application.appliedAt}

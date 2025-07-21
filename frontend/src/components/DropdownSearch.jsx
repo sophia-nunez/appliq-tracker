@@ -16,7 +16,6 @@ const DropdownSearch = ({
   });
 
   const exactOptionMatch = data.some((item) => item === value);
-  // TODO slice array to top 6 results
   const filteredOptions = exactOptionMatch
     ? data.slice(0, 6)
     : data
@@ -67,7 +66,7 @@ const DropdownSearch = ({
         <Combobox.Options>
           {options}
           {!exactOptionMatch && value.trim().length > 0 && (
-            <Combobox.Option value={value}>+ Create {value}</Combobox.Option>
+            <Combobox.Option value={value}>{value}</Combobox.Option>
           )}
         </Combobox.Options>
       </Combobox.Dropdown>

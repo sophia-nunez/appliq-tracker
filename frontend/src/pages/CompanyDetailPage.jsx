@@ -43,7 +43,7 @@ const CompanyDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteCompany(companyId);
-      setMessage({ type: "success", text: "Company deleted." });
+      setMessage({ type: "success", text: `Company deleted: ${deleted.name}` });
       setStatusOpen(true);
       navigate(-1);
     } catch (error) {
@@ -103,7 +103,7 @@ const CompanyDetailPage = () => {
                           reloadPage={loadCompany}
                           key={application.id}
                           id={application.id}
-                          companyName={application.companyName}
+                          companyName={company.name}
                           title={application.title}
                           description={application.description}
                           appliedAt={application.appliedAt}

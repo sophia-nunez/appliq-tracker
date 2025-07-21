@@ -42,7 +42,7 @@ const CompaniesChart = ({ orderBy, filter }) => {
         company[status.status] = status._count._all;
       });
 
-      // {name: companyName, [status]: int}
+      // name: companyName, [status]: int
       return company;
     });
 
