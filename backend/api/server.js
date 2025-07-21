@@ -40,8 +40,8 @@ if (CURR_ENV === "local") {
       sameSite: "lax",
       maxAge: 36000000, // 10 hours
     },
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new PrismaSessionStore(new PrismaClient(), {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
@@ -59,8 +59,8 @@ if (CURR_ENV === "local") {
       sameSite: "none",
       maxAge: 36000000, // 10 hours
     },
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     store: new PrismaSessionStore(new PrismaClient(), {
       checkPeriod: 2 * 60 * 1000, //ms
       dbRecordIdIsSessionId: true,
@@ -86,15 +86,6 @@ server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
-
-const isAuthenticated = (req, res, next) => {
-  if (!req.session.userId) {
-    return res
-      .status(401)
-      .json({ error: "You must be logged in to view this page." });
-  }
-  next();
-};
 
 // user authentication
 server.post("/register", async (req, res) => {
