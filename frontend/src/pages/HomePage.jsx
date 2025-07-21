@@ -15,7 +15,11 @@ const HomePage = () => {
       // find interviews from email and ask to add to calendar
       addInterviews();
     } catch (error) {
-      console.log("Failed to find new interview times.");
+      setMessage({
+        type: "error",
+        text: "Failed to find interview times from email. Please try again later.",
+      });
+      setStatusOpen(true);
     }
   }, []);
 

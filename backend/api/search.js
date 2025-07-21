@@ -89,7 +89,6 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
