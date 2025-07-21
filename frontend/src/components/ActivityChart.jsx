@@ -9,6 +9,7 @@ import {
   Legend,
 } from "recharts";
 import { getApplicationGroupData } from "../utils/dataUtils";
+import { Periods } from "../data/enums";
 
 const ActivityChart = ({ dateRange }) => {
   const [data, setData] = useState(Array());
@@ -23,7 +24,7 @@ const ActivityChart = ({ dateRange }) => {
       const fullDate = new Date(date.day);
       // format date to "Month dd, yyyy"
       let options = { month: "long", day: "numeric" };
-      if (dateRange === "all-range") {
+      if (dateRange === Periods.ALL) {
         options = { month: "long", day: "numeric", year: "numeric" };
       }
       const formattedDate = fullDate.toLocaleDateString(undefined, options);
@@ -34,28 +35,34 @@ const ActivityChart = ({ dateRange }) => {
   };
 
   return (
-    <LineChart
-      width={500}
-      height={300}
-      data={data}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="applications"
-        stroke="#8884d8"
-        activeDot={{ r: 8 }}
-      />
-    </LineChart>
+    <>
+      {data && data.length > 0 ? (
+        <LineChart
+          width={500}
+          height={300}
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="applications"
+            stroke="#8884d8"
+            activeDot={{ r: 8 }}
+          />
+        </LineChart>
+      ) : (
+        <p>No data to display. Please try another range! </p>
+      )}
+    </>
   );
 };
 

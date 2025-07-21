@@ -1,13 +1,20 @@
+import { DatePickerInput } from "@mantine/dates";
 import { useState } from "react";
 import ActivityChart from "./ActivityChart";
 import CompaniesChart from "./CompaniesChart";
 import Checkbox from "./Checkbox";
 import { Periods } from "../data/enums";
+import "@mantine/dates/styles.css";
 
 const DataDisplay = () => {
   // for activity chart
   const [type, setType] = useState("Activity");
   const [dateRange, setDateRange] = useState(Periods.ALL);
+  const [customRange, setCustomRange] = useState([
+    new Date().toISOString().substring(0, 10),
+    new Date().toISOString().substring(0, 10),
+  ]);
+
   // for top company chart
   const [orderBy, setOrderBy] = useState("applied");
   const [filter, setFilter] = useState(["applied", "interview", "offer"]);
@@ -45,7 +52,11 @@ const DataDisplay = () => {
               <>
                 <ActivityChart dateRange={dateRange} />
                 {dateRange !== Periods.ALL && (
-                  <h4>{new Date().getFullYear()}</h4>
+                  <h4>
+                    {Object.values(Periods).includes(dateRange)
+                      ? new Date().getFullYear()
+                      : "Custom Range"}
+                  </h4>
                 )}
               </>
             ) : (
@@ -64,6 +75,18 @@ const DataDisplay = () => {
                   <button onClick={() => setDateRange(Periods.MONTH)}>
                     1 Month
                   </button>
+                  <div className="custom-range">
+                    <DatePickerInput
+                      type="range"
+                      label="Custom:"
+                      placeholder="Pick dates range"
+                      value={customRange}
+                      onChange={setCustomRange}
+                    />
+                    <button onClick={() => setDateRange(customRange)}>
+                      Set
+                    </button>
+                  </div>
                 </div>
               </>
             ) : (

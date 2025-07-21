@@ -12,6 +12,14 @@ const getApplicationGroupData = async (type) => {
     routeURL = `${baseURL()}/applications/data/dateRange/year`;
   } else if (type === Periods.MONTH) {
     routeURL = `${baseURL()}/applications/data/dateRange/month`;
+  } else if (type !== "status") {
+    // custom range
+    const range = new URLSearchParams({
+      start: type[0],
+      end: type[1],
+    });
+
+    routeURL = `${baseURL()}/applications/data/dateRange/custom?${range}`;
   }
 
   try {
@@ -24,6 +32,7 @@ const getApplicationGroupData = async (type) => {
     }
 
     const data = await response.json();
+
     return data;
   } catch (error) {
     throw error;

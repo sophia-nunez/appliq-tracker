@@ -9,6 +9,7 @@ const Periods = {
   YEAR: "year",
   MONTH: "month",
   DAY: "day",
+  CUSTOM: "custom",
 };
 
 module.exports = { Order, Periods };

@@ -20,7 +20,6 @@ const SummarySection = () => {
 
   return (
     <article className="summary-chart">
-      <h4 className="chart-title">Summary</h4>
       <SummaryChart data={data} />
     </article>
   );

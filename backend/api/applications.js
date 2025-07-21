@@ -195,7 +195,20 @@ router.get(
           GROUP BY day
           ORDER BY day;
         `;
-    if (period !== "all") {
+    if (period === Periods.CUSTOM) {
+      const { start, end } = req.query;
+
+      const startDate = start.substring(0, 10);
+      const endDate = end.substring(0, 10);
+
+      query = `
+          SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
+          FROM "Application"
+          WHERE "userId" = ${userId} AND "appliedAt" BETWEEN '${startDate}' and '${endDate}'
+          GROUP BY day
+          ORDER BY day;
+        `;
+    } else if (period !== Periods.ALL) {
       query = `
           SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
           FROM "Application"
@@ -403,7 +416,8 @@ router.put(
     } catch (err) {
       return res.status(500).json({ error: "Failed to update application." });
     }
-  });
+  }
+);
 
 const addCategories = async (userId, categories) => {
   let connected = [];
