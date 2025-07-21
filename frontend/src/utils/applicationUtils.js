@@ -2,21 +2,40 @@ import { baseURL, checkLogin } from "./authUtils";
 
 // uses query params to load matching applications
 const getApplications = async (query) => {
-  try {
-    const response = await fetch(
-      `${baseURL()}/applications/?${query.toString()}`,
-      { credentials: "include" }
-    );
-    if (!response.ok) {
-      const text = await response.json();
-      checkLogin(response);
-      throw new Error(text.error);
-    }
+  const searchQuery = new URLSearchParams(query);
+  if (query.text) {
+    try {
+      const response = await fetch(
+        `${baseURL()}/applications/search/?${searchQuery.toString()}`,
+        { credentials: "include" }
+      );
+      if (!response.ok) {
+        const text = await response.json();
+        return;
+      }
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  } else {
+    try {
+      const response = await fetch(
+        `${baseURL()}/applications/?${searchQuery.toString()}`,
+        { credentials: "include" }
+      );
+      if (!response.ok) {
+        const text = await response.json();
+        checkLogin(response);
+        throw new Error(text.error);
+      }
+
+      const data = await response.json();
+      return { applications: data };
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
@@ -62,7 +81,7 @@ const getFeatured = async () => {
 // fetches single application by id
 const getApplication = async (id) => {
   try {
-    const response = await fetch(`${baseURL()}/applications/${id}`, {
+    const response = await fetch(`${baseURL()}/applications/id/${id}`, {
       credentials: "include",
     });
     if (!response.ok) {
@@ -133,7 +152,7 @@ const editApplication = async (application, id) => {
   }
 
   try {
-    const response = await fetch(`${baseURL()}/applications/${id}`, {
+    const response = await fetch(`${baseURL()}/applications/edit/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -155,7 +174,7 @@ const editApplication = async (application, id) => {
 // removes application based on given id
 const deleteApplication = async (id) => {
   try {
-    const response = await fetch(`${baseURL()}/applications/${id}`, {
+    const response = await fetch(`${baseURL()}/applications/delete/${id}`, {
       method: "DELETE",
       credentials: "include",
     });

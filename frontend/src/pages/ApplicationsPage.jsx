@@ -25,7 +25,7 @@ const ApplicationsPage = () => {
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("all");
+  const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();
 
   const { setMessage, setStatusOpen } = useOutletContext();
@@ -57,18 +57,21 @@ const ApplicationsPage = () => {
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
     loading.setTrue();
-    const currQuery = new URLSearchParams({
+    const currQuery = {
       page: activePage,
       text: query.trim(),
       category: filter,
       orderBy,
-    });
+    };
     try {
       const data = await getApplications(currQuery);
       const categories = await getCategories();
 
       setCategoriesList(categories);
-      setApplications(data);
+      setApplications(data.applications);
+      if (data.totalPages) {
+        setTotalPages(data.totalPages);
+      }
     } catch (error) {
       setMessage({
         type: "error",

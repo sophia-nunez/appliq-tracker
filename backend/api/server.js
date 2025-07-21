@@ -7,10 +7,13 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("../generated/prisma");
+
+// api routes
 const applicationRouter = require("./applications");
 const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
 const noteRouter = require("./notes");
+const searchRouter = require("./search");
 const middleware = require("../middleware/middleware");
 
 // node environment indicators
@@ -27,6 +30,7 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
+// set session config based on DEV or PROD
 let sessionConfig = {};
 if (CURR_ENV === "local") {
   sessionConfig = {
@@ -86,6 +90,7 @@ server.use(applicationRouter);
 server.use(categoryRouter);
 server.use(companyRouter);
 server.use(noteRouter);
+server.use(searchRouter);
 
 // user authentication
 server.post("/register", async (req, res) => {
