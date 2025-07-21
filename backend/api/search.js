@@ -6,6 +6,7 @@ const { Client } = require("@elastic/elasticsearch");
 require("dotenv").config();
 const ELASTIC_API_KEY = process.env.ELASTIC_API_KEY;
 const URL = process.env.ELASTIC_URL;
+const ELASTIC_INDEX = process.env.ELASTIC_INDEX;
 
 // middleware
 const middleware = require("../middleware/middleware");
@@ -62,7 +63,7 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
   try {
     const applications = await client.search({
       track_total_hits: true,
-      index: "content-postgresql-ac4b",
+      index: ELASTIC_INDEX,
       from,
       size: APPS_PER_PAGE,
       query,
@@ -88,6 +89,7 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
