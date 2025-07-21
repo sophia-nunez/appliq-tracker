@@ -128,6 +128,11 @@ const ApplicationModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formInput.companyName) {
+      setCompanyError("Please fill out this field");
+      return;
+    }
+
     try {
       let returnedApplication;
       if (application.id) {
@@ -169,11 +174,19 @@ const ApplicationModal = ({
   };
 
   return (
-    <form className="application-form" onSubmit={handleSubmit}>
+    <form
+      className="application-form"
+      onSubmit={handleSubmit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+        }
+      }}
+    >
       <section className="application-header">
         <h2>
           <label htmlFor="title"></label>
-          <span style={{ color: "red" }}>*</span>
+          <span className="required-asterisk">*</span>
           <input
             type="text"
             id="title"
@@ -184,8 +197,9 @@ const ApplicationModal = ({
             required
           />
         </h2>
-        <div>
+        <div className="company-input">
           <label htmlFor="companyName"></label>
+          <span className="required-asterisk">*</span>
           <DropdownSearch
             data={allCompanies}
             id="companyName"
@@ -215,7 +229,8 @@ const ApplicationModal = ({
           <section className="status-details">
             <label htmlFor="status">
               <h3>
-                <span style={{ color: "red" }}>*</span>Status |
+                <span className="required-asterisk">*</span>
+                Status |
               </h3>
             </label>
             <select

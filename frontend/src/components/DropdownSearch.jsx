@@ -42,8 +42,13 @@ const DropdownSearch = ({
     >
       <Combobox.Target>
         <InputBase
-          rightSection={<Combobox.Chevron />}
           value={value}
+          onKeyDown={(e, val) => {
+            if (e.key === "Enter") {
+              addItem(e.currentTarget.value);
+              combobox.closeDropdown();
+            }
+          }}
           onChange={(event) => {
             combobox.openDropdown();
             combobox.updateSelectedOptionIndex();
@@ -58,7 +63,6 @@ const DropdownSearch = ({
             setError("");
           }}
           placeholder={`Add ${label}`}
-          rightSectionPointerEvents="none"
         />
       </Combobox.Target>
 
