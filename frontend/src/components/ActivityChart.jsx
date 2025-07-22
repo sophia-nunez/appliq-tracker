@@ -46,8 +46,12 @@ const ActivityChart = ({ dateRange }) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      <XAxis
+        dataKey="name"
+        stroke="var(--text-color)"
+        tick={{ fill: "var(--text-color)" }}
+      />
+      <YAxis stroke="var(--text-color)" tick={{ fill: "var(--text-color)" }} />
       <Tooltip />
       <Line
         type="monotone"

@@ -80,13 +80,27 @@
         margin: 0px;
       }
     }
+  }
 
-    .unknown {
-      display: flex;
+  .unknown {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 501px) {
+    .long {
       flex-direction: column;
-    }
+      align-items: center;
+      justify-content: space-evenly;
 
-    @media (min-width: 501px) {
+      .details {
+        margin: 10px 0px;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+      }
       .unknown {
         flex-direction: row;
         align-items: center;
