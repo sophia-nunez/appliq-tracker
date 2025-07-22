@@ -212,7 +212,9 @@ router.get(
       query = `
           SELECT DATE("appliedAt") AS day, CAST(COUNT(*) AS INT) as count
           FROM "Application"
-          WHERE "userId" = ${userId} AND "appliedAt" >= NOW() - INTERVAL '1 ${period}'
+          WHERE "userId" = ${userId} 
+            AND "appliedAt" >= date_trunc('${period}', NOW())
+            AND "appliedAt" < date_trunc('${period}', NOW() + interval '1 ${period}')
           GROUP BY day
           ORDER BY day;
         `;

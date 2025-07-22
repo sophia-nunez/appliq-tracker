@@ -10,6 +10,7 @@ const DataDisplay = () => {
   // for activity chart
   const [type, setType] = useState("Activity");
   const [dateRange, setDateRange] = useState(Periods.ALL);
+  const [dateLabel, setDateLabel] = useState(new Date().getFullYear());
   const [customRange, setCustomRange] = useState([
     new Date().toISOString().substring(0, 10),
     new Date().toISOString().substring(0, 10),
@@ -51,13 +52,7 @@ const DataDisplay = () => {
             {type === "Activity" ? (
               <>
                 <ActivityChart dateRange={dateRange} />
-                {dateRange !== Periods.ALL && (
-                  <h4>
-                    {Object.values(Periods).includes(dateRange)
-                      ? new Date().getFullYear()
-                      : "Custom Range"}
-                  </h4>
-                )}
+                {dateRange !== Periods.ALL && <h4>{dateLabel}</h4>}
               </>
             ) : (
               <CompaniesChart orderBy={orderBy} filter={filter} />
@@ -68,22 +63,49 @@ const DataDisplay = () => {
               <>
                 <p> Date Range: </p>
                 <div className="chart-buttons">
-                  <button onClick={() => setDateRange(Periods.ALL)}>All</button>
-                  <button onClick={() => setDateRange(Periods.YEAR)}>
-                    1 Year
-                  </button>
-                  <button onClick={() => setDateRange(Periods.MONTH)}>
-                    1 Month
-                  </button>
+                  <div className="preset-range">
+                    <button
+                      onClick={() => {
+                        setDateRange(Periods.ALL);
+                        setDateLabel("");
+                      }}
+                    >
+                      All
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateRange(Periods.YEAR);
+                        setDateLabel(new Date().getFullYear());
+                      }}
+                    >
+                      1 Year
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateRange(Periods.MONTH);
+                        setDateLabel(
+                          new Date().toLocaleString("default", {
+                            month: "long",
+                          })
+                        );
+                      }}
+                    >
+                      1 Month
+                    </button>
+                  </div>
                   <div className="custom-range">
                     <DatePickerInput
                       type="range"
-                      label="Custom:"
                       placeholder="Pick dates range"
                       value={customRange}
                       onChange={setCustomRange}
                     />
-                    <button onClick={() => setDateRange(customRange)}>
+                    <button
+                      onClick={() => {
+                        setDateRange(customRange);
+                        setDateLabel("Custom Range");
+                      }}
+                    >
                       Set
                     </button>
                   </div>
