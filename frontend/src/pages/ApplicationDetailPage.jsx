@@ -59,7 +59,7 @@ const ApplicationDetailPage = () => {
       setStatusOpen(true);
       navigate(-1);
     } catch (error) {
-      setMessage({ type: "error", text: "Failed to delete company." });
+      setMessage({ type: "error", text: "Failed to delete application." });
       setStatusOpen(true);
     }
   };

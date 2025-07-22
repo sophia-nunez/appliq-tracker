@@ -173,6 +173,19 @@ const ApplicationModal = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const deleted = await deleteApplication(application.id);
+      setMessage({ type: "success", text: "Application deleted." });
+      setStatusOpen(true);
+      setModalOpen(false);
+    } catch (error) {
+      console.log(error);
+      setMessage({ type: "error", text: "Failed to delete application." });
+      setStatusOpen(true);
+    }
+  };
+
   return (
     <form
       className="application-form"
@@ -330,7 +343,7 @@ const ApplicationModal = ({
             Submit
           </button>
           {application && (
-            <button type="button" className="delete-btn">
+            <button type="button" className="delete-btn" onClick={handleDelete}>
               Delete
             </button>
           )}
