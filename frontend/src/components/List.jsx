@@ -69,6 +69,7 @@ const List = () => {
             placeholder="New task..."
             value={formInput.task}
             onChange={handleChange}
+            required
           />
           <label htmlFor="description" />
           <input

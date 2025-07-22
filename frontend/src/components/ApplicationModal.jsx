@@ -180,7 +180,6 @@ const ApplicationModal = ({
       setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      console.log(error);
       setMessage({ type: "error", text: "Failed to delete application." });
       setStatusOpen(true);
     }
@@ -342,7 +341,7 @@ const ApplicationModal = ({
           <button className="edit-btn" type="submit">
             Submit
           </button>
-          {application && (
+          {application && application.id && (
             <button type="button" className="delete-btn" onClick={handleDelete}>
               Delete
             </button>

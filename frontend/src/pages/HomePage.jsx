@@ -64,7 +64,7 @@ const HomePage = () => {
         <Featured />
       </section>
       <section className="featured-container">
-        <h3>Notes</h3>
+        <h3>Tasks</h3>
         <List />
       </section>
     </main>
