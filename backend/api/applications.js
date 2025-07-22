@@ -84,6 +84,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   try {
     const applications = await prisma.application.findMany({
       where,
+      include: { company: { select: { name: true } } },
       orderBy,
       skip: page * APPS_PER_PAGE,
       take: APPS_PER_PAGE,
@@ -98,7 +99,6 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// TODO implement for search on elasticsearch branch, would need to send totalpages for each search
 router.get(
   "/applications/totalpages",
   isAuthenticated,
@@ -270,7 +270,7 @@ router.get("/applications/id/:id", isAuthenticated, async (req, res, next) => {
   try {
     const application = await prisma.application.findUnique({
       where: { id, userId: req.session.userId },
-      include: { categories: true },
+      include: { categories: true, company: { select: { name: true } } },
     });
     if (application) {
       res.json(application);
@@ -292,7 +292,12 @@ router.get(
     const title = req.params.title;
     try {
       const applications = await prisma.application.findMany({
-        where: { title, companyName, userId: req.session.userId },
+        where: {
+          title,
+          company: { name: companyName },
+          userId: req.session.userId,
+        },
+        include: { company: { select: { name: true } } },
       });
       if (applications.length > 0) {
         return res.json(applications[0]);
@@ -315,17 +320,28 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
     // Validate that new application has required fields
     const newApplicationValid =
       newApplication.title !== undefined &&
-      newApplication.companyName !== undefined &&
-      newApplication.status !== undefined;
+      newApplication.status !== undefined &&
+      newApplication.companyName !== undefined;
 
     if (newApplicationValid) {
-      // try to find company to add companyId
+      // try to find company to add companyId or make new company
+      let connectedCompanyId;
       const existingCompany = await prisma.company.findFirst({
         where: { userId: req.session.userId, name: newApplication.companyName },
       });
       if (existingCompany) {
-        newApplication.company = { connect: { id: existingCompany.id } };
+        connectedCompanyId = existingCompany.id;
+      } else {
+        const newCompany = await prisma.company.create({
+          data: {
+            userId: req.session.userId,
+            name: newApplication.companyName,
+          },
+        });
+        connectedCompanyId = newCompany.id;
       }
+      // connect the company to the application
+      newApplication.company = { connect: { id: connectedCompanyId } };
 
       let categories = { connect: [] };
       // adding categories, either add existing or create new one
@@ -341,7 +357,16 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       // update application category data
       newApplication.categories = categories;
 
-      const created = await prisma.application.create({ data: newApplication });
+      const created = await prisma.application.create({
+        data: newApplication,
+        include: {
+          company: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
       return res.status(201).json(created);
     } else {
       return res.status(400).json({ error: "Missing required fields" });
@@ -355,15 +380,18 @@ router.put(
   "/applications/edit/:appId",
   isAuthenticated,
   async (req, res, next) => {
-    const id = Number(req.params.appId);
     // separate field of categories to be removed
-    const { removedCategories, ...data } = req.body;
-    const updatedApp = { ...data, userId: req.session.userId };
-    let categories = { connectOrCreate: [], disconnect: removedCategories };
+    const { id, userId, companyId, removedCategories, ...data } = req.body;
+    if (userId !== req.session.userId) {
+      return res
+        .status(401)
+        .json({ message: "Application does not belong to signed in user." });
+    }
+    const updatedApp = { ...data };
     try {
       // Make sure the ID is valid
       const application = await prisma.application.findUnique({
-        where: { id, userId: req.session.userId },
+        where: { id, userId },
       });
 
       if (!application) {
@@ -371,18 +399,24 @@ router.put(
       }
 
       // Validate that application has required fields
-      const updatedAppValid = updatedApp.userId !== undefined;
+      const updatedAppValid = id !== undefined;
       if (updatedAppValid) {
         if (updatedApp.companyName) {
           // if companyName is changed, check if that company exists
           const existingCompany = await prisma.company.findFirst({
-            where: { userId: req.session.userId, name: updatedApp.companyName },
+            where: { userId, name: updatedApp.companyName },
           });
           if (existingCompany) {
-            updatedApp.companyId = existingCompany.id;
+            updatedApp.company = { connect: { id: existingCompany.id } };
           } else {
-            // if no matching company, remove any existing companyId
-            updatedApp.companyId = null;
+            // if no matching company, make new company
+            const newCompany = await prisma.company.create({
+              data: {
+                userId,
+                name: updatedApp.companyName,
+              },
+            });
+            updatedApp.company = { connect: { id: newCompany.id } };
           }
         }
 
@@ -394,7 +428,7 @@ router.put(
         if (updatedApp.categories) {
           // add categories to connect
           const connectedCats = await addCategories(
-            req.session.userId,
+            userId,
             updatedApp.categories
           );
           // replace categories to connect with matched list of ids
@@ -406,6 +440,13 @@ router.put(
         const updated = await prisma.application.update({
           data: updatedApp,
           where: { id },
+          include: {
+            company: {
+              select: {
+                name: true,
+              },
+            },
+          },
         });
         return res.status(201).json(updated);
       } else {

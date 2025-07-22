@@ -12,6 +12,14 @@
   --delete-red: rgb(122, 40, 34);
   --gray: rgb(198, 198, 198);
 
+  /* Colors for status */
+  --interview: #e29727;
+  --offer: #4caf50;
+  --rejected: #d74130;
+  --signed: #9b59b6;
+  --applied: #3498db;
+  --other: #817e7e;
+
   color-scheme: light dark;
   color: var(--text-color);
   background-color: var(--background-color);
@@ -29,6 +37,14 @@
     --hover-color: #ccd6ea;
     --gray: rgb(63, 63, 63);
     --delete-red: rgb(221, 132, 132);
+
+    /* Colors for status */
+    --interview: #f0b66a;
+    --offer: #8dcf98;
+    --rejected: #e68a8a;
+    --signed: #b199cc;
+    --applied: #7caedc;
+    --other: #c5c5c5;
 
     background-color: var(--background-color);
     color: var(--text-color);
@@ -98,4 +114,16 @@ button:focus-visible {
 }
 .delete-btn:hover {
   background-color: rgba(255, 0, 0, 0.421);
+}
+
+.mantine-Button-root,
+.mantine-Input-wrapper,
+.mantine-Input-input,
+.mantine-DateTimePicker-input,
+.mantine-Popover-dropdown,
+.mantine-Calendar-root,
+.mantine-Select-dropdown,
+.mantine-Text-root {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
 }

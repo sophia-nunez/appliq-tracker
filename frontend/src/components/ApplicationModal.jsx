@@ -39,7 +39,15 @@ const ApplicationModal = ({
   useEffect(() => {
     if (application.id) {
       // TODO currently adds userId and all other fields to payload, should this be avoided?
-      setFormInput((prev) => ({ ...prev, ...application }));
+      const linkedCompanyName =
+        application.company && application.company.name
+          ? application.company.name
+          : "";
+      setFormInput((prev) => ({
+        ...prev,
+        ...application,
+        companyName: linkedCompanyName,
+      }));
     }
 
     // get all categories and set dropdown list to these values
@@ -120,6 +128,11 @@ const ApplicationModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formInput.companyName) {
+      setCompanyError("Please fill out this field");
+      return;
+    }
+
     try {
       let returnedApplication;
       if (application.id) {
@@ -143,7 +156,7 @@ const ApplicationModal = ({
       if (change) {
         setInterviewChanged({
           title: returnedApplication.title,
-          company: returnedApplication.companyName,
+          company: returnedApplication.company.name,
           date: new Date(returnedApplication.interviewAt),
         });
       }
@@ -160,11 +173,32 @@ const ApplicationModal = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const deleted = await deleteApplication(application.id);
+      setMessage({ type: "success", text: "Application deleted." });
+      setStatusOpen(true);
+      setModalOpen(false);
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to delete application." });
+      setStatusOpen(true);
+    }
+  };
+
   return (
-    <form className="application-form" onSubmit={handleSubmit}>
+    <form
+      className="application-form"
+      onSubmit={handleSubmit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+        }
+      }}
+    >
       <section className="application-header">
         <h2>
           <label htmlFor="title"></label>
+          <span className="required-asterisk">*</span>
           <input
             type="text"
             id="title"
@@ -175,8 +209,9 @@ const ApplicationModal = ({
             required
           />
         </h2>
-        <div>
+        <div className="company-input">
           <label htmlFor="companyName"></label>
+          <span className="required-asterisk">*</span>
           <DropdownSearch
             data={allCompanies}
             id="companyName"
@@ -187,6 +222,7 @@ const ApplicationModal = ({
             addItem={handleCompanyChange}
             error={companyError}
             setError={setCompanyError}
+            required
           />
         </div>
       </section>
@@ -204,7 +240,10 @@ const ApplicationModal = ({
         <div className="list-container user-details">
           <section className="status-details">
             <label htmlFor="status">
-              <h3>Status | </h3>
+              <h3>
+                <span className="required-asterisk">*</span>
+                Status |
+              </h3>
             </label>
             <select
               id="status"
@@ -302,8 +341,8 @@ const ApplicationModal = ({
           <button className="edit-btn" type="submit">
             Submit
           </button>
-          {application && (
-            <button type="button" className="delete-btn">
+          {application && application.id && (
+            <button type="button" className="delete-btn" onClick={handleDelete}>
               Delete
             </button>
           )}

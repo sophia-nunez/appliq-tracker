@@ -42,7 +42,7 @@ const CompaniesChart = ({ orderBy, filter }) => {
         company[status.status] = status._count._all;
       });
 
-      // {name: companyName, [status]: int}
+      // name: companyName, [status]: int
       return company;
     });
 
@@ -62,8 +62,12 @@ const CompaniesChart = ({ orderBy, filter }) => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      <XAxis
+        dataKey="name"
+        stroke="var(--text-color)"
+        tick={{ fill: "var(--text-color)" }}
+      />
+      <YAxis stroke="var(--text-color)" tick={{ fill: "var(--text-color)" }} />
       <Tooltip />
       <Legend />
       <Bar dataKey={Status.Applied} stackId="a" fill="#4A90E2" />

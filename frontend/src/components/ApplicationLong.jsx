@@ -42,15 +42,15 @@ const ApplicationLong = ({
         <p className="ellipsis-overflow">{description}</p>
       </div>
       <div className="details">
-        <div className="details" onClick={toggleFeatured}>
+        <Status status={status} />
+        <p>{applicationDate}</p>
+        <div className="featured-icon" onClick={toggleFeatured}>
           {featured ? (
             <FaHeart className="featured" />
           ) : (
             <FaRegHeart className="not-featured" />
           )}
         </div>
-        <Status status={status} />
-        <p>{applicationDate}</p>
       </div>
     </article>
   );

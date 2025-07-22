@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getApplicationGroupData } from "../utils/dataUtils";
 import SummaryChart from "./SummaryChart";
-import SankeyChart from "./SankeyChart";
 
 const SummarySection = () => {
   const [data, setData] = useState(Array());

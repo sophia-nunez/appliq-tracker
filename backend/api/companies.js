@@ -178,7 +178,6 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
 // [PUT] update company
 router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
   // TODO if company name is updated, update applications with that company as well
-  // or should it remove the applications - make decision
 
   const id = Number(req.params.companyId);
   const { applications, ...rest } = req.body;
@@ -191,6 +190,17 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
 
     if (!company) {
       return res.status(404).json({ error: "Company not found" });
+    }
+
+    // make sure name isn't being changed to another existing company
+    if (changes.name && changes.name !== company.name) {
+      const existingCompany = await prisma.company.findFirst({
+        where: { name: changes.name, userId: req.session.userId },
+      });
+
+      if (existingCompany) {
+        return res.status(422).json({ error: "Duplicate company." });
+      }
     }
 
     // check if isFavorite is changing
