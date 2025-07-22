@@ -1,8 +1,22 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
 const { Order, Periods } = require("../data/enums");
+const { Client } = require("@elastic/elasticsearch");
+
+// env variables
+require("dotenv").config();
+const ELASTIC_API_KEY = process.env.ELASTIC_API_KEY;
+const URL = process.env.ELASTIC_URL;
+const ELASTIC_INDEX = process.env.ELASTIC_INDEX;
 
 const prisma = new PrismaClient();
+const client = new Client({
+  node: URL,
+  auth: {
+    apiKey: ELASTIC_API_KEY,
+  },
+  tls: { rejectUnauthorized: false },
+});
 
 const middleware = require("../middleware/middleware");
 
@@ -352,8 +366,24 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
               name: true,
             },
           },
+          categories: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
         },
       });
+
+      // format for elastic insert
+      const { companyName, company, ...document } = created;
+      // updates elastic index with new document
+      const elasticResponse = await client.index({
+        index: ELASTIC_INDEX,
+        id: document.id.toString(),
+        document,
+      });
+
       return res.status(201).json(created);
     } else {
       return res.status(400).json({ error: "Missing required fields" });
@@ -433,8 +463,24 @@ router.put(
                 name: true,
               },
             },
+            categories: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
           },
         });
+
+        // format for elastic insert
+        const { companyName, company, ...document } = updated;
+        // updates document in the index
+        const elasticResponse = await client.index({
+          index: ELASTIC_INDEX,
+          id: document.id.toString(),
+          document,
+        });
+
         return res.status(201).json(updated);
       } else {
         return res
@@ -442,6 +488,7 @@ router.put(
           .json({ error: "Application modifications are invalid" });
       }
     } catch (err) {
+      // TODO special error handling if elastic update fails
       return res.status(500).json({ error: "Failed to update application." });
     }
   }
@@ -489,6 +536,12 @@ router.delete(
       });
       if (application) {
         const deleted = await prisma.application.delete({ where: { id } });
+
+        // deletes document in elastic
+        const elasticResponse = await client.delete({
+          index: ELASTIC_INDEX,
+          id: deleted.id,
+        });
         res.json(deleted);
       } else {
         return res.status(404).json({ error: "Application not found" });
