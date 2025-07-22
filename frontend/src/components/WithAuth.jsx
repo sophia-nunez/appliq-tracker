@@ -1,22 +1,42 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "./UserContext";
-import { loginPath } from "../data/links.js";
+import { homePath, loginPath } from "../data/links.js";
 import LoadingModal from "./LoadingModal.jsx";
 
-const WithAuth = (loadingUser, WrappedComponent) => {
-  return function ProtectedComponent(props) {
+const WithAuth = (type, loadingUser, WrappedComponent) => {
+  if (type === "protected") {
+    return function ProtectedComponent(props) {
+      const { user } = useUser();
+
+      // wait for useUser() to fetch before navigating
+      const navigate = useNavigate();
+      useEffect(() => {
+        if (!loadingUser && !user.id) {
+          navigate(loginPath);
+        }
+      }, [user, navigate]);
+
+      if (loadingUser || !user.id) {
+        return <LoadingModal />;
+      }
+
+      return <WrappedComponent {...props} />;
+    };
+  }
+
+  return function UnprotectedComponent(props) {
     const { user } = useUser();
 
     // wait for useUser() to fetch before navigating
     const navigate = useNavigate();
     useEffect(() => {
-      if (!loadingUser && !user.id) {
-        navigate(loginPath);
+      if (!loadingUser && user.id) {
+        navigate(homePath);
       }
     }, [user, navigate]);
 
-    if (loadingUser || !user.id) {
+    if (loadingUser || user.id) {
       return <LoadingModal />;
     }
 
