@@ -318,6 +318,11 @@ const ApplicationModal = ({
                   onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
+                  timePickerProps={{
+                    withDropdown: true,
+                    popoverProps: { withinPortal: false },
+                    format: "12h",
+                  }}
                   required
                 />
               </div>
@@ -331,6 +336,11 @@ const ApplicationModal = ({
                   onChange={(value) => {
                     handleDateChange("interviewAt", value);
                     setChange(true);
+                  }}
+                  timePickerProps={{
+                    withDropdown: true,
+                    popoverProps: { withinPortal: false },
+                    format: "12h",
                   }}
                 />
               </div>
