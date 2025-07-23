@@ -5,7 +5,7 @@ import CompaniesChart from "./CompaniesChart";
 import Checkbox from "./Checkbox";
 import { Periods } from "../data/enums";
 import "@mantine/dates/styles.css";
-import { Card, Divider, InputLabel, Select, Tooltip } from "@mantine/core";
+import { Card, Divider, InputLabel, Select } from "@mantine/core";
 
 const DataDisplay = () => {
   // for activity chart
