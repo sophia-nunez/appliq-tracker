@@ -70,6 +70,26 @@
           align-items: end;
         }
       }
+
+      fieldset {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 0.3em;
+      }
+
+      @media (max-width: 940px) {
+        .chart-details {
+          display: flex;
+          flex-wrap: wrap;
+          width: 80%;
+          justify-content: center;
+        }
+
+        fieldset {
+          width: 45%;
+        }
+      }
     }
 
     .chart-title {

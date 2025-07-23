@@ -113,38 +113,36 @@ const DataDisplay = () => {
               <>
                 <fieldset>
                   <legend> Sort by: </legend>
-                  <div className="chart-buttons">
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="applications"
-                        name="orderBy"
-                        value="Applied"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                        defaultChecked
-                      />
-                      <label htmlFor="applications">Applications</label>
-                    </div>
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="interviews"
-                        name="orderBy"
-                        value="Interview"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                      />
-                      <label htmlFor="interviews">Interviews</label>
-                    </div>
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="offers"
-                        name="orderBy"
-                        value="Offer"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                      />
-                      <label htmlFor="offers">Offers</label>
-                    </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="applications"
+                      name="orderBy"
+                      value="Applied"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                      defaultChecked
+                    />
+                    <label htmlFor="applications">Applications</label>
+                  </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="interviews"
+                      name="orderBy"
+                      value="Interview"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                    />
+                    <label htmlFor="interviews">Interviews</label>
+                  </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="offers"
+                      name="orderBy"
+                      value="Offer"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                    />
+                    <label htmlFor="offers">Offers</label>
                   </div>
                 </fieldset>
                 <fieldset>
