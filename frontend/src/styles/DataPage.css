@@ -27,7 +27,7 @@
 
       width: 80vw;
       min-height: 60vh;
-      padding: 100px 20px;
+      padding: 50px 20px;
 
       .chart-content {
         display: flex;
@@ -43,8 +43,9 @@
         place-items: center;
         padding: 20px;
         border-radius: 5px;
+        width: 100%;
         min-height: 30vh;
-        min-width: 550px;
+        min-width: 250px;
         background-color: var(--background-color);
         color: var(--text-color);
       }
@@ -67,7 +68,7 @@
           display: flex;
           flex-wrap: wrap;
           gap: 20px;
-          align-items: end;
+          align-items: start;
         }
       }
 
@@ -76,19 +77,15 @@
         flex-direction: column;
         justify-content: start;
         gap: 0.3em;
+        width: 45%;
       }
 
-      @media (max-width: 940px) {
-        .chart-details {
-          display: flex;
-          flex-wrap: wrap;
-          width: 80%;
-          justify-content: center;
-        }
-
-        fieldset {
-          width: 45%;
-        }
+      .chart-details {
+        display: flex;
+        flex-wrap: wrap;
+        width: 80%;
+        min-width: 200px;
+        justify-content: center;
       }
     }
 

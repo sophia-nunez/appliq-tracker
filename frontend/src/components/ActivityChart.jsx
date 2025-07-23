@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 import { getApplicationGroupData } from "../utils/dataUtils";
 import { Periods } from "../data/enums";
@@ -15,7 +16,11 @@ const ActivityChart = ({ dateRange }) => {
   const [data, setData] = useState(Array());
 
   useEffect(() => {
-    loadActivity();
+    if (dateRange === Periods.CUSTOM) {
+      setData([]);
+    } else {
+      loadActivity();
+    }
   }, [dateRange]);
 
   const loadActivity = async () => {
@@ -65,37 +70,41 @@ const ActivityChart = ({ dateRange }) => {
   return (
     <>
       {data && data.length > 0 ? (
-        <LineChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="name"
-            stroke="var(--text-color)"
-            tick={{ fill: "var(--text-color)" }}
-          />
-          <YAxis
-            stroke="var(--text-color)"
-            tick={{ fill: "var(--text-color)" }}
-          />
-          <Tooltip />
-          <Line
-            type="monotone"
-            dataKey="applications"
-            stroke="#8884d8"
-            activeDot={{ r: 8 }}
-          />
-        </LineChart>
+        <ResponsiveContainer height={350} width="100%">
+          <LineChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              stroke="var(--text-color)"
+              tick={{ fill: "var(--text-color)" }}
+            />
+            <YAxis
+              stroke="var(--text-color)"
+              tick={{ fill: "var(--text-color)" }}
+            />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="applications"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       ) : (
-        <p>No data to display. Please try another range! </p>
+        <p style={{ height: "350px", placeContent: "center" }}>
+          No data to display. Please set a range below!
+        </p>
       )}
     </>
   );
