@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 import { useOutletContext } from "react-router";
 
@@ -49,44 +50,58 @@ const CompaniesChart = ({ orderBy, filter }) => {
       setData(formattedData);
     } catch (error) {
       setMessage({ type: "error", text: "Failed to load data." });
+      setStatusOpen(true);
     }
   };
 
   return (
-    <BarChart
-      width={500}
-      height={300}
-      data={data}
-      margin={{
-        top: 20,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis
-        dataKey="name"
-        stroke="var(--text-color)"
-        tick={{ fill: "var(--text-color)" }}
-        interval={0}
-        // tickeFormatter code from https://stackoverflow.com/questions/67950014
-        tickFormatter={(value, index) => {
-          const limit = 9;
-          if (value.length < limit) return value;
-          return `${value.substring(0, limit)}...`;
-        }}
-      />
-      <YAxis stroke="var(--text-color)" tick={{ fill: "var(--text-color)" }} />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey={Status.Applied} stackId="a" fill="#4A90E2" />
-      <Bar dataKey={Status.Interview} stackId="a" fill="#F5A623" />
-      <Bar dataKey={Status.Offer} stackId="a" fill="#82ca9d" />
-      <Bar dataKey={Status.Rejected} stackId="a" fill="#D0021B" />
-      <Bar dataKey={Status.Signed} stackId="a" fill="#560bad" />
-      <Bar dataKey={Status.Other} stackId="a" fill="#9B9B9B" />
-    </BarChart>
+    <>
+      {data && data.length > 0 ? (
+        <ResponsiveContainer height={350} width="100%">
+          <BarChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              stroke="var(--text-color)"
+              tick={{ fill: "var(--text-color)" }}
+              interval={0}
+              // tickeFormatter code from https://stackoverflow.com/questions/67950014
+              tickFormatter={(value, index) => {
+                const limit = 9;
+                if (value.length < limit) return value;
+                return `${value.substring(0, limit)}...`;
+              }}
+            />
+            <YAxis
+              stroke="var(--text-color)"
+              tick={{ fill: "var(--text-color)" }}
+            />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey={Status.Applied} stackId="a" fill="#4A90E2" />
+            <Bar dataKey={Status.Interview} stackId="a" fill="#F5A623" />
+            <Bar dataKey={Status.Offer} stackId="a" fill="#82ca9d" />
+            <Bar dataKey={Status.Rejected} stackId="a" fill="#D0021B" />
+            <Bar dataKey={Status.Signed} stackId="a" fill="#560bad" />
+            <Bar dataKey={Status.Other} stackId="a" fill="#9B9B9B" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ height: "350px", placeContent: "center" }}>
+          No data to display. Select new filters below!
+        </p>
+      )}
+    </>
   );
 };
 
