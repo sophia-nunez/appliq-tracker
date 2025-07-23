@@ -59,8 +59,6 @@ const ActivityChart = ({ dateRange }) => {
       }
     }
 
-    console.log(formattedData);
-
     setData(formattedData);
   };
 

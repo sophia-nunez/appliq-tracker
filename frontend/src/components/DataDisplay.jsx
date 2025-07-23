@@ -121,7 +121,7 @@ const DataDisplay = () => {
                         type="radio"
                         id="applications"
                         name="orderBy"
-                        value="applied"
+                        value="Applied"
                         onClick={(e) => setOrderBy(e.target.value)}
                         defaultChecked
                       />
@@ -132,7 +132,7 @@ const DataDisplay = () => {
                         type="radio"
                         id="interviews"
                         name="orderBy"
-                        value="interview"
+                        value="Interview"
                         onClick={(e) => setOrderBy(e.target.value)}
                       />
                       <label htmlFor="interviews">Interviews</label>
@@ -142,7 +142,7 @@ const DataDisplay = () => {
                         type="radio"
                         id="offers"
                         name="orderBy"
-                        value="offer"
+                        value="Offer"
                         onClick={(e) => setOrderBy(e.target.value)}
                       />
                       <label htmlFor="offers">Offers</label>

@@ -4,6 +4,11 @@ const Order = {
   INTERVIEW: "interviewDate",
 };
 
+const Status = {
+  Interview: "Interview",
+  Offer: "Offer",
+};
+
 const Periods = {
   ALL: "all",
   YEAR: "year",
@@ -12,4 +17,4 @@ const Periods = {
   CUSTOM: "custom",
 };
 
-module.exports = { Order, Periods };
+module.exports = { Order, Status, Periods };

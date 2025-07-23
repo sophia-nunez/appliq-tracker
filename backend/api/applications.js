@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const { Order, Periods } = require("../data/enums");
+const { Order, Periods, Status } = require("../data/enums");
 
 const prisma = new PrismaClient();
 
@@ -242,19 +242,83 @@ router.get(
     const sort = req.params.orderBy;
     const userId = req.session.userId;
 
+    let where = { userId };
+
+    if (Object.values(Status).includes(sort)) {
+      // interviews or offers, include where : status
+      where = { ...where, status: sort };
+    }
     try {
-      const applications = await prisma.application.groupBy({
-        by: ["companyName", "status"],
+      // get ids top companies according to current sort
+      const topCompanies = await prisma.application.groupBy({
+        by: ["companyId"],
+        where,
+        _count: {
+          companyId: true,
+        },
+        orderBy: {
+          _count: {
+            companyId: "desc",
+          },
+        },
+      });
+
+      // array (max length 5) of ids for top companies
+      const promises = topCompanies.slice(0, 5).map(async (company) => {
+        const companyName = await prisma.company.findUnique({
+          where: {
+            id: company.companyId,
+          },
+          select: {
+            name: true,
+          },
+        });
+        return company.companyId;
+      });
+
+      const companyIds = await Promise.all(promises);
+
+      // use company array to only groupBy applications with matching company
+      const groupedCompanies = await prisma.application.groupBy({
+        by: ["companyId", "status"],
         where: {
-          userId: req.session.userId,
+          userId,
+          companyId: { in: companyIds },
         },
         _count: {
           _all: true,
         },
       });
 
-      if (applications) {
-        res.json(applications);
+      // now get company names and then map the counts to the names
+      // gives array of objects {id, name}
+      const companies = await prisma.company.findMany({
+        where: {
+          id: { in: companyIds },
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      // create Map using .map to get key as int
+      const companyMap = new Map(
+        companies.map((company) => [company.id, company.name])
+      );
+
+      // get result by mapping object to same field, but replacing company id with name
+      // companyStatus is {_count, companyId, status}, map return is {_count, companyName, status}
+      const result = groupedCompanies.map((companyStatus) => {
+        return {
+          _count: companyStatus._count,
+          status: companyStatus.status,
+          companyName: companyMap.get(companyStatus.companyId),
+        };
+      });
+
+      if (result) {
+        res.json(result);
       } else {
         return res.status(404).json({ error: "No applications found" });
       }
