@@ -40,8 +40,10 @@ const getApplicationGroupData = async (type) => {
 };
 
 // uses given order to get company names with application count by status
-const getCompanyData = async (orderBy) => {
-  let routeURL = `${baseURL()}/applications/data/company/${orderBy}`;
+const getCompanyData = async (orderBy, filter) => {
+  const query = new URLSearchParams({ orderBy, filter });
+
+  let routeURL = `${baseURL()}/applications/data/company/?${query.toString()}`;
 
   try {
     const response = await fetch(routeURL, {

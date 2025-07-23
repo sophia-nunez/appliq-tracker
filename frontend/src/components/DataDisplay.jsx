@@ -17,10 +17,8 @@ const DataDisplay = () => {
   ]);
 
   // for top company chart
-  const [orderBy, setOrderBy] = useState("applied");
-  const [filter, setFilter] = useState(["applied", "interview", "offer"]);
-
-  //TODO: add filter/sort functionality for top companies, and a custom date range selector for Activity chart
+  const [orderBy, setOrderBy] = useState("Applied");
+  const [filter, setFilter] = useState(["Applied", "Interview", "Offer"]);
 
   // updates filter list for application types to show on company chart
   const handleFilter = (e) => {
@@ -150,39 +148,39 @@ const DataDisplay = () => {
                   </div>
                 </fieldset>
                 <fieldset>
-                  <legend>Filter by application status:</legend>
+                  <legend>Include:</legend>
 
                   <Checkbox
                     label="Applied"
-                    valueName="applied"
+                    valueName="Applied"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Interview"
-                    valueName="interview"
+                    valueName="Interview"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Offer"
-                    valueName="offer"
+                    valueName="Offer"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Rejected"
-                    valueName="rejected"
+                    valueName="Rejected"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Signed"
-                    valueName="signed"
+                    valueName="Signed"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Other"
-                    valueName="other"
+                    valueName="Other"
                     handleFilter={handleFilter}
                   />
                 </fieldset>

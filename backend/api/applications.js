@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const { Order, Periods, Status } = require("../data/enums");
+const { Order, Periods, Status, OrderStatus } = require("../data/enums");
 
 const prisma = new PrismaClient();
 
@@ -236,18 +236,29 @@ router.get(
 
 // [GET] company data orderBy number of applications of given status
 router.get(
-  "/applications/data/company/:orderBy",
+  "/applications/data/company",
   isAuthenticated,
   async (req, res, next) => {
-    const sort = req.params.orderBy;
+    // order by number of application of status "sort"
+    const sort = req.query.orderBy;
+    // application types to include, filters is comma-separated string
+    const filters = req.query.filter;
+    // convert to array of strings
+    const filterBy = filters.split(",");
     const userId = req.session.userId;
 
     let where = { userId };
 
-    if (Object.values(Status).includes(sort)) {
+    if (Object.values(OrderStatus).includes(sort)) {
       // interviews or offers, include where : status
       where = { ...where, status: sort };
+    } //otherwise default to "Applied"
+
+    // validate filters
+    if (!filterBy.every((filter) => Object.values(Status).includes(filter))) {
+      return res.status(400).json({ error: "Invalid filters." });
     }
+
     try {
       // get ids top companies according to current sort
       const topCompanies = await prisma.application.groupBy({
@@ -279,18 +290,20 @@ router.get(
       const companyIds = await Promise.all(promises);
 
       // use company array to only groupBy applications with matching company
+      // only includes applications with selected status (filters)
       const groupedCompanies = await prisma.application.groupBy({
         by: ["companyId", "status"],
         where: {
           userId,
           companyId: { in: companyIds },
+          status: { in: filterBy },
         },
         _count: {
           _all: true,
         },
       });
 
-      // now get company names and then map the counts to the names
+      // get company names and then map the counts to the names
       // gives array of objects {id, name}
       const companies = await prisma.company.findMany({
         where: {
@@ -320,7 +333,7 @@ router.get(
       if (result) {
         res.json(result);
       } else {
-        return res.status(404).json({ error: "No applications found" });
+        res.json([]);
       }
     } catch (err) {
       return res

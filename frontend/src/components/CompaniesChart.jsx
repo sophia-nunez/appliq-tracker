@@ -10,43 +10,46 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { useOutletContext } from "react-router";
 
 const CompaniesChart = ({ orderBy, filter }) => {
-  // TODO: filter data by application status
+  const { setMessage, setStatusOpen } = useOutletContext();
   const [data, setData] = useState(Array());
 
   useEffect(() => {
     loadCompanies();
-  }, [orderBy]);
-
-  // add second useEffect for filterCompanies when filter changes
+  }, [orderBy, filter]);
 
   // gets companies is given order
   const loadCompanies = async () => {
-    // get application count groups by company and status
-    const loadedData = await getCompanyData(orderBy);
+    try {
+      // get application count groups by company and status
+      const loadedData = await getCompanyData(orderBy, filter);
 
-    // group all status types for company results
-    const groupedCompanies = Object.groupBy(
-      loadedData,
-      (company) => company.companyName
-    );
+      // group all status types for company results
+      const groupedCompanies = Object.groupBy(
+        loadedData,
+        (company) => company.companyName
+      );
 
-    // format into name with fields for each application status
-    const formattedData = Object.keys(groupedCompanies).map((key) => {
-      // set name to companyName
-      let company = { name: key };
+      // format into name with fields for each application status
+      const formattedData = Object.keys(groupedCompanies).map((key) => {
+        // set name to companyName
+        let company = { name: key };
 
-      // for each application status the company contains, set this field with the count
-      groupedCompanies[key].forEach((status) => {
-        company[status.status] = status._count._all;
+        // for each application status the company contains, set this field with the count
+        groupedCompanies[key].forEach((status) => {
+          company[status.status] = status._count._all;
+        });
+
+        // name: companyName, [status]: int
+        return company;
       });
 
-      // name: companyName, [status]: int
-      return company;
-    });
-
-    setData(formattedData);
+      setData(formattedData);
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to load data." });
+    }
   };
 
   return (
@@ -66,6 +69,13 @@ const CompaniesChart = ({ orderBy, filter }) => {
         dataKey="name"
         stroke="var(--text-color)"
         tick={{ fill: "var(--text-color)" }}
+        interval={0}
+        // tickeFormatter code from https://stackoverflow.com/questions/67950014
+        tickFormatter={(value, index) => {
+          const limit = 9;
+          if (value.length < limit) return value;
+          return `${value.substring(0, limit)}...`;
+        }}
       />
       <YAxis stroke="var(--text-color)" tick={{ fill: "var(--text-color)" }} />
       <Tooltip />
