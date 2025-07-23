@@ -1,4 +1,10 @@
 import { createContext, useState, useContext } from "react";
+import {
+  Button,
+  Paper,
+  MantineProvider,
+  useMantineColorScheme,
+} from "@mantine/core";
 
 const ThemeContext = createContext();
 
@@ -14,18 +20,30 @@ export const ThemeProvider = ({ children }) => {
   };
 
   // set with initlial value as device preferred
-  const [theme, setTheme] = useState(getPreferredTheme);
+  const preferredTheme = getPreferredTheme();
+  const [theme, setTheme] = useState("light");
+  const { setColorScheme } = useMantineColorScheme();
 
   // sets to opposite theme (toggles)
   const toggleTheme = () => {
-    setTheme((curr) => (curr === "light" ? "dark" : "light"));
+    const currentTheme = theme;
+    setTheme(currentTheme === "light" ? "dark" : "light");
+    setColorScheme(currentTheme === "light" ? "dark" : "light");
   };
 
   const value = { theme, toggleTheme };
 
   // return context provider to wrap app in
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      <MantineProvider
+        theme={{ colorScheme: theme }}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        {children}
+      </MantineProvider>
+    </ThemeContext.Provider>
   );
 };
 

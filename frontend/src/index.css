@@ -6,9 +6,9 @@
   --primary-color: #121f38;
   --secondary-color: #bccff2;
   --hover-color: #787093;
-  --background-color: rgb(72, 73, 83);
-  --card-bg-color: rgb(59, 62, 71);
-  --text-color: #f9f9f9;
+  --background-color: #2e2e2e;
+  --card-bg-color: rgb(25, 26, 29);
+  --text-color: #e3e3e3;
   --delete-red: rgb(122, 40, 34);
   --gray: rgb(198, 198, 198);
 
@@ -119,28 +119,4 @@ button:focus-visible {
 }
 .delete-btn:hover {
   background-color: rgba(255, 0, 0, 0.421);
-}
-
-.mantine-Button-root,
-.mantine-Input-wrapper,
-.mantine-Input-input,
-.mantine-DateTimePicker-input,
-.mantine-TimePicker-field,
-.mantine-Popover-dropdown,
-.mantine-Calendar-root,
-.mantine-Select-dropdown,
-.mantine-Select-option,
-.mantine-Text-root,
-.mantine-ScrollArea-viewport,
-.mantine-ScrollArea-content {
-  background-color: var(--background-color) !important;
-  color: var(--text-color) !important;
-}
-
-.mantine-Anchor-root.mantine-Text-root {
-  color: #747bff !important;
-}
-
-.mantine-Anchor-root.mantine-Text-root:hover {
-  color: #5a60ce !important;
 }
