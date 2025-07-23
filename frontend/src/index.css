@@ -125,10 +125,14 @@ button:focus-visible {
 .mantine-Input-wrapper,
 .mantine-Input-input,
 .mantine-DateTimePicker-input,
+.mantine-TimePicker-field,
 .mantine-Popover-dropdown,
 .mantine-Calendar-root,
 .mantine-Select-dropdown,
-.mantine-Text-root {
+.mantine-Select-option,
+.mantine-Text-root,
+.mantine-ScrollArea-viewport,
+.mantine-ScrollArea-content {
   background-color: var(--background-color) !important;
   color: var(--text-color) !important;
 }
