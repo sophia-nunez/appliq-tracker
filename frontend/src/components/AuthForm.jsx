@@ -118,39 +118,41 @@ const AuthForm = ({ type }) => {
     <main>
       <section className={`${type}-container`}>
         <h2>{type === "register" ? "Register" : "Login"}</h2>
-        {message && <p className={`${message.type}-text`}>{message.text}</p>}
-        <div className="username-input input-container">
-          <TextInput
-            label="Username:"
-            type="text"
-            name="username"
-            id="username"
-            value={formInput.username}
-            onChange={handleChange}
-            placeholder="Your username"
-            required
-          />
-        </div>
-        <div className="password-input input-container">
-          <PasswordInput
-            label="Password:"
-            type="password"
-            name="password"
-            id="password"
-            value={formInput.password}
-            onChange={handleChange}
-            placeholder="Your password"
-            required
-          />
-        </div>
-        <div className={`${type}-btns`}>
-          <button className="google-btn" onClick={() => login()}>
-            <FcGoogle className="google-logo" /> Google
-          </button>
-          <button className={`${type}-btn`} onClick={handleSubmit}>
-            {type === "login" ? "Sign in" : "Register"}
-          </button>
-        </div>
+        <form>
+          {message && <p className={`${message.type}-text`}>{message.text}</p>}
+          <div className="username-input input-container">
+            <TextInput
+              label="Username:"
+              type="text"
+              name="username"
+              id="username"
+              value={formInput.username}
+              onChange={handleChange}
+              placeholder="Your username"
+              required
+            />
+          </div>
+          <div className="password-input input-container">
+            <PasswordInput
+              label="Password:"
+              type="password"
+              name="password"
+              id="password"
+              value={formInput.password}
+              onChange={handleChange}
+              placeholder="Your password"
+              required
+            />
+          </div>
+          <div className={`${type}-btns`}>
+            <button className="google-btn" onClick={() => login()}>
+              <FcGoogle className="google-logo" /> Google
+            </button>
+            <button className={`${type}-btn`} onClick={handleSubmit}>
+              {type === "login" ? "Sign in" : "Register"}
+            </button>
+          </div>
+        </form>
         {type === "login" ? (
           <Text className="subtitle">
             Don't have an account yet?{" "}

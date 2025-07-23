@@ -136,3 +136,11 @@ button:focus-visible {
   background-color: var(--background-color) !important;
   color: var(--text-color) !important;
 }
+
+.mantine-Anchor-root.mantine-Text-root {
+  color: #747bff !important;
+}
+
+.mantine-Anchor-root.mantine-Text-root:hover {
+  color: #5a60ce !important;
+}

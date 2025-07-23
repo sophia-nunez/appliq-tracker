@@ -10,6 +10,10 @@
   max-width: 40vw;
   border-radius: 3px;
 
+  form {
+    width: 100%;
+  }
+
   .input-container {
     width: 100%;
   }
