@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router";
 import { googleLogout } from "@react-oauth/google";
 import { useUser } from "./UserContext";
-import { IoMdClose } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoMdClose, IoIosLogOut, IoIosSettings } from "react-icons/io";
+import { Divider } from "@mantine/core";
 import { baseURL } from "../utils/authUtils";
 import "../styles/NavBar.css";
 import {
@@ -12,7 +12,7 @@ import {
   dataPath,
   settingsPath,
   loginPath,
-} from "../links";
+} from "../data/links";
 
 const NavBar = ({ closeNav, reference }) => {
   const { user, setUser } = useUser();
@@ -39,6 +39,10 @@ const NavBar = ({ closeNav, reference }) => {
             <IoMdClose className="close-icon" />
           </span>
         </div>
+        <span>
+          Signed in as <strong>{user.username}</strong>
+        </span>
+        <Divider size="sm" className="divider" />
         <nav>
           <Link to={homePath} onClick={closeNav}>
             Home
@@ -53,16 +57,16 @@ const NavBar = ({ closeNav, reference }) => {
             Data
           </Link>
           <div className="bottom-nav">
-            <span>
-              Signed in as <strong>{user.username}</strong>
-            </span>
+            <Divider size="sm" />
             <div id="non-nav-btns">
-              <button className="logout-btn" onClick={handleLogout}>
-                Log Out
-              </button>
               <Link to={settingsPath}>
-                <IoSettingsOutline className="settings-icon" />
+                <IoIosSettings className="settings-icon" />
+                Settings
               </Link>
+              <div className="logout-btn" onClick={handleLogout}>
+                <IoIosLogOut className="settings-icon" />
+                Log Out
+              </div>
             </div>
           </div>
         </nav>

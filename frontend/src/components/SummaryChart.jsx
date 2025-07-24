@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell } from "recharts";
+import { Status } from "../data/enums";
 
 // label to go on outside, middle section, with status and count
 const renderCustomizedLabel = ({
@@ -18,7 +19,7 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="black"
+      fill="var(--text-color)"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
     >
@@ -30,12 +31,12 @@ const renderCustomizedLabel = ({
 //
 const SummaryChart = ({ data }) => {
   const colors = new Map([
-    ["Interview", "#F5A623"],
-    ["Offer", "#82ca9d"],
-    ["Rejected", "#D0021B"],
-    ["Signed", "#560bad"],
-    ["Applied", "#4A90E2"],
-    ["Other", "#9B9B9B"],
+    [Status.Interview, "#F5A623"],
+    [Status.Offer, "#82ca9d"],
+    [Status.Rejected, "#D0021B"],
+    [Status.Signed, "#560bad"],
+    [Status.Applied, "#4A90E2"],
+    [Status.Other, "#9B9B9B"],
   ]);
 
   return (

@@ -2,24 +2,29 @@
   font-size: 1rem;
   font-weight: 350;
   padding: 3px;
+  width: 80px;
 }
 
 .status-btn.Signed {
-  background-color: palegreen;
+  background-color: var(--signed);
 }
 
 .status-btn.Rejected {
-  background-color: var(--delete-red);
+  background-color: var(--rejected);
 }
 
 .status-btn.Applied {
-  background-color: lightgray;
+  background-color: var(--applied);
 }
 
 .status-btn.Interview {
-  background-color: var(--primary-color);
+  background-color: var(--interview);
 }
 
-.status-btn.other {
-  background-color: palegoldenrod;
+.status-btn.Offer {
+  background-color: var(--offer);
+}
+
+.status-btn.Other {
+  background-color: var(--other);
 }

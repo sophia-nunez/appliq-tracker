@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getApplicationGroupData } from "../utils/dataUtils";
 import SummaryChart from "./SummaryChart";
-import SankeyChart from "./SankeyChart";
 
 const SummarySection = () => {
   const [data, setData] = useState(Array());
@@ -20,7 +19,6 @@ const SummarySection = () => {
 
   return (
     <article className="summary-chart">
-      <h4 className="chart-title">Summary</h4>
       <SummaryChart data={data} />
     </article>
   );

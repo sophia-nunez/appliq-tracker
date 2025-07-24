@@ -18,15 +18,18 @@ import DataPage from "./pages/DataPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import CompanyDetailPage from "./pages/CompanyDetailPage";
 import PrivacyPage from "./pages/PrivacyPage";
-import { LoadingProvider } from "./components/LoadingContext";
+import { LoadingProvider, useLoading } from "./components/LoadingContext";
 import SubmissionStatus from "./components/SubmissionStatus";
+import LoadingModal from "./components/LoadingModal";
 
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
 // basic layout to be rendered on all pages
 function Root() {
+  const { isLoading } = useLoading();
   // pop up on form submission
   const [message, setMessage] = useState({
     type: "error",
@@ -39,6 +42,11 @@ function Root() {
   return (
     <>
       <Header />
+      {isLoading && (
+        <main>
+          <LoadingModal />
+        </main>
+      )}
       <Outlet
         context={{
           message,
@@ -74,17 +82,34 @@ const AppContent = ({ router }) => {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(false);
   // separate loading for user to prevent page re-rendering
   const [loadingUser, setLoadingUser] = useState(true);
   // can't access main pages if not logged in
-  const ProtectedHome = WithAuth(loadingUser, HomePage);
-  const ProtectedApplications = WithAuth(loadingUser, ApplicationsPage);
-  const ProtectedApplication = WithAuth(loadingUser, ApplicationDetailPage);
-  const ProtectedCompanies = WithAuth(loadingUser, CompanyPage);
-  const ProtectedCompany = WithAuth(loadingUser, CompanyDetailPage);
-  const ProtectedData = WithAuth(loadingUser, DataPage);
-  const ProtectedSettings = WithAuth(loadingUser, SettingsPage);
+  const ProtectedHome = WithAuth("protected", loadingUser, HomePage);
+  const ProtectedApplications = WithAuth(
+    "protected",
+    loadingUser,
+    ApplicationsPage
+  );
+  const ProtectedApplication = WithAuth(
+    "protected",
+    loadingUser,
+    ApplicationDetailPage
+  );
+  const ProtectedCompanies = WithAuth("protected", loadingUser, CompanyPage);
+  const ProtectedCompany = WithAuth(
+    "protected",
+    loadingUser,
+    CompanyDetailPage
+  );
+  const ProtectedData = WithAuth("protected", loadingUser, DataPage);
+  const ProtectedSettings = WithAuth("protected", loadingUser, SettingsPage);
+  const UnprotectedLogin = WithAuth("unprotected", loadingUser, LoginPage);
+  const UnprotectedRegister = WithAuth(
+    "unprotected",
+    loadingUser,
+    RegisterPage
+  );
 
   // sets up routes for each URL to the respectice component
   const router = createBrowserRouter([
@@ -120,11 +145,11 @@ export default function App() {
         },
         {
           path: "login",
-          Component: LoginPage,
+          Component: UnprotectedLogin,
         },
         {
           path: "register",
-          Component: RegisterPage,
+          Component: UnprotectedRegister,
         },
         {
           path: "privacy-policy",

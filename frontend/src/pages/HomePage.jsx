@@ -1,7 +1,7 @@
 import { Link, useOutletContext } from "react-router";
 import Featured from "../components/Featured";
 import List from "../components/List";
-import { applicationsPath, companiesPath, dataPath } from "../links";
+import { applicationsPath, companiesPath, dataPath } from "../data/links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
 import { findInterviewTimes } from "../utils/oauthUtils";
@@ -15,7 +15,11 @@ const HomePage = () => {
       // find interviews from email and ask to add to calendar
       addInterviews();
     } catch (error) {
-      console.log("Failed to find new interview times.");
+      setMessage({
+        type: "error",
+        text: "Failed to find interview times from email. Please try again later.",
+      });
+      setStatusOpen(true);
     }
   }, []);
 
@@ -60,7 +64,7 @@ const HomePage = () => {
         <Featured />
       </section>
       <section className="featured-container">
-        <h3>Notes</h3>
+        <h3>Tasks</h3>
         <List />
       </section>
     </main>

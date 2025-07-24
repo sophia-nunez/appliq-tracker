@@ -1,30 +1,53 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { FaCirclePlus } from "react-icons/fa6";
+// Pagination component from https://mantine.dev/core/pagination/
+import { Pagination } from "@mantine/core";
 import SearchBar from "../components/SearchBar";
 import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
-import { getApplications } from "../utils/applicationUtils";
+import { getApplications, getTotalPages } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
 import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
 
 const ApplicationsPage = () => {
-  const { setIsLoading } = useLoading();
+  const { loading } = useLoading();
   const [applications, setApplications] = useState(Array());
-  const [categoriesList, setCategoriesList] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
+  const [categoriesList, setCategoriesList] = useState(Array());
+
+  // page management
+  const [activePage, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // search and nav
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [orderBy, setOrderBy] = useState("all");
+  const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();
+
+  const { setMessage, setStatusOpen } = useOutletContext();
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter, orderBy]);
+  }, [query, filter, orderBy, activePage]);
+
+  // gets total pages
+  useEffect(() => {
+    async function getPages() {
+      const pages = await getTotalPages(
+        new URLSearchParams({
+          text: query.trim(),
+          category: filter,
+        })
+      );
+      setTotalPages(pages);
+    }
+
+    getPages();
+  }, [query]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -33,22 +56,30 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
-    setIsLoading(true);
-    const currQuery = new URLSearchParams({
+    loading.setTrue();
+    const currQuery = {
+      page: activePage,
       text: query.trim(),
       category: filter,
       orderBy,
-    });
+    };
     try {
       const data = await getApplications(currQuery);
       const categories = await getCategories();
 
       setCategoriesList(categories);
-      setApplications(data);
+      setApplications(data.applications);
+      if (data.totalPages) {
+        setTotalPages(data.totalPages);
+      }
     } catch (error) {
-      alert(error.message);
+      setMessage({
+        type: "error",
+        text: error.message || "Failed to load applications.",
+      });
+      setStatusOpen(true);
     }
-    setIsLoading(false);
+    loading.setFalse();
   };
 
   // opens modal to add application
@@ -96,7 +127,11 @@ const ApplicationsPage = () => {
                     reloadPage={loadApplications}
                     key={application.id}
                     id={application.id}
-                    companyName={application.companyName}
+                    companyName={
+                      application.company && application.company.name
+                        ? application.company.name
+                        : "No Company Assigned"
+                    }
                     title={application.title}
                     description={application.description}
                     appliedAt={application.appliedAt}
@@ -114,6 +149,12 @@ const ApplicationsPage = () => {
               </div>
             )}
           </section>
+          <Pagination
+            className="page-numbers"
+            value={activePage}
+            onChange={setPage}
+            total={totalPages}
+          />
         </section>
       </main>
       {modalOpen && (

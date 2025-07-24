@@ -44,14 +44,13 @@
     padding: 15px;
     height: 80%;
     width: 25%;
-    min-width: 150px;
+    min-width: 200px;
     max-width: 250px;
     border-radius: 3px;
     background-color: var(--background-color);
     box-shadow: 1px 1px 3px 0px var(--primary-color);
 
     .favorite-status {
-      color: gray;
       padding: 10px;
       position: absolute;
       top: 0;

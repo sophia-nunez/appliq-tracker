@@ -42,7 +42,7 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
-    alert("No new interview times found from email.");
+    throw new Error("Failed to find interview times from email.");
   }
 };
 
@@ -59,7 +59,9 @@ const setInterviewTime = async (interviews) => {
       // try to find application with matching company and title
       try {
         const response = await fetch(
-          `${baseURL()}/applications/${interview.company}/${interview.title}`,
+          `${baseURL()}/applications/interview/${interview.company}/${
+            interview.title
+          }`,
           {
             credentials: "include",
           }
