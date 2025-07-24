@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
 const Order = require("../data/enums");
 const { Client } = require("@elastic/elasticsearch");
+const { OAuth2Client } = require("google-auth-library");
 const { timeZoneAbbr } = require("../data/timezones");
 const { DateTime } = require("luxon");
 
@@ -23,8 +24,36 @@ const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
 router.use(middleware);
 
+// verification function from Google dev
+// https://developers.google.com/identity/sign-in/web/backend-auth#node.js
+const googleClient = new OAuth2Client();
+async function verify() {
+  const ticket = await googleClient.verifyIdToken({
+    idToken: token,
+    audience: process.env.WEB_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  const userid = payload["sub"];
+}
+
 router.post("/scheduler/email", async (req, res) => {
-  // TODO add authentication
+  // OIDC authentication
+  try {
+    // get authorization header
+    const header = req.headers.authorization;
+    if (!header || !header.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ error: "Missing or invalid authorization header" });
+    }
+    // get token after "Bearer "
+    const token = header.split(" ")[1];
+
+    const payload = await verify(token);
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid authorization token" });
+  }
+
   try {
     const users = await prisma.user.findMany({
       where: { auth_provider: "google" },
