@@ -158,6 +158,27 @@ const getUserInfo = async () => {
   }
 };
 
+// attempts update user's timestamp for lastLogin
+const trackLogin = async () => {
+  try {
+    const response = await fetch(`${baseURL()}/track/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "User profile update failed.");
+    }
+  } catch (error) {
+    // log error with logging
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -166,4 +187,5 @@ export {
   getUserInfo,
   baseURL,
   checkLogin,
+  trackLogin,
 };

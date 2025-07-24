@@ -5,6 +5,7 @@ import { applicationsPath, companiesPath, dataPath } from "../data/links";
 import "../styles/HomePage.css";
 import { useEffect } from "react";
 import { findInterviewTimes } from "../utils/oauthUtils";
+import { trackLogin } from "../utils/authUtils";
 
 const HomePage = () => {
   // pop up on form submission
@@ -13,7 +14,7 @@ const HomePage = () => {
   useEffect(() => {
     try {
       // find interviews from email and ask to add to calendar
-      addInterviews();
+      loginHome();
     } catch (error) {
       setMessage({
         type: "error",
@@ -23,7 +24,7 @@ const HomePage = () => {
     }
   }, []);
 
-  const addInterviews = async () => {
+  const loginHome = async () => {
     // on load, search and set interviews from email
     const interviews = await findInterviewTimes();
 
@@ -50,6 +51,8 @@ const HomePage = () => {
         );
       });
     }
+
+    await trackLogin();
   };
 
   return (

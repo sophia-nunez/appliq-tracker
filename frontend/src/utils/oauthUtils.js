@@ -8,7 +8,7 @@ import { DateTime } from "luxon";
 // gets new messages for user, parses them, then adds interviews
 // helper methods below
 const findInterviewTimes = async () => {
-  const interviews = [];
+  const newInterviews = [];
   try {
     // get user information based on current session
     const user = await getUserInfo();
@@ -18,6 +18,7 @@ const findInterviewTimes = async () => {
       return;
     }
 
+    // check for new emails since last check
     // get all new messages from inbox that contain "interview confirmation"
     const data = await getMessages(user);
 
@@ -29,7 +30,7 @@ const findInterviewTimes = async () => {
 
         // if data was able to be obtained from the message, add interview object to list
         if (newInterview) {
-          interviews.push(newInterview);
+          newInterviews.push(newInterview);
         }
       }
     }
@@ -38,7 +39,34 @@ const findInterviewTimes = async () => {
     updateEmailScanned();
 
     // using the interview list, match interviews to applications to update or create
-    setInterviewTime(interviews);
+    setInterviewTime(newInterviews);
+
+    // array for ALL updated applications since login
+    const interviews = [];
+
+    // get applications updated since lastLogin (auto, interview date)
+    const updatedAppsResponse = await fetch(
+      `${baseURL()}/applications/interview/new`,
+      {
+        credentials: "include",
+      }
+    );
+    if (!updatedAppsResponse.ok) {
+      const text = await updatedAppsResponse.json();
+      throw new Error(text.error);
+    }
+    const updatedApps = await updatedAppsResponse.json();
+
+    updatedApps.forEach((application) => {
+      const interview = {
+        id: application.emailId,
+        company: application.company.name,
+        title: application.title,
+        date: application.interviewAt,
+      };
+
+      interviews.push(interview);
+    });
 
     return interviews;
   } catch (error) {

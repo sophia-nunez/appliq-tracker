@@ -3,7 +3,6 @@ const { PrismaClient } = require("../generated/prisma");
 const { Client } = require("@elastic/elasticsearch");
 const { Order, Periods, Status, OrderStatus } = require("../data/enums");
 
-
 // env variables
 require("dotenv").config();
 const ELASTIC_API_KEY = process.env.ELASTIC_API_KEY;
@@ -376,8 +375,42 @@ router.get("/applications/id/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// [GET] applications updated since last login
+router.get(
+  "/applications/interview/new",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.session.userId },
+      });
+
+      // not logged in before, no emails to fetch
+      if (!user.lastLogin) {
+        return res.status(200).json([]);
+      }
+
+      const applications = await prisma.application.findMany({
+        where: {
+          updatedAt: {
+            gte: new Date(user.lastLogin),
+          },
+          userId: user.id,
+          interviewAt: { not: null },
+        },
+        include: { company: { select: { name: true } } },
+      });
+      if (applications.length > 0) {
+        return res.json(applications);
+      }
+      return res.status(200).json([]);
+    } catch (err) {
+      return res.status(404).json({ error: "Application fetch failed." });
+    }
+  }
+);
+
 // GET one application by title and company
-// [GET] one application by id
 router.get(
   "/applications/interview/:company/:title",
   isAuthenticated,
