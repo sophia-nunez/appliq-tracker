@@ -47,13 +47,13 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
         {
           query_string: {
             query: `${search.text}*`, // search term
-            fields: ["public_application_title^2", "*"], // boost title so matches in title are more important
+            fields: ["title^2", "*"], // boost title so matches in title are more important
             analyze_wildcard: true,
           },
         },
         {
           match: {
-            public_application_userid: req.session.userId, // user id
+            userId: req.session.userId, // user id
           },
         },
       ],
@@ -71,13 +71,20 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
     if (applications) {
       // get list of ids
       const idList = applications.hits.hits.map((application) => {
-        return application._source.public_application_id;
+        return application._source.id;
       });
 
       // get all applications from db
       const fullApplications = await prisma.application.findMany({
         where: {
           id: { in: idList },
+        },
+        include: {
+          company: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
 
