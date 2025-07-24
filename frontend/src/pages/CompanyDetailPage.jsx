@@ -44,9 +44,10 @@ const CompanyDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteCompany(companyId);
+      navigate(-1);
       setMessage({ type: "success", text: `Company deleted: ${deleted.name}` });
       setStatusOpen(true);
-      navigate(companiesPath);
+
     } catch (error) {
       setMessage({ type: "error", text: "Failed to delete company." });
       setStatusOpen(true);

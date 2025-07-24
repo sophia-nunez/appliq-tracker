@@ -129,6 +129,7 @@
   .company-btns {
     margin-top: 20px;
     display: flex;
+    justify-content: center;
     gap: 10px;
   }
 
@@ -159,6 +160,11 @@
       max-height: 50vh;
       height: 150px;
     }
+  }
+
+  #status {
+    background-color: var(--background-color);
+    color: var(--text-color);
   }
 
   .child.notes {

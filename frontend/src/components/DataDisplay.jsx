@@ -1,18 +1,26 @@
+import { DatePickerInput } from "@mantine/dates";
 import { useState } from "react";
 import ActivityChart from "./ActivityChart";
 import CompaniesChart from "./CompaniesChart";
 import Checkbox from "./Checkbox";
 import { Periods } from "../data/enums";
+import "@mantine/dates/styles.css";
+import { Card, Divider, InputLabel, Select } from "@mantine/core";
 
 const DataDisplay = () => {
   // for activity chart
   const [type, setType] = useState("Activity");
   const [dateRange, setDateRange] = useState(Periods.ALL);
-  // for top company chart
-  const [orderBy, setOrderBy] = useState("applied");
-  const [filter, setFilter] = useState(["applied", "interview", "offer"]);
+  const [dateLabel, setDateLabel] = useState(new Date().getFullYear());
+  const [customRangeOpen, setCustomOpen] = useState(false);
+  const [customRange, setCustomRange] = useState([
+    new Date().toISOString().substring(0, 10),
+    new Date().toISOString().substring(0, 10),
+  ]);
 
-  //TODO: add filter/sort functionality for top companies, and a custom date range selector for Activity chart
+  // for top company chart
+  const [orderBy, setOrderBy] = useState("Applied");
+  const [filter, setFilter] = useState(["Applied", "Interview", "Offer"]);
 
   // updates filter list for application types to show on company chart
   const handleFilter = (e) => {
@@ -23,6 +31,35 @@ const DataDisplay = () => {
     } else {
       // add to array
       setFilter((prev) => [...prev, value]);
+    }
+  };
+
+  const setRange = (val) => {
+    setDateRange(val);
+    if (val !== Periods.CUSTOM) {
+      setCustomOpen(false);
+    }
+
+    switch (val) {
+      case Periods.ALL:
+        setDateLabel("");
+        break;
+      case Periods.YEAR:
+        setDateLabel(new Date().getFullYear());
+        break;
+      case Periods.MONTH:
+        setDateLabel(
+          new Date().toLocaleString("default", {
+            month: "long",
+          })
+        );
+        break;
+      case Periods.CUSTOM:
+        setDateLabel("Custom Range");
+        setCustomOpen(true);
+        break;
+      default:
+        setDateLabel("Invalid range - please try again.");
     }
   };
 
@@ -44,9 +81,7 @@ const DataDisplay = () => {
             {type === "Activity" ? (
               <>
                 <ActivityChart dateRange={dateRange} />
-                {dateRange !== Periods.ALL && (
-                  <h4>{new Date().getFullYear()}</h4>
-                )}
+                {dateRange !== Periods.ALL && <h4>{dateLabel}</h4>}
               </>
             ) : (
               <CompaniesChart orderBy={orderBy} filter={filter} />
@@ -55,89 +90,117 @@ const DataDisplay = () => {
           <div className="chart-details">
             {type === "Activity" ? (
               <>
-                <p> Date Range: </p>
                 <div className="chart-buttons">
-                  <button onClick={() => setDateRange(Periods.ALL)}>All</button>
-                  <button onClick={() => setDateRange(Periods.YEAR)}>
-                    1 Year
-                  </button>
-                  <button onClick={() => setDateRange(Periods.MONTH)}>
-                    1 Month
-                  </button>
+                  <Select
+                    id="range-selector"
+                    label="Date Range"
+                    data={[
+                      Periods.ALL,
+                      Periods.YEAR,
+                      Periods.MONTH,
+                      Periods.CUSTOM,
+                    ]}
+                    defaultValue="Periods.ALL"
+                    allowDeselect={false}
+                    value={dateRange}
+                    onChange={(val) => setRange(val)}
+                  />
+
+                  {customRangeOpen && (
+                    <>
+                      <Card className="custom-range">
+                        <InputLabel>Select a range:</InputLabel>
+                        <DatePickerInput
+                          type="range"
+                          placeholder="Pick dates range"
+                          value={customRange}
+                          onChange={setCustomRange}
+                        />
+                        <button
+                          onClick={() => {
+                            setDateRange(customRange);
+                            setDateLabel("Custom Range");
+                          }}
+                        >
+                          Set
+                        </button>
+                      </Card>
+                    </>
+                  )}
+
+                  <Divider />
                 </div>
               </>
             ) : (
               <>
                 <fieldset>
                   <legend> Sort by: </legend>
-                  <div className="chart-buttons">
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="applications"
-                        name="orderBy"
-                        value="applied"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                        defaultChecked
-                      />
-                      <label htmlFor="applications">Applications</label>
-                    </div>
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="interviews"
-                        name="orderBy"
-                        value="interview"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                      />
-                      <label htmlFor="interviews">Interviews</label>
-                    </div>
-                    <div className="selection">
-                      <input
-                        type="radio"
-                        id="offers"
-                        name="orderBy"
-                        value="offer"
-                        onClick={(e) => setOrderBy(e.target.value)}
-                      />
-                      <label htmlFor="offers">Offers</label>
-                    </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="applications"
+                      name="orderBy"
+                      value="Applied"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                      defaultChecked
+                    />
+                    <label htmlFor="applications">Applications</label>
+                  </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="interviews"
+                      name="orderBy"
+                      value="Interview"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                    />
+                    <label htmlFor="interviews">Interviews</label>
+                  </div>
+                  <div className="selection">
+                    <input
+                      type="radio"
+                      id="offers"
+                      name="orderBy"
+                      value="Offer"
+                      onClick={(e) => setOrderBy(e.target.value)}
+                    />
+                    <label htmlFor="offers">Offers</label>
                   </div>
                 </fieldset>
                 <fieldset>
-                  <legend>Filter by application status:</legend>
+                  <legend>Include:</legend>
 
                   <Checkbox
                     label="Applied"
-                    valueName="applied"
+                    valueName="Applied"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Interview"
-                    valueName="interview"
+                    valueName="Interview"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Offer"
-                    valueName="offer"
+                    valueName="Offer"
                     initial="true"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Rejected"
-                    valueName="rejected"
+                    valueName="Rejected"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Signed"
-                    valueName="signed"
+                    valueName="Signed"
                     handleFilter={handleFilter}
                   />
                   <Checkbox
                     label="Other"
-                    valueName="other"
+                    valueName="Other"
                     handleFilter={handleFilter}
                   />
                 </fieldset>

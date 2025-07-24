@@ -318,6 +318,11 @@ const ApplicationModal = ({
                   onChange={(value) => handleDateChange("appliedAt", value)}
                   withAsterisk
                   description="Time is optional"
+                  timePickerProps={{
+                    withDropdown: true,
+                    popoverProps: { withinPortal: false },
+                    format: "12h",
+                  }}
                   required
                 />
               </div>
@@ -332,6 +337,11 @@ const ApplicationModal = ({
                     handleDateChange("interviewAt", value);
                     setChange(true);
                   }}
+                  timePickerProps={{
+                    withDropdown: true,
+                    popoverProps: { withinPortal: false },
+                    format: "12h",
+                  }}
                 />
               </div>
             </article>
@@ -341,7 +351,7 @@ const ApplicationModal = ({
           <button className="edit-btn" type="submit">
             Submit
           </button>
-          {application && (
+          {application && application.id && (
             <button type="button" className="delete-btn" onClick={handleDelete}>
               Delete
             </button>

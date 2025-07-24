@@ -14,10 +14,11 @@ const Order = {
 };
 
 const Periods = {
-  ALL: "all",
-  YEAR: "year",
-  MONTH: "month",
-  DAY: "day",
+  ALL: "All",
+  YEAR: "Year",
+  MONTH: "Month",
+  DAY: "Day",
+  CUSTOM: "Custom",
 };
 
 export { Status, Order, Periods };

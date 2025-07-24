@@ -19,7 +19,7 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="black"
+      fill="var(--text-color)"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
     >

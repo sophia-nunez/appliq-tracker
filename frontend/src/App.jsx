@@ -85,13 +85,31 @@ export default function App() {
   // separate loading for user to prevent page re-rendering
   const [loadingUser, setLoadingUser] = useState(true);
   // can't access main pages if not logged in
-  const ProtectedHome = WithAuth(loadingUser, HomePage);
-  const ProtectedApplications = WithAuth(loadingUser, ApplicationsPage);
-  const ProtectedApplication = WithAuth(loadingUser, ApplicationDetailPage);
-  const ProtectedCompanies = WithAuth(loadingUser, CompanyPage);
-  const ProtectedCompany = WithAuth(loadingUser, CompanyDetailPage);
-  const ProtectedData = WithAuth(loadingUser, DataPage);
-  const ProtectedSettings = WithAuth(loadingUser, SettingsPage);
+  const ProtectedHome = WithAuth("protected", loadingUser, HomePage);
+  const ProtectedApplications = WithAuth(
+    "protected",
+    loadingUser,
+    ApplicationsPage
+  );
+  const ProtectedApplication = WithAuth(
+    "protected",
+    loadingUser,
+    ApplicationDetailPage
+  );
+  const ProtectedCompanies = WithAuth("protected", loadingUser, CompanyPage);
+  const ProtectedCompany = WithAuth(
+    "protected",
+    loadingUser,
+    CompanyDetailPage
+  );
+  const ProtectedData = WithAuth("protected", loadingUser, DataPage);
+  const ProtectedSettings = WithAuth("protected", loadingUser, SettingsPage);
+  const UnprotectedLogin = WithAuth("unprotected", loadingUser, LoginPage);
+  const UnprotectedRegister = WithAuth(
+    "unprotected",
+    loadingUser,
+    RegisterPage
+  );
 
   // sets up routes for each URL to the respectice component
   const router = createBrowserRouter([
@@ -127,11 +145,11 @@ export default function App() {
         },
         {
           path: "login",
-          Component: LoginPage,
+          Component: UnprotectedLogin,
         },
         {
           path: "register",
-          Component: RegisterPage,
+          Component: UnprotectedRegister,
         },
         {
           path: "privacy-policy",
