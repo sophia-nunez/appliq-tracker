@@ -392,7 +392,7 @@ router.get(
 
       const applications = await prisma.application.findMany({
         where: {
-          updatedAt: {
+          interviewUpdated: {
             gte: new Date(user.lastLogin),
           },
           userId: user.id,
@@ -405,7 +405,7 @@ router.get(
       }
       return res.status(200).json([]);
     } catch (err) {
-      return res.status(404).json({ error: "Application fetch failed." });
+      return res.status(500).json({ error: "Application fetch failed." });
     }
   }
 );
