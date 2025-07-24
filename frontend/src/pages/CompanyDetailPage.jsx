@@ -11,6 +11,7 @@ import Modal from "../components/Modal";
 import { deleteCompany, getCompany } from "../utils/companyUtils";
 import "../styles/Subpage.css";
 import "../styles/ApplicationDetailPage.css";
+import { companiesPath } from "../data/links";
 
 const CompanyDetailPage = () => {
   const navigate = useNavigate();
@@ -43,9 +44,10 @@ const CompanyDetailPage = () => {
   const handleDelete = async () => {
     try {
       const deleted = await deleteCompany(companyId);
-      setMessage({ type: "success", text: "Company deleted." });
-      setStatusOpen(true);
       navigate(-1);
+      setMessage({ type: "success", text: `Company deleted: ${deleted.name}` });
+      setStatusOpen(true);
+
     } catch (error) {
       setMessage({ type: "error", text: "Failed to delete company." });
       setStatusOpen(true);
@@ -103,7 +105,7 @@ const CompanyDetailPage = () => {
                           reloadPage={loadCompany}
                           key={application.id}
                           id={application.id}
-                          companyName={application.companyName}
+                          companyName={company.name}
                           title={application.title}
                           description={application.description}
                           appliedAt={application.appliedAt}

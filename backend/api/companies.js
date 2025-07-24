@@ -1,6 +1,21 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
 const Order = require("../data/enums");
+const { Client } = require("@elastic/elasticsearch");
+
+// env variables
+require("dotenv").config();
+const ELASTIC_API_KEY = process.env.ELASTIC_API_KEY;
+const URL = process.env.ELASTIC_URL;
+const ELASTIC_INDEX = process.env.ELASTIC_INDEX;
+
+const client = new Client({
+  node: URL,
+  auth: {
+    apiKey: ELASTIC_API_KEY,
+  },
+  tls: { rejectUnauthorized: false },
+});
 
 const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
@@ -163,6 +178,30 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
           });
         }
 
+        // also add company id and name to elastic
+        const operations = matchingApplications.flatMap((application) => {
+          return [
+            {
+              update: {
+                _id: application.id,
+                _index: ELASTIC_INDEX,
+              },
+            },
+            {
+              doc: {
+                companyId: created.id,
+                companyName: created.name,
+              },
+            },
+          ];
+        });
+
+        if (operations && operations.length > 0) {
+          const elasticResponse = await client.bulk({
+            operations,
+          });
+        }
+
         res.status(201).json(created);
       } else {
         return res.status(422).json({ error: "Duplicate company." });
@@ -178,19 +217,36 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
 // [PUT] update company
 router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
   // TODO if company name is updated, update applications with that company as well
-  // or should it remove the applications - make decision
 
-  const id = Number(req.params.companyId);
-  const { applications, ...rest } = req.body;
-  const changes = { ...rest, userId: req.session.userId };
+  const { id, userId, createdAt, applications, ...rest } = req.body;
+  const changes = { ...rest, userId };
+  if (userId !== req.session.userId) {
+    return res
+      .status(401)
+      .json({ message: "Application does not belong to signed in user." });
+  }
   try {
     // Make sure the ID is valid
     const company = await prisma.company.findUnique({
-      where: { id, userId: req.session.userId },
+      where: { id, userId },
     });
 
     if (!company) {
       return res.status(404).json({ error: "Company not found" });
+    }
+
+    // make sure name isn't being changed to another existing company
+    if (changes.name && changes.name !== company.name) {
+      const existingCompany = await prisma.company.findFirst({
+        where: { name: changes.name, userId },
+      });
+
+      if (existingCompany) {
+        return res.status(422).json({
+          error:
+            "Company with this name already exists. Please try a different name.",
+        });
+      }
     }
 
     // check if isFavorite is changing
@@ -210,7 +266,33 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
       const updated = await prisma.company.update({
         data: changes,
         where: { id },
+        include: {
+          applications: true,
+        },
       });
+
+      const operations = updated.applications.flatMap((application) => {
+        return [
+          {
+            update: {
+              _id: application.id,
+              _index: ELASTIC_INDEX,
+            },
+          },
+          {
+            doc: {
+              companyName: updated.name,
+            },
+          },
+        ];
+      });
+
+      if (operations && operations.length > 0) {
+        const elasticResponse = await client.bulk({
+          operations,
+        });
+      }
+
       return res.status(201).json(updated);
     } else {
       return res
@@ -230,7 +312,35 @@ router.delete("/companies/:id", async (req, res, next) => {
       where: { id, userId: req.session.userId },
     });
     if (company) {
-      const deleted = await prisma.company.delete({ where: { id } });
+      const deleted = await prisma.company.delete({
+        where: { id },
+        include: {
+          applications: true,
+        },
+      });
+
+      const operations = deleted.applications.flatMap((application) => {
+        return [
+          {
+            update: {
+              _id: application.id,
+              _index: ELASTIC_INDEX,
+            },
+          },
+          {
+            doc: {
+              companyId: null,
+              companyName: "",
+            },
+          },
+        ];
+      });
+
+      if (operations && operations.length > 0) {
+        const elasticResponse = await client.bulk({
+          operations,
+        });
+      }
       res.json(deleted);
     } else {
       return res.status(404).json({ error: "Company not found" });

@@ -101,6 +101,16 @@
     width: 100%;
   }
 
+  .company-input {
+    display: flex;
+    gap: 0.2em;
+  }
+
+  .required-asterisk {
+    color: red;
+    font-size: 20px;
+  }
+
   .list-content {
     .child {
       display: flex;
@@ -119,6 +129,7 @@
   .company-btns {
     margin-top: 20px;
     display: flex;
+    justify-content: center;
     gap: 10px;
   }
 
@@ -149,6 +160,11 @@
       max-height: 50vh;
       height: 150px;
     }
+  }
+
+  #status {
+    background-color: var(--background-color);
+    color: var(--text-color);
   }
 
   .child.notes {

@@ -14,6 +14,7 @@ const categoryRouter = require("./categories");
 const companyRouter = require("./companies");
 const noteRouter = require("./notes");
 const searchRouter = require("./search");
+const chronRouter = require("./chron");
 const middleware = require("../middleware/middleware");
 
 // node environment indicators
@@ -84,6 +85,7 @@ server.set("trust proxy", 1);
 server.use(session(sessionConfig));
 server.use(express.json());
 server.use(cors());
+server.use(chronRouter);
 server.use(middleware);
 
 server.use(applicationRouter);
@@ -183,18 +185,6 @@ server.post("/auth/google", async (req, res) => {
   }
 });
 
-// refresh access token for user, set new token based on given google_id
-server.post("/auth/google/refresh-token", async (req, res) => {
-  const user = await prisma.user.findUnique({
-    where: { id: req.session.userId },
-  });
-  oAuth2Client.setCredentials({
-    refresh_token: user.refresh_token,
-  });
-  // TODO: prisma update with new access token and expiry date
-  res.json(credentials);
-});
-
 // checks if google account already has profile (login), otherwise registers
 server.post("/auth/google/login", async (req, res) => {
   const {
@@ -222,7 +212,6 @@ server.post("/auth/google/login", async (req, res) => {
 
   if (existingUser) {
     // accounts exists, set logged in user
-    // TODO: check if access expires soon, if so refresh
     req.session.userId = existingUser.id;
 
     const updated = await prisma.user.update({
@@ -296,6 +285,20 @@ server.post("/logout", (req, res) => {
     res.clearCookie("connect.sid");
     res.json({ message: "Logged out successfully" });
   });
+});
+
+server.post("/track/login", async (req, res) => {
+  // update login time
+  if (req.session.userId) {
+    await prisma.user.update({
+      where: { id: req.session.userId },
+      data: { lastLogin: new Date() },
+    });
+
+    res.status(204).end();
+  } else {
+    res.status(401).json({ error: "Failed to update. User is not logged in." });
+  }
 });
 
 server.get("/me", async (req, res) => {
