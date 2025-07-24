@@ -88,12 +88,13 @@ const editCompany = async (changes, id) => {
       credentials: "include",
     });
     if (!response.ok) {
-      throw new Error();
+      const text = await response.json();
+      throw new Error(text.error);
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error("Failed to update company");
+    throw new Error(error.message || "Failed to update company");
   }
 };
 
@@ -107,6 +108,10 @@ const deleteCompany = async (id) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = response.json();
+
+    return data;
   } catch (error) {
     throw new Error("Failed to delete company");
   }

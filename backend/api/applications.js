@@ -376,7 +376,8 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       });
 
       // format for elastic insert
-      const { companyName, company, ...document } = created;
+      const { companyName, company, ...app } = created;
+      const document = { ...app, companyName: company.name };
       // updates elastic index with new document
       const elasticResponse = await client.index({
         index: ELASTIC_INDEX,
@@ -473,7 +474,8 @@ router.put(
         });
 
         // format for elastic insert
-        const { companyName, company, ...document } = updated;
+        const { companyName, company, ...app } = updated;
+        const document = { ...app, companyName: company.name };
         // updates document in the index
         const elasticResponse = await client.index({
           index: ELASTIC_INDEX,

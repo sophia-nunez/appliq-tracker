@@ -180,7 +180,6 @@ const ApplicationModal = ({
       setStatusOpen(true);
       setModalOpen(false);
     } catch (error) {
-      console.log(error);
       setMessage({ type: "error", text: "Failed to delete application." });
       setStatusOpen(true);
     }
