@@ -312,7 +312,35 @@ router.delete("/companies/:id", async (req, res, next) => {
       where: { id, userId: req.session.userId },
     });
     if (company) {
-      const deleted = await prisma.company.delete({ where: { id } });
+      const deleted = await prisma.company.delete({
+        where: { id },
+        include: {
+          applications: true,
+        },
+      });
+
+      const operations = deleted.applications.flatMap((application) => {
+        return [
+          {
+            update: {
+              _id: application.id,
+              _index: ELASTIC_INDEX,
+            },
+          },
+          {
+            doc: {
+              companyId: null,
+              companyName: "",
+            },
+          },
+        ];
+      });
+
+      if (operations && operations.length > 0) {
+        const elasticResponse = await client.bulk({
+          operations,
+        });
+      }
       res.json(deleted);
     } else {
       return res.status(404).json({ error: "Company not found" });
