@@ -216,11 +216,12 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
 
 // [PUT] update company
 router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
-  // TODO if company name is updated, update applications with that company as well
-
-  const { id, userId, createdAt, applications, ...rest } = req.body;
+  const id = Number(req.params.companyId);
+  const userId = req.session.userId;
+  // remove fields that need special handling
+  const { givenId, givenUserId, createdAt, applications, ...rest } = req.body;
   const changes = { ...rest, userId };
-  if (userId !== req.session.userId) {
+  if (givenUserId && givenUserId !== userId) {
     return res
       .status(401)
       .json({ message: "Application does not belong to signed in user." });

@@ -527,9 +527,13 @@ router.put(
   "/applications/edit/:appId",
   isAuthenticated,
   async (req, res, next) => {
+    const id = Number(req.params.appId);
+    const userId = req.session.userId;
     // separate field of categories to be removed
-    const { id, userId, companyId, removedCategories, ...data } = req.body;
-    if (userId !== req.session.userId) {
+    const { givenId, givenUserId, companyId, removedCategories, ...data } =
+      req.body;
+
+    if (givenUserId && givenUserId !== userId) {
       return res
         .status(401)
         .json({ message: "Application does not belong to signed in user." });
@@ -575,7 +579,7 @@ router.put(
         if (updatedApp.categories) {
           // add categories to connect
           const connectedCats = await addCategories(
-            userId,
+            req.session.userId,
             updatedApp.categories
           );
           // replace categories to connect with matched list of ids

@@ -85,6 +85,7 @@ const CompanyPage = () => {
                 return (
                   <CompanyLong
                     openPage={openPage}
+                    reloadPage={loadCompanies}
                     key={company.id}
                     id={company.id}
                     name={company.name}
