@@ -6,11 +6,19 @@
   --primary-color: #121f38;
   --secondary-color: #bccff2;
   --hover-color: #787093;
-  --background-color: rgb(72, 73, 83);
-  --card-bg-color: rgb(59, 62, 71);
-  --text-color: #f9f9f9;
+  --background-color: #2e2e2e;
+  --card-bg-color: rgb(25, 26, 29);
+  --text-color: #e3e3e3;
   --delete-red: rgb(122, 40, 34);
   --gray: rgb(198, 198, 198);
+
+  /* Colors for status */
+  --interview: #e29727;
+  --offer: #4caf50;
+  --rejected: #d74130;
+  --signed: #9b59b6;
+  --applied: #3498db;
+  --other: #817e7e;
 
   color-scheme: light dark;
   color: var(--text-color);
@@ -29,6 +37,14 @@
     --hover-color: #ccd6ea;
     --gray: rgb(63, 63, 63);
     --delete-red: rgb(221, 132, 132);
+
+    /* Colors for status */
+    --interview: #f0b66a;
+    --offer: #8dcf98;
+    --rejected: #e68a8a;
+    --signed: #b199cc;
+    --applied: #7caedc;
+    --other: #c5c5c5;
 
     background-color: var(--background-color);
     color: var(--text-color);
@@ -51,6 +67,7 @@ body,
 }
 
 main {
+  position: relative;
   min-height: 85vh;
   width: 90vw;
   margin: 0px auto;
@@ -73,9 +90,14 @@ h2 {
 }
 
 button {
+  max-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6em 1.2em;
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;

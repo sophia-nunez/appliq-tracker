@@ -1,9 +1,19 @@
+import { useNavigate } from "react-router";
+import { loginPath, userInfoURL } from "../data/links.js";
+
 // checks if in dev to return base API url
 // no real sitename given yet
 function baseURL() {
   return import.meta.env.VITE_DEV
     ? "http://localhost:3000"
     : import.meta.env.VITE_BACKEND_URL;
+}
+
+function checkLogin(response) {
+  const navigate = useNavigate();
+  if (response.status === 401) {
+    navigate(loginPath);
+  }
 }
 
 // checks valid login info and unique username, then attempts to POST
@@ -85,15 +95,12 @@ const getGoogleToken = async (code) => {
 
 const getGoogleProfile = async (tokenResponse) => {
   try {
-    const response = await fetch(
-      `https://www.googleapis.com/oauth2/v3/userinfo`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenResponse.access_token}`,
-        },
-      }
-    );
+    const response = await fetch(userInfoURL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenResponse.access_token}`,
+      },
+    });
 
     const data = await response.json();
 
@@ -137,6 +144,7 @@ const getUserInfo = async () => {
     });
     if (!response.ok) {
       const text = await response.json();
+      checkLogin(response);
       throw new Error(text.error);
     }
 
@@ -147,6 +155,27 @@ const getUserInfo = async () => {
   }
 };
 
+// attempts update user's timestamp for lastLogin
+const trackLogin = async () => {
+  try {
+    const response = await fetch(`${baseURL()}/track/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "User profile update failed.");
+    }
+  } catch (error) {
+    // log error with logging
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -154,4 +183,6 @@ export {
   loginGoogleUser,
   getUserInfo,
   baseURL,
+  checkLogin,
+  trackLogin,
 };

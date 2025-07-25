@@ -12,6 +12,18 @@
 
   display: flex;
   flex-direction: column;
+  .close {
+    z-index: 1;
+    padding: 5px;
+    color: var(--secondary-color);
+    float: right;
+    font-weight: bold;
+
+    .close-icon {
+      font-size: 1.5rem;
+      pointer-events: none;
+    }
+  }
 }
 
 #nav-content {
@@ -31,18 +43,9 @@
   flex-direction: column;
   animation-name: animateslide;
   animation-duration: 0.8s;
-}
 
-.close {
-  z-index: 1;
-  padding: 5px;
-  color: var(--secondary-color);
-  float: right;
-  font-weight: bold;
-
-  .close-icon {
-    font-size: 1.5rem;
-    pointer-events: none;
+  .divider {
+    margin: 10px;
   }
 }
 
@@ -100,15 +103,30 @@ nav {
   #non-nav-btns {
     margin-top: 5px;
     display: flex;
+    flex-direction: column;
     gap: 0.6rem;
     justify-content: space-evenly;
-    align-items: center;
+    align-items: start;
 
-    a {
+    * {
+      width: 100%;
+      font-size: 1em;
+      font-weight: 400;
       border: none;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7em;
     }
     .settings-icon {
-      font-size: 1.6rem;
+      width: min-content;
+      font-size: 1.3rem;
+    }
+    .logout-btn:hover {
+      cursor: pointer;
+      color: #747bff;
     }
   }
 }

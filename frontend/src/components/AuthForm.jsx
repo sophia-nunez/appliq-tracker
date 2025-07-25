@@ -9,34 +9,37 @@ import {
   loginUser,
   registerUser,
 } from "../utils/authUtils";
-import { homePath, loginPath, registerPath } from "../data/links";
+import { Text, Anchor, Divider, TextInput, PasswordInput } from "@mantine/core";
+import { homePath, loginPath, registerPath, Scopes } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {
   const { setUser } = useUser();
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
-  const [message, setMessage] = useState(""); // error or success message
+  const [message, setMessage] = useState({}); // error or success message
 
   // google login for authorization
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => await handleGoogleLogin(tokenResponse),
     onError: () => {
-      alert("Login failed. Please try again");
+      setMessage({
+        type: "error",
+        text: "Google login failed. Please try again.",
+      });
     },
     flow: "auth-code",
-    scope:
-      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+    scope: `${Scopes.GMAIL} ${Scopes.CALENDAR} ${Scopes.USER_INFO} ${Scopes.USER_EMAIL}`,
     include_granted_scopes: "true",
   });
 
   const handleGoogleLogin = async (tokenResponse) => {
     const hasAccess = hasGrantedAllScopesGoogle(
       tokenResponse,
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/gmail.readonly",
-      "https://www.googleapis.com/auth/calendar.events"
+      Scopes.USER_EMAIL,
+      Scopes.USER_INFO,
+      Scopes.GMAIL,
+      Scopes.CALENDAR
     );
 
     if (hasAccess) {
@@ -60,7 +63,10 @@ const AuthForm = ({ type }) => {
         });
       }
     } else {
-      alert("Login failed due to missing permissions.");
+      setMessage({
+        type: "error",
+        text: "Google login failed due to missing permissions.",
+      });
     }
   };
 
@@ -111,53 +117,56 @@ const AuthForm = ({ type }) => {
     <main>
       <section className={`${type}-container`}>
         <h2>{type === "register" ? "Register" : "Login"}</h2>
-        <div className="username-input input-container">
-          <label htmlFor="username">Username: </label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={formInput.username}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="password-input input-container">
-          <label htmlFor="password">Password: </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={formInput.password}
-            onChange={handleChange}
-            autoComplete="none"
-          />
-        </div>
-        <div className={`${type}-btns`}>
-          <button className={`${type}-btn`} onClick={handleSubmit}>
-            {type === "login" ? "Login" : "Register"}
-          </button>
-          <section className="alt-login">
-            <hr />
-            <p>Or</p>
+        <form>
+          {message && <p className={`${message.type}-text`}>{message.text}</p>}
+          <div className="username-input input-container">
+            <TextInput
+              label="Username:"
+              type="text"
+              name="username"
+              id="username"
+              value={formInput.username}
+              onChange={handleChange}
+              placeholder="Your username"
+              required
+            />
+          </div>
+          <div className="password-input input-container">
+            <PasswordInput
+              label="Password:"
+              type="password"
+              name="password"
+              id="password"
+              value={formInput.password}
+              onChange={handleChange}
+              placeholder="Your password"
+              required
+            />
+          </div>
+          <div className={`${type}-btns`}>
             <button className="google-btn" onClick={() => login()}>
-              <FcGoogle className="google-logo" /> Sign in with Google
+              <FcGoogle className="google-logo" /> Google
             </button>
-            {type === "login" ? (
-              <button className="register-btn">
-                <Link to={registerPath} className="register-btn">
-                  Register
-                </Link>
-              </button>
-            ) : (
-              <button className="login-btn">
-                <Link to={loginPath} className="login-btn">
-                  Login
-                </Link>
-              </button>
-            )}
-          </section>
-        </div>
-        {message && <p className={`${message.type}-text`}>{message.text}</p>}
+            <button className={`${type}-btn`} onClick={handleSubmit}>
+              {type === "login" ? "Sign in" : "Register"}
+            </button>
+          </div>
+        </form>
+        {type === "login" ? (
+          <Text className="subtitle">
+            Don't have an account yet?{" "}
+            <Anchor component={Link} to={registerPath}>
+              Create account
+            </Anchor>
+          </Text>
+        ) : (
+          <Text className="subtitle">
+            Have an account?{" "}
+            <Anchor component={Link} to={loginPath}>
+              Sign in
+            </Anchor>
+          </Text>
+        )}
       </section>
     </main>
   );

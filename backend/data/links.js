@@ -1,11 +1,3 @@
-const homePath = "/";
-const applicationsPath = "/applications";
-const companiesPath = "/companies";
-const dataPath = "/data";
-const registerPath = "/register";
-const loginPath = "/login";
-const settingsPath = "/settings";
-
 // google API URLs
 const refreshTokenURL = "https://oauth2.googleapis.com/token";
 const userInfoURL = "https://www.googleapis.com/oauth2/v3/userinfo";
@@ -17,16 +9,4 @@ const Scopes = {
   CALENDAR: "https://www.googleapis.com/auth/calendar.app.created",
 };
 
-export {
-  homePath,
-  applicationsPath,
-  companiesPath,
-  dataPath,
-  loginPath,
-  registerPath,
-  settingsPath,
-  refreshTokenURL,
-  userInfoURL,
-  createCalendarURL,
-  Scopes,
-};
+module.exports = { refreshTokenURL, userInfoURL, createCalendarURL, Scopes };
