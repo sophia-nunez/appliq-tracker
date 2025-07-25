@@ -261,7 +261,7 @@ router.get(
     const filterBy = filters.split(",");
     const userId = req.session.userId;
 
-    let where = { userId };
+    let where = { userId, companyId: { not: null } };
 
     if (Object.values(OrderStatus).includes(sort)) {
       // interviews or offers, include where : status
@@ -298,7 +298,10 @@ router.get(
             name: true,
           },
         });
-        return company.companyId;
+        if (company.companyId) {
+          return company.companyId;
+        }
+        return;
       });
 
       const companyIds = await Promise.all(promises);

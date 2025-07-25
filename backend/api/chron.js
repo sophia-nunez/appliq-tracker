@@ -49,10 +49,8 @@ router.post("/scheduler/email", async (req, res) => {
     // get token after "Bearer "
     const token = header.split(" ")[1];
 
-    console.log("token: ", token);
     const payload = await verify(token);
   } catch (error) {
-    console.log("verify error: ", error);
     return res.status(401).json({ error: "Invalid authorization token" });
   }
 
