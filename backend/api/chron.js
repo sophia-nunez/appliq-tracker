@@ -27,7 +27,7 @@ router.use(middleware);
 // verification function from Google dev
 // https://developers.google.com/identity/sign-in/web/backend-auth#node.js
 const googleClient = new OAuth2Client();
-async function verify() {
+async function verify(token) {
   const ticket = await googleClient.verifyIdToken({
     idToken: token,
     audience: process.env.WEB_CLIENT_ID,
