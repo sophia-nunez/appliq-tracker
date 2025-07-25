@@ -90,8 +90,15 @@ router.post("/scheduler/email", async (req, res) => {
               success: false,
               error,
             };
-            // continue to next user
           }
+          // save success information
+          return {
+            email: user.email,
+            authSuccess: true,
+            success: true,
+            error,
+            // continue to next user
+          };
         }
       })
     );

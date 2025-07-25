@@ -39,7 +39,7 @@ const findInterviewTimes = async () => {
     updateEmailScanned();
 
     // using the interview list, match interviews to applications to update or create
-    setInterviewTime(newInterviews);
+    await setInterviewTime(newInterviews);
 
     // array for ALL updated applications since login
     const interviews = [];

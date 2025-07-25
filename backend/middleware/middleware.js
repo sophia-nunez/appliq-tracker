@@ -64,7 +64,7 @@ router.use(async (req, res, next) => {
             now.getTime() + credentials.expires_in * 1000
           );
           const updated = await prisma.user.update({
-            data: { access_token: credentials.access_token },
+            data: { access_token: credentials.access_token, token_expiry },
             where: { id: req.session.userId },
           });
         } catch (error) {
