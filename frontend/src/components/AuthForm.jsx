@@ -144,7 +144,11 @@ const AuthForm = ({ type }) => {
             />
           </div>
           <div className={`${type}-btns`}>
-            <button className="google-btn" onClick={() => login()}>
+            <button
+              className="google-btn"
+              type="button"
+              onClick={() => login()}
+            >
               <FcGoogle className="google-logo" /> Google
             </button>
             <button className={`${type}-btn`} onClick={handleSubmit}>

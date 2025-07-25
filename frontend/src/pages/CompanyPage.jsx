@@ -29,7 +29,7 @@ const CompanyPage = () => {
 
   useEffect(() => {
     loadCompanies();
-  }, [query, orderBy]);
+  }, [orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -49,6 +49,7 @@ const CompanyPage = () => {
     try {
       const data = await getCompanies(currQuery);
       setCompanies(data.companies);
+      setTotalPages(data.totalPages);
     } catch (error) {
       setMessage({
         type: "error",
