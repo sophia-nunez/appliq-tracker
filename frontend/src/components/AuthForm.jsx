@@ -10,7 +10,7 @@ import {
   registerUser,
 } from "../utils/authUtils";
 import { Text, Anchor, Divider, TextInput, PasswordInput } from "@mantine/core";
-import { homePath, loginPath, registerPath } from "../data/links";
+import { homePath, loginPath, registerPath, Scopes } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {
@@ -29,18 +29,17 @@ const AuthForm = ({ type }) => {
       });
     },
     flow: "auth-code",
-    scope:
-      "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.app.created https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+    scope: `${Scopes.GMAIL} ${Scopes.CALENDAR} ${Scopes.USER_INFO} ${Scopes.USER_EMAIL}`,
     include_granted_scopes: "true",
   });
 
   const handleGoogleLogin = async (tokenResponse) => {
     const hasAccess = hasGrantedAllScopesGoogle(
       tokenResponse,
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/gmail.readonly",
-      "https://www.googleapis.com/auth/calendar.app.created"
+      Scopes.USER_EMAIL,
+      Scopes.USER_INFO,
+      Scopes.GMAIL,
+      Scopes.CALENDAR
     );
 
     if (hasAccess) {

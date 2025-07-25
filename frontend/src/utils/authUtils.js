@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { loginPath } from "../data/links.js";
+import { loginPath, userInfoURL } from "../data/links.js";
 
 // checks if in dev to return base API url
 // no real sitename given yet
@@ -95,15 +95,12 @@ const getGoogleToken = async (code) => {
 
 const getGoogleProfile = async (tokenResponse) => {
   try {
-    const response = await fetch(
-      `https://www.googleapis.com/oauth2/v3/userinfo`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenResponse.access_token}`,
-        },
-      }
-    );
+    const response = await fetch(userInfoURL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenResponse.access_token}`,
+      },
+    });
 
     const data = await response.json();
 

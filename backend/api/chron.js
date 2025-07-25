@@ -22,6 +22,7 @@ const client = new Client({
 
 const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
+const { refreshTokenURL } = require("../data/links");
 router.use(middleware);
 
 // verification function from Google dev
@@ -129,7 +130,7 @@ const getNewAccessToken = async (user) => {
 
   // google requires the information to be URL
   try {
-    const response = await fetch("https://oauth2.googleapis.com/token", {
+    const response = await fetch(refreshTokenURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
