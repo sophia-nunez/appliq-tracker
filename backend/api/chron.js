@@ -97,7 +97,6 @@ router.post("/scheduler/email", async (req, res) => {
             email: user.email,
             authSuccess: true,
             success: true,
-            error,
             // continue to next user
           };
         }
