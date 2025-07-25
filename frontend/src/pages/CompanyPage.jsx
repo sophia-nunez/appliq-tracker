@@ -8,6 +8,7 @@ import SearchBar from "../components/SearchBar.jsx";
 import CompanyLong from "../components/CompanyLong.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
 import { useLoading } from "../components/LoadingContext.jsx";
+import { Search } from "../data/enums.js";
 
 const CompanyPage = () => {
   const { loading } = useLoading();
@@ -21,7 +22,7 @@ const CompanyPage = () => {
   const { setMessage, setStatusOpen, setInterviewChanged } = useOutletContext();
 
   // search and nav
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(Search.ALL);
   const [query, setQuery] = useState("");
   const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();

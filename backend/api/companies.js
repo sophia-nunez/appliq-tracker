@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const Order = require("../data/enums");
+const { Order, Search } = require("../data/enums");
 const { Client } = require("@elastic/elasticsearch");
 
 // env variables
@@ -56,7 +56,7 @@ router.get("/companies", async (req, res, next) => {
 
   if (search.industry) {
     // if industry query, search by industry
-    if (search.industry !== "all") {
+    if (search.industry !== Search.ALL) {
       where.industry = search.industry;
     }
   }

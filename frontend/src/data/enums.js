@@ -21,4 +21,8 @@ const Periods = {
   CUSTOM: "Custom",
 };
 
-export { Status, Order, Periods };
+const Search = {
+  ALL: "all",
+};
+
+export { Status, Order, Periods, Search };

@@ -11,6 +11,7 @@ import { getCategories } from "../utils/categoryUtils";
 import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
+import { Search } from "../data/enums";
 
 const ApplicationsPage = () => {
   const { loading } = useLoading();
@@ -23,7 +24,7 @@ const ApplicationsPage = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   // search and nav
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(Search.ALL);
   const [query, setQuery] = useState("");
   const [orderBy, setOrderBy] = useState("recent");
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ const ApplicationsPage = () => {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             >
-              <option value="all">All</option>
+              <option value={Search.ALL}>All</option>
               {categoriesList &&
                 categoriesList.map((cat) => {
                   return (

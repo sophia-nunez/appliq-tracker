@@ -1,7 +1,13 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
 const { Client } = require("@elastic/elasticsearch");
-const { Order, Periods, Status, OrderStatus } = require("../data/enums");
+const {
+  Order,
+  Periods,
+  Status,
+  OrderStatus,
+  Search,
+} = require("../data/enums");
 
 // env variables
 require("dotenv").config();
@@ -78,7 +84,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
 
   if (search.category) {
     // if cat query, search by category
-    if (search.category !== "all") {
+    if (search.category !== Search.ALL) {
       where.categories = {
         some: { name: search.category },
       };
@@ -90,8 +96,8 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     where.OR = [
       { isFeatured: true },
       { interviewAt: { gt: new Date() } },
-      { status: "Offer" },
-      { status: "Signed" },
+      { status: Status.Offer },
+      { status: Status.Signed },
     ];
   }
 
@@ -133,7 +139,7 @@ router.get(
 
     if (search.category) {
       // if cat query, search by category
-      if (search.category !== "all") {
+      if (search.category !== Search.ALL) {
         where.categories = {
           some: { name: search.category },
         };
@@ -145,8 +151,8 @@ router.get(
       where.OR = [
         { isFeatured: true },
         { interviewAt: { gt: new Date() } },
-        { status: "Offer" },
-        { status: "Signed" },
+        { status: Status.Offer },
+        { status: Status.Signed },
       ];
     }
 
