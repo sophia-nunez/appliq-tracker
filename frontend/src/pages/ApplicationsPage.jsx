@@ -33,22 +33,19 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter, orderBy, activePage]);
+  }, [filter, orderBy, activePage]);
 
-  // gets total pages
-  useEffect(() => {
-    async function getPages() {
-      const pages = await getTotalPages(
-        new URLSearchParams({
-          text: query.trim(),
-          category: filter,
-        })
-      );
-      setTotalPages(pages);
-    }
-
-    getPages();
-  }, [query]);
+  // gets total pages and reloads search results
+  async function handleSearch() {
+    await loadApplications();
+    const pages = await getTotalPages(
+      new URLSearchParams({
+        text: query.trim(),
+        category: filter,
+      })
+    );
+    setTotalPages(pages);
+  }
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -96,7 +93,7 @@ const ApplicationsPage = () => {
           setQuery={setQuery}
           orderBy={orderBy}
           setOrderBy={setOrderBy}
-          handleSearch={loadApplications}
+          handleSearch={handleSearch}
         />
         <section className="list-container">
           <div className="list-header">
