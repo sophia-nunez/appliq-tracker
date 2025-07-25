@@ -59,26 +59,53 @@ router.post("/scheduler/email", async (req, res) => {
       where: { auth_provider: "google" },
     });
 
-    await Promise.all(
+    const response = await Promise.all(
       users.map(async (user) => {
+        let updatedUser = null;
         // read from email, timestamp will be 24 hours before (job interval)
         try {
           // check access token with function below
-          const updated = await checkAccess(user);
-
-          // look for emails, parse, and add interview dates to corresponding applications
-          const interviews = await findInterviewTimes(updated);
-
-          await prisma.user.update({
-            data: { emailScanned: new Date() },
-            where: { id: updated.id },
-          });
+          updatedUser = await checkAccess(user);
         } catch (error) {
-          // continue to next user
+          return {
+            email: user.email,
+            authSuccess: false,
+            success: false,
+            error,
+          };
+        }
+        if (updatedUser) {
+          try {
+            // look for emails, parse, and add interview dates to corresponding applications
+            const interviews = await findInterviewTimes(updatedUser);
+
+            await prisma.user.update({
+              data: { emailScanned: new Date() },
+              where: { id: updatedUser.id },
+            });
+          } catch (error) {
+            return {
+              email: updatedUser.email,
+              authSuccess: true,
+              success: false,
+              error,
+            };
+            // continue to next user
+          }
         }
       })
     );
-    res.status(204).end();
+
+    console.info("Job completed with 2** status: ", response);
+    // if any users failed, send Accepted status to indicate this
+    if (response.some((result) => !result.success)) {
+      return res
+        .status(202)
+        .json({ message: "Failed to update some users", result: response });
+    }
+
+    // if all users succeed,
+    res.status(200).json({ message: "All users updated", result: response });
   } catch (err) {
     res.status(500).json({ error: "Failed to sync emails for all users." });
   }
@@ -104,7 +131,10 @@ const getNewAccessToken = async (user) => {
     });
 
     if (!response.ok) {
-      throw new Error("Token refresh failed.");
+      const errorText = await response.text();
+      throw new Error(
+        `Token refresh failed for ${user.email}: ${response.status} ${response.statusText} - ${errorText}`
+      );
     }
     const data = await response.json();
     return data;
@@ -114,30 +144,25 @@ const getNewAccessToken = async (user) => {
 };
 
 // checks if user needs new access token and regenerates
+// throws error if getting access fails
 const checkAccess = async (user) => {
   const expiration = new Date(user.token_expiry);
   const deadline = new Date();
 
   if (expiration <= deadline) {
     // refresh token
-    try {
-      const credentials = await getNewAccessToken(user);
-      // find new expiration date
-      const now = new Date();
-      const token_expiry = new Date(
-        now.getTime() + credentials.expires_in * 1000
-      );
-      const updated = await prisma.user.update({
-        data: { access_token: credentials.access_token },
-        where: { id: user.id },
-      });
+    const credentials = await getNewAccessToken(user);
+    // find new expiration date
+    const now = new Date();
+    const token_expiry = new Date(
+      now.getTime() + credentials.expires_in * 1000
+    );
+    const updated = await prisma.user.update({
+      data: { access_token: credentials.access_token },
+      where: { id: user.id },
+    });
 
-      return updated;
-    } catch (error) {
-      res.status(401).json({
-        error: "Failed to update Google login.",
-      });
-    }
+    return updated;
   }
 
   return user;
