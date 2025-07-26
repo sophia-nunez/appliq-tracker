@@ -22,6 +22,7 @@ const client = new Client({
     apiKey: ELASTIC_API_KEY,
   },
   tls: { rejectUnauthorized: false },
+  serverMode: "serverless",
 });
 
 const middleware = require("../middleware/middleware");
