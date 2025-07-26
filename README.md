@@ -11,6 +11,7 @@ Welcome to Appliq! This is a job application tracker with many features to help 
 ### Home Page
 - View a featured list of favorite applications and upcoming interviews. If less than 5 applications match these requirements, recent applications are displayed
 - Manage upcoming tasks, such as applications to apply to, deadline, and follow-ups, with a task list
+[Image of Appliq Home Page with dummy data](./readme/images/home-page.png)
 ### Application Management
 - Add and remove job applications to track current status
 - Automatic company linking based on company name
