@@ -7,7 +7,7 @@ import {
 } from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Modal from "../components/Modal";
-import Status from "../components/Status";
+import StatusButton from "../components/Status";
 import { deleteApplication, getApplication } from "../utils/applicationUtils";
 import "../styles/Subpage.css";
 import "../styles/ApplicationDetailPage.css";
@@ -85,7 +85,7 @@ const ApplicationDetailPage = () => {
           <p>Job description: {application.description}</p>
           <div className="list-container user-details">
             <h3 className="status-details">
-              Status | <Status status={application.status} />
+              Status | <StatusButton status={application.status} />
             </h3>
             <section className="list-content">
               <article className="child notes">

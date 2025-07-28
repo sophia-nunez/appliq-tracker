@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router";
 import { FaHeart } from "react-icons/fa";
-import { getFeatured } from "../utils/applicationUtils";
-import Status from "./Status";
+import { editApplication, getFeatured } from "../utils/applicationUtils";
+import StatusButton from "./Status";
 import "../styles/Featured.css";
 import { useLoading } from "./LoadingContext";
+import { Divider } from "@mantine/core";
+import { Status } from "../data/enums";
 
 const Featured = () => {
   const { loading } = useLoading();
@@ -41,6 +43,14 @@ const Featured = () => {
     loading.setFalse();
   };
 
+  const toggleFeatured = async (e, id) => {
+    e.stopPropagation();
+
+    const application = await editApplication({ isFeatured: false }, id);
+
+    loadApplications();
+  };
+
   return (
     <section className="featured-container">
       <h3> Featured </h3>
@@ -54,13 +64,33 @@ const Featured = () => {
                   className="featured"
                   onClick={(e) => openApplicationPage(e, application.id)}
                 >
-                  <Status status={application.status} />
+                  <StatusButton status={application.status} />
                   <h4>{application.title}</h4>
                   <p>{application.description}</p>
                   {application.isFeatured && (
-                    <div className="favorite-status">
+                    <div
+                      className="favorite-status"
+                      onClick={(e) => toggleFeatured(e, application.id)}
+                    >
                       <FaHeart />
                     </div>
+                  )}
+                  {application.interviewAt && (
+                    <>
+                      <div className="interview-date">
+                        <p className="label">Interview:</p>
+                        <p>
+                          {new Date(application.interviewAt).toLocaleDateString(
+                            undefined,
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </>
                   )}
                 </article>
               );

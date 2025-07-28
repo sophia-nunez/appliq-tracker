@@ -219,7 +219,13 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
   const id = Number(req.params.companyId);
   const userId = req.session.userId;
   // remove fields that need special handling
-  const { givenId, givenUserId, createdAt, applications, ...rest } = req.body;
+  const {
+    id: givenId,
+    userId: givenUserId,
+    createdAt,
+    applications,
+    ...rest
+  } = req.body;
   const changes = { ...rest, userId };
   if (givenUserId && givenUserId !== userId) {
     return res

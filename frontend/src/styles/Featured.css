@@ -56,6 +56,32 @@
       top: 0;
       right: 0;
     }
+
+    h4 {
+      margin: 5px 0px;
+    }
+
+    .interview-date {
+      width: 100%;
+      padding: 2px;
+      margin: 5px auto;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 0.3em;
+
+      * {
+        margin: 0px;
+        font-size: 0.9em;
+      }
+      .label {
+        font-size: 0.8em;
+        color: var(--gray);
+      }
+    }
   }
 
   .featured:hover {
