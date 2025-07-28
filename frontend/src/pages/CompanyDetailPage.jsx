@@ -47,7 +47,6 @@ const CompanyDetailPage = () => {
       navigate(-1);
       setMessage({ type: "success", text: `Company deleted: ${deleted.name}` });
       setStatusOpen(true);
-
     } catch (error) {
       setMessage({ type: "error", text: "Failed to delete company." });
       setStatusOpen(true);
@@ -63,23 +62,27 @@ const CompanyDetailPage = () => {
           </NavLink>
           <div className="company-header">
             <h2>{company.name}</h2>
-            <button>
-              {company.careerPage ? (
-                <a
-                  className="website-URL"
-                  href={company.careerPage}
-                  target="_blank"
-                >
-                  Career Page
-                </a>
-              ) : (
-                "No Career Page Linked"
-              )}
-            </button>
           </div>
           <div className="back-btn" />
         </div>
         <section className="company-details">
+          <button>
+            {company.careerPage ? (
+              <a
+                className="website-URL"
+                href={
+                  company.careerPage.startsWith("http")
+                    ? company.careerPage
+                    : `https://${company.careerPage}`
+                }
+                target="_blank"
+              >
+                Career Page
+              </a>
+            ) : (
+              "No Career Page Linked"
+            )}
+          </button>
           <div className="list-container user-details">
             <section className="list-content">
               <article className="child tags">
