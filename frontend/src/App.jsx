@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import { ThemeProvider, useTheme } from "./components/ThemeContext";
-import { UserProvider, useUser } from "./components/UserContext";
+import { UserProvider } from "./components/UserContext";
 import { MantineProvider } from "@mantine/core";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginPage from "./pages/LoginPage";
@@ -164,16 +164,16 @@ export default function App() {
   // theme provider to give theme for light/dark mode
   // userProvider to give login/user information
   return (
-    <MantineProvider>
-      <ThemeProvider>
-        <GoogleOAuthProvider clientId={CLIENT_ID}>
-          <UserProvider setLoadingUser={setLoadingUser}>
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
+      <UserProvider setLoadingUser={setLoadingUser}>
+        <MantineProvider>
+          <ThemeProvider>
             <LoadingProvider>
               <AppContent router={router} />
             </LoadingProvider>
-          </UserProvider>
-        </GoogleOAuthProvider>
-      </ThemeProvider>
-    </MantineProvider>
+          </ThemeProvider>
+        </MantineProvider>
+      </UserProvider>
+    </GoogleOAuthProvider>
   );
 }

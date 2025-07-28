@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router";
 import { loginPath, userInfoURL } from "../data/links.js";
+import { useTheme } from "../components/ThemeContext.jsx";
+import { Scheme } from "../data/enums.js";
 
 // checks if in dev to return base API url
 // no real sitename given yet
@@ -22,13 +24,22 @@ const registerUser = async (loginInfo) => {
     throw new Error("Username and password are required.");
   }
 
+  let colorScheme = Scheme.LIGHT;
+  if (typeof window !== "undefined" && window.matchMedia) {
+    colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? Scheme.DARK
+      : Scheme.LIGHT;
+  }
+
+  const userProfile = { colorScheme, ...loginInfo };
+
   try {
     const response = await fetch(`${baseURL()}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(loginInfo),
+      body: JSON.stringify(userProfile),
       credentials: "include",
     });
 
@@ -46,6 +57,8 @@ const registerUser = async (loginInfo) => {
 
 // attempts to log in user, if error the error message is returned
 const loginUser = async (loginInfo) => {
+  const { setTheme } = useTheme();
+
   if (!loginInfo.username || !loginInfo.password) {
     throw new Error("Username and password are required.");
   }
@@ -65,6 +78,12 @@ const loginUser = async (loginInfo) => {
     if (!response.ok) {
       throw new Error(data.error || "Login failed.");
     }
+
+    // update color scheme to user preference
+    if (data.colorScheme) {
+      setTheme(data.colorScheme);
+    }
+
     return data;
   } catch (error) {
     throw error;
@@ -155,6 +174,29 @@ const getUserInfo = async () => {
   }
 };
 
+const updateUserScheme = async (colorScheme) => {
+  if (Object.values(Scheme).includes(colorScheme)) {
+    try {
+      const response = await fetch(`${baseURL()}/user`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ colorScheme }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "User profile update failed.");
+      }
+    } catch (error) {
+      // log error with logging
+    }
+  }
+};
+
 // attempts update user's timestamp for lastLogin
 const trackLogin = async () => {
   try {
@@ -182,6 +224,7 @@ export {
   getGoogleToken,
   loginGoogleUser,
   getUserInfo,
+  updateUserScheme,
   baseURL,
   checkLogin,
   trackLogin,

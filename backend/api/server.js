@@ -97,7 +97,7 @@ server.use(searchRouter);
 
 // user authentication
 server.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, colorScheme } = req.body;
 
   if (!username || !password) {
     return res
@@ -122,12 +122,16 @@ server.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-      data: { username, password: hashedPassword },
+      data: { username, password: hashedPassword, colorScheme },
     });
+
+    req.session.userId = newUser.id;
+
     res.status(201).json({
       id: newUser.id,
       type: newUser.auth_provider,
       username: newUser.username,
+      colorScheme: newUser.colorScheme,
     });
   } catch (err) {
     return res.status(400).json({ error: "Failed to create account." });
@@ -169,6 +173,7 @@ server.post("/login", loginLimiter, async (req, res) => {
       id: user.id,
       type: user.auth_provider,
       username: user.username,
+      colorScheme: user.colorScheme,
     });
   } catch (err) {
     return res.status(401).json({ error: "Login failed." });
@@ -308,16 +313,28 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true, name: true, auth_provider: true },
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      auth_provider: true,
+      colorScheme: true,
+    },
   });
   if (user.auth_provider === "google") {
     return res.json({
       id: user.id,
       username: user.name,
       type: user.auth_provider,
+      colorScheme: user.colorScheme,
     });
   }
-  res.json({ id: user.id, username: user.username, type: user.auth_provider });
+  res.json({
+    id: user.id,
+    username: user.username,
+    type: user.auth_provider,
+    colorScheme: user.colorScheme,
+  });
 });
 
 server.get("/user", async (req, res) => {
@@ -345,11 +362,18 @@ server.get("/user", async (req, res) => {
 });
 
 server.put("/user", async (req, res) => {
-  const { emailScanned } = req.body;
+  const { emailScanned, colorScheme } = req.body;
   if (!req.session.userId) {
     return res
       .status(401)
       .json({ message: "Not logged in: " + req.session.userId });
+  }
+
+  let data;
+  if (emailScanned) {
+    data = { emailScanned };
+  } else if (colorScheme) {
+    data = { colorScheme };
   }
 
   try {
@@ -359,7 +383,7 @@ server.put("/user", async (req, res) => {
 
     if (user) {
       const updated = await prisma.user.update({
-        data: { emailScanned },
+        data,
         where: { id: req.session.userId },
       });
     } else {
