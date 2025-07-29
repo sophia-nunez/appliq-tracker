@@ -56,17 +56,11 @@ const HomePage = () => {
   };
 
   return (
-    <main>
+    <main className="home-page" style={{ width: "100vw" }}>
       <h2>Home</h2>
-      <nav className="home-nav">
-        <Link to={applicationsPath}>Applications</Link>
-        <Link to={companiesPath}>Companies</Link>
-        <Link to={dataPath}>Data</Link>
-      </nav>
-      <section className="featured-container">
-        <Featured />
-      </section>
-      <section className="featured-container">
+
+      <Featured />
+      <section className="tasks-container">
         <h3>Tasks</h3>
         <List />
       </section>

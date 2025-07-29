@@ -95,7 +95,7 @@ const ApplicationDetailPage = () => {
             <h3 className="status-details">
               Status | <StatusButton status={application.status} />
             </h3>
-            <section className="list-content">
+            <section className="list-content visible-bg">
               <article className="child notes">
                 <h4>Notes</h4>
                 <p>{application.notes}</p>

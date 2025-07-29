@@ -1,9 +1,18 @@
-import { Link } from "react-router";
-import "../styles/List.css";
-import { applicationsPath } from "../data/links";
 import { useEffect, useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
+import { applicationsPath } from "../data/links";
 import { getNotes, createNote, deleteNote } from "../utils/noteUtils";
 import { useLoading } from "./LoadingContext";
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Button,
+  Group,
+  SimpleGrid,
+} from "@mantine/core";
+import "../styles/List.css";
 
 const List = () => {
   const { loading } = useLoading();
@@ -59,7 +68,7 @@ const List = () => {
 
   return (
     <section className="list-content notes-list" to={`${applicationsPath}/1`}>
-      <form className="child" onSubmit={handleSubmit}>
+      <form className="child add-task-container" onSubmit={handleSubmit}>
         <div className="text">
           <label htmlFor="task" />
           <input
@@ -85,26 +94,34 @@ const List = () => {
           <button type="submit">Add Task</button>
         </div>
       </form>
-      {notes && notes.length > 0
-        ? notes.map((note) => {
-            return (
-              <article key={note.id} className="child">
-                <div className="text">
-                  <h4>{note.task}</h4>
-                  <p>{note.description}</p>
-                </div>
-                <div className="buttons">
-                  <button
-                    className="delete-btn"
-                    onClick={(e) => handleDelete(e, note.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </article>
-            );
-          })
-        : "No notes to display."}
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, xl: 5 }}>
+        {notes && notes.length > 0
+          ? notes.map((note) => {
+              return (
+                <Card
+                  key={note.id}
+                  shadow="sm"
+                  padding="lg"
+                  radius="md"
+                  withBorder
+                >
+                  <div className="text">
+                    <h4>{note.task}</h4>
+                    <p className="description-text">{note.description}</p>
+                  </div>
+                  <div className="buttons">
+                    <button
+                      className="delete-btn"
+                      onClick={(e) => handleDelete(e, note.id)}
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </div>
+                </Card>
+              );
+            })
+          : "No notes to display."}
+      </SimpleGrid>
     </section>
   );
 };

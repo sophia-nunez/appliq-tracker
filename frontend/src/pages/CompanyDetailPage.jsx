@@ -84,7 +84,7 @@ const CompanyDetailPage = () => {
             )}
           </button>
           <div className="list-container user-details">
-            <section className="list-content">
+            <section className="list-content visible-bg">
               <article className="child tags">
                 <h4>Industry</h4>
                 {!company.industry ? (

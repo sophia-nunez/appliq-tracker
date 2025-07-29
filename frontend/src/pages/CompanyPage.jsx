@@ -120,6 +120,7 @@ const CompanyPage = () => {
             value={activePage}
             onChange={setPage}
             total={totalPages}
+            color="violet"
           />
         </section>
       </main>

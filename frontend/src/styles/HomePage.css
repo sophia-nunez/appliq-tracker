@@ -1,12 +1,25 @@
-.home-nav {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+.home-page {
+  h3 {
+    font-weight: 400;
+    font-size: 1.6em;
+    margin: 0px;
+  }
 
-  a {
-    background-color: inherit;
-    width: 30%;
-    text-align: center;
+  .home-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    a {
+      background-color: inherit;
+      width: 30%;
+      text-align: center;
+    }
+  }
+
+  .tasks-container {
+    margin: 10px 0px;
+    padding: 20px 5vw;
   }
 }

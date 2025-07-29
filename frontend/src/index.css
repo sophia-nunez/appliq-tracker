@@ -3,14 +3,16 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --primary-color: #121f38;
-  --secondary-color: #bccff2;
+  --primary-color: #23183d;
+  --shadow-color: #403e44;
+  --secondary-color: #c8bcf2;
   --hover-color: #787093;
-  --background-color: #2e2e2e;
-  --card-bg-color: rgb(25, 26, 29);
-  --text-color: #e3e3e3;
+  --background-color: #242424;
+  --card-bg-color: rgb(20, 20, 22);
+  --text-color: #cccccc;
+  --inverse-text: #2e2e2e;
   --delete-red: rgb(122, 40, 34);
-  --gray: rgb(198, 198, 198);
+  --gray: rgb(179, 179, 179);
 
   /* Colors for status */
   --interview: #e29727;
@@ -30,11 +32,13 @@
 
   [data-theme="light"] {
     --text-color: #000000;
+    --inverse-text: #ffffff;
     --background-color: #f9f9f9;
-    --card-bg-color: #cad0df;
-    --primary-color: #bccff2;
-    --secondary-color: #121f38;
-    --hover-color: #ccd6ea;
+    --card-bg-color: #afabd2;
+    --primary-color: #c3bcf2;
+    --shadow-color: #e0dee6;
+    --secondary-color: #1c1238;
+    --hover-color: #d8ccea;
     --gray: rgb(63, 63, 63);
     --delete-red: rgb(221, 132, 132);
 
@@ -71,7 +75,7 @@ main {
   min-height: 85vh;
   width: 90vw;
   margin: 0px auto;
-  padding: 10px;
+  padding: 0px;
 
   * {
     background-color: inherit;
@@ -84,8 +88,8 @@ main {
 }
 
 h2 {
-  font-weight: 300;
-  font-size: 2.1rem;
+  font-weight: 600;
+  font-size: 2.5rem;
   text-align: center;
 }
 
@@ -119,4 +123,13 @@ button:focus-visible {
 }
 .delete-btn:hover {
   background-color: rgba(255, 0, 0, 0.421);
+}
+
+.description-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

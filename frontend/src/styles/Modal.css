@@ -117,6 +117,7 @@
 
   .application-details,
   .company-details {
+    margin-bottom: 10px;
     width: 100%;
   }
 

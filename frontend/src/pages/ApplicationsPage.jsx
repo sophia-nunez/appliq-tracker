@@ -159,6 +159,7 @@ const ApplicationsPage = () => {
             value={activePage}
             onChange={setPage}
             total={totalPages}
+            color="violet"
           />
         </section>
       </main>

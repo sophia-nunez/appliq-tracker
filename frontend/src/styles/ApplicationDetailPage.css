@@ -48,6 +48,7 @@
 
   .application-details,
   .company-details {
+    margin-bottom: 20px;
     width: clamp(250px, 80%, 2000px);
     display: flex;
     flex-direction: column;
@@ -66,6 +67,7 @@
       background-color: lightgray;
       padding: 5px;
       border-radius: 10px;
+      cursor: default;
     }
 
     .category-list {

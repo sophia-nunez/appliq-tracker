@@ -66,7 +66,7 @@ const Featured = () => {
                 >
                   <StatusButton status={application.status} />
                   <h4>{application.title}</h4>
-                  <p>{application.description}</p>
+                  <p className="description-text">{application.description}</p>
                   {application.isFeatured && (
                     <div
                       className="favorite-status"

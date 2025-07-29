@@ -29,14 +29,13 @@
 }
 
 .list-content {
-  background-color: var(--card-bg-color);
   min-height: 50vh;
   padding: 20px;
   border-radius: 3px;
 
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 1em;
 
   .child {
@@ -58,6 +57,8 @@
     max-height: 20vh;
     border-radius: 3px;
     background-color: var(--background-color);
+    border: 1px solid var(--shadow-color);
+    box-shadow: 0px 0px 7px 0px var(--shadow-color);
 
     display: flex;
     align-items: start;
@@ -128,6 +129,10 @@
   }
 }
 
+.list-content.visible-bg {
+  background-color: var(--card-bg-color);
+}
+
 .application,
 .company {
   cursor: pointer;
@@ -142,13 +147,13 @@
   animation-direction: reverse;
   animation-duration: 1s;
   transform: scale(1.02);
-  box-shadow: 0px 0px 3px 0px var(--primary-color);
+  box-shadow: 0px 2px 2px 1px var(--shadow-color);
 }
 
 @keyframes animatescale {
   from {
     transform: scale(1.02);
-    box-shadow: 0px 0px 3px 0px var(--primary-color);
+    box-shadow: 0px 0px 3px 0px var(--shadow-color);
   }
   to {
     transform: scale(1);
@@ -156,6 +161,10 @@
 }
 
 .notes-list {
+  max-height: 60vh;
+  overflow: auto;
+  padding: 10px;
+
   .child {
     height: 125px;
     display: flex;
@@ -178,5 +187,14 @@
       border: transparent;
       width: 100%;
     }
+  }
+
+  .task-item {
+    width: 200px;
+  }
+
+  .add-task-container {
+    background-color: var(--inverse-text);
+    box-shadow: 0px 2px 2px 1px var(--shadow-color);
   }
 }
