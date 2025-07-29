@@ -104,7 +104,6 @@ const AuthForm = ({ type }) => {
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
-      console.log(err);
       setMessage({
         type: "error",
         text:

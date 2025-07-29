@@ -120,6 +120,7 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       });
       return res.json(otherApplications);
     }
+    return res.json([]);
   } catch (err) {
     return res.status(500).json({ error: "Failed to get applications." });
   }
@@ -641,8 +642,8 @@ router.put(
           .json({ error: "Application modifications are invalid" });
       }
     } catch (err) {
-      console.log(err);
-      // TODO special error handling if elastic update fails
+      // log on backend
+      console.warn(err);
       return res.status(500).json({ error: "Failed to update application." });
     }
   }
