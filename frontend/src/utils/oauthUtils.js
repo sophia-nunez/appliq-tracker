@@ -70,6 +70,7 @@ const findInterviewTimes = async () => {
 
     return interviews;
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to find interview times from email.");
   }
 };
@@ -267,6 +268,7 @@ const parseMessage = async (message, data) => {
 // gets new emails (since email last scanned) from user's inbox containing "interview confirmation" keywords
 const getMessages = async (user) => {
   let searchTime = null;
+
   // if first time fetching for this user there will not be emailScanned, so no initial timestamp is given and all emails will be read in
   let apiURL = `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages?includeSpamTrash=true&q=subject:(Interview Confirmation) to:${user.email}`;
   if (user.emailScanned) {

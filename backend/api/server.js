@@ -4,6 +4,7 @@ const session = require("express-session");
 const rateLimit = require("express-rate-limit");
 const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("../generated/prisma");
@@ -17,6 +18,7 @@ const searchRouter = require("./search");
 const chronRouter = require("./chron");
 const middleware = require("../middleware/middleware");
 const { createCalendarURL } = require("../data/links");
+const { encrypt, decrypt } = require("../utils/encryptionUtils");
 
 // node environment indicators
 const DEV = process.env.DEV;
@@ -210,6 +212,13 @@ server.post("/auth/google/login", async (req, res) => {
       .json({ error: "Google login failed - missing profile information." });
   }
 
+  // encrypt important tokens
+  const encryptedAccessToken = encrypt(access_token);
+  let encryptedRefreshToken = refresh_token;
+  if (refresh_token) {
+    encryptedRefreshToken = encrypt(refresh_token);
+  }
+
   const token_expiry = new Date(expiry_date);
 
   const existingUser = await prisma.user.findUnique({
@@ -221,7 +230,11 @@ server.post("/auth/google/login", async (req, res) => {
     req.session.userId = existingUser.id;
 
     const updated = await prisma.user.update({
-      data: { access_token, refresh_token, token_expiry },
+      data: {
+        access_token: encryptedAccessToken,
+        refresh_token: encryptedRefreshToken,
+        token_expiry,
+      },
       where: { google_id: sub },
     });
 
@@ -260,8 +273,8 @@ server.post("/auth/google/login", async (req, res) => {
           name: given_name,
           auth_provider: "google",
           google_id: sub,
-          access_token: access_token,
-          refresh_token: refresh_token,
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
           token_expiry,
           calendarId: calendar.id,
         },
@@ -358,6 +371,12 @@ server.get("/user", async (req, res) => {
       calendarId: true,
     },
   });
+
+  if (user.access_token) {
+    const { access_token, ...rest } = user;
+    const decryptedAccessToken = decrypt(access_token);
+    return res.json({ access_token: decryptedAccessToken, ...rest });
+  }
   res.json(user);
 });
 
