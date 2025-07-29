@@ -36,7 +36,7 @@
 
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 1em;
 
   .child {
@@ -52,15 +52,18 @@
   }
 
   .long {
+    flex-grow: 1;
     padding: 20px;
-    height: 20vh;
     width: 100%;
+    max-height: 20vh;
     border-radius: 3px;
     background-color: var(--background-color);
 
     display: flex;
-    align-items: center;
+    align-items: start;
     justify-content: space-between;
+
+    overflow: auto;
 
     .text {
       width: 100%;
@@ -68,7 +71,13 @@
       margin: 0px 20px;
       overflow: auto;
 
+      /* description text cuts off with ellipsis after 2 lines */
       .ellipsis-overflow {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
         text-overflow: ellipsis;
       }
     }

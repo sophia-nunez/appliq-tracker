@@ -125,7 +125,7 @@ const CompanyModal = ({
                 <h4>Company Description</h4>
               </label>
               <textarea
-                maxlength="500"
+                maxLength="500"
                 id="description"
                 name="description"
                 placeholder="Company values, mission statement, etc."

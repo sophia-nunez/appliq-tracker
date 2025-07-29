@@ -233,7 +233,7 @@ const ApplicationModal = ({
         <div className="description-input">
           <label htmlFor="description">Job Description </label>
           <textarea
-            maxlength="500"
+            maxLength="500"
             id="description"
             name="description"
             placeholder="Required Skills, Location, etc."
@@ -269,7 +269,7 @@ const ApplicationModal = ({
             <article className="child notes">
               <label htmlFor="notes">Notes </label>
               <textarea
-                maxlength="400"
+                maxLength="400"
                 id="notes"
                 name="notes"
                 value={formInput.notes}

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import { loginPath, userInfoURL } from "../data/links.js";
-import { useTheme } from "../components/ThemeContext.jsx";
 import { Scheme } from "../data/enums.js";
 
 // checks if in dev to return base API url
@@ -56,9 +55,7 @@ const registerUser = async (loginInfo) => {
 };
 
 // attempts to log in user, if error the error message is returned
-const loginUser = async (loginInfo) => {
-  const { setTheme } = useTheme();
-
+async function loginUser(loginInfo, setTheme) {
   if (!loginInfo.username || !loginInfo.password) {
     throw new Error("Username and password are required.");
   }
@@ -88,7 +85,7 @@ const loginUser = async (loginInfo) => {
   } catch (error) {
     throw error;
   }
-};
+}
 
 const getGoogleToken = async (code) => {
   try {
