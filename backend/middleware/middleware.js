@@ -59,13 +59,16 @@ router.use(async (req, res, next) => {
         // refresh token
         try {
           const credentials = await getNewAccessToken(user);
+          // encrypt access token
+          const encryptedAccessToken = encrypt(credentials.access_token);
+
           // find new expiration date
           const now = new Date();
           const token_expiry = new Date(
             now.getTime() + credentials.expires_in * 1000
           );
           const updated = await prisma.user.update({
-            data: { access_token: credentials.access_token, token_expiry },
+            data: { access_token: encryptedAccessToken, token_expiry },
             where: { id: req.session.userId },
           });
         } catch (error) {

@@ -3,6 +3,13 @@
   font-weight: 350;
   padding: 3px;
   width: 80px;
+
+  cursor: default;
+}
+
+.status-btn:focus,
+.status-btn:focus-visible {
+  outline: transparent;
 }
 
 .status-btn.Signed {

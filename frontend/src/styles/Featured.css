@@ -1,30 +1,25 @@
 .featured-container {
-  margin: 20px 10px;
-
-  h3 {
-    font-weight: 400;
-    font-size: 1.4em;
-    margin: 0px;
-  }
+  margin: 10px 0px;
+  padding: 20px 5vw;
+  background-color: var(--card-bg-color);
 }
 
 .featured-background {
   height: 20vh;
   min-height: 300px;
-  padding: 10px 20px;
+  padding: 0px;
   border-radius: 3px;
-  background-color: var(--card-bg-color);
 
   .featured-content {
     display: flex;
     overflow: auto;
     flex-grow: 1;
     justify-content: start;
-    align-items: stretch;
+    align-items: center;
     gap: 1em;
 
     height: 100%;
-    padding: 10px;
+    padding: 10px 0px;
 
     .no-display {
       margin: auto;
@@ -40,7 +35,7 @@
   .featured {
     position: relative;
     overflow: auto;
-    margin: auto 0px;
+    margin: 0px;
     padding: 15px;
     height: 80%;
     width: 25%;
@@ -48,7 +43,8 @@
     max-width: 250px;
     border-radius: 3px;
     background-color: var(--background-color);
-    box-shadow: 1px 1px 3px 0px var(--primary-color);
+    border: 1px solid var(--shadow-color);
+    box-shadow: 0px 0px 7px 0px var(--shadow-color);
 
     .favorite-status {
       padding: 10px;
@@ -56,10 +52,37 @@
       top: 0;
       right: 0;
     }
+
+    h4 {
+      margin: 5px 0px;
+    }
+
+    .interview-date {
+      width: 100%;
+      padding: 2px;
+      margin: 5px auto;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 0.3em;
+
+      * {
+        margin: 0px;
+        font-size: 0.9em;
+      }
+      .label {
+        font-size: 0.8em;
+        color: var(--gray);
+      }
+    }
   }
 
   .featured:hover {
     cursor: pointer;
     transform: scale(1.02);
+    box-shadow: 0px 2px 2px 1px var(--shadow-color);
   }
 }

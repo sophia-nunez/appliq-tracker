@@ -1,5 +1,4 @@
 import { createContext, useState, useContext, useCallback } from "react";
-import LoadingModal from "./LoadingModal";
 
 const LoadingContext = createContext();
 

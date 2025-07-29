@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import Status from "./Status";
+import StatusButton from "./Status";
 import "../styles/List.css";
 import { editApplication } from "../utils/applicationUtils";
 
@@ -42,7 +42,7 @@ const ApplicationLong = ({
         <p className="ellipsis-overflow">{description}</p>
       </div>
       <div className="details">
-        <Status status={status} />
+        <StatusButton status={status} />
         <p>{applicationDate}</p>
         <div className="featured-icon" onClick={toggleFeatured}>
           {featured ? (

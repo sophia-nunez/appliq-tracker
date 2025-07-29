@@ -23,6 +23,7 @@ const client = new Client({
 const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
 const { refreshTokenURL } = require("../data/links");
+const { encrypt, decrypt } = require("../utils/encryptionUtils");
 router.use(middleware);
 
 // verification function from Google dev
@@ -159,13 +160,16 @@ const checkAccess = async (user) => {
   if (expiration <= deadline) {
     // refresh token
     const credentials = await getNewAccessToken(user);
+    // encrypt access token
+    const encryptedAccessToken = encrypt(credentials.access_token);
+
     // find new expiration date
     const now = new Date();
     const token_expiry = new Date(
       now.getTime() + credentials.expires_in * 1000
     );
     const updated = await prisma.user.update({
-      data: { access_token: credentials.access_token },
+      data: { access_token: encryptedAccessToken },
       where: { id: user.id },
     });
 
@@ -548,6 +552,8 @@ const getMessages = async (user) => {
   // first scan happens on initial login, chron job should call from interval of scan (1 day prior for daily scans)
   let searchTime = null;
 
+  const decryptedAccessToken = decrypt(user.access_token);
+
   // emailScanned is upated when job runs, otherwise when user interacts with the page
   if (user.emailScanned) {
     // if user logged in since last job, use this time
@@ -565,7 +571,7 @@ const getMessages = async (user) => {
     const response = await fetch(apiURL, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.access_token}`,
+        Authorization: `Bearer ${decryptedAccessToken}`,
       },
     });
     if (!response.ok) {
@@ -582,13 +588,15 @@ const getMessages = async (user) => {
 
 // using email id, gets the data for that message from Gmail API
 const getMessage = async (user, message) => {
+  const decryptedAccessToken = decrypt(user.access_token);
+
   try {
     const response = await fetch(
       `https://gmail.googleapis.com/gmail/v1/users/${user.email}/messages/${message.id}`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.access_token}`,
+          Authorization: `Bearer ${decryptedAccessToken}`,
         },
       }
     );

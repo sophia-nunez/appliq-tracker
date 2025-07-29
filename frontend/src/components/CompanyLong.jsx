@@ -29,7 +29,6 @@ const CompanyLong = ({
       <div className="text">
         <h4>{name}</h4>
         <p>{industry}</p>
-        <p className="ellipsis-overflow">{description}</p>
       </div>
       <div className="details" onClick={toggleFavorite}>
         {favorite ? (

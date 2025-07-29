@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { DateTimePicker } from "@mantine/dates";
-import { FaCirclePlus } from "react-icons/fa6";
 import { createApplication, editApplication } from "../utils/applicationUtils";
 import { Status } from "../data/enums";
 import "../styles/Modal.css";
@@ -196,9 +195,11 @@ const ApplicationModal = ({
       }}
     >
       <section className="application-header">
-        <h2>
-          <label htmlFor="title"></label>
-          <span className="required-asterisk">*</span>
+        <div className="header-input">
+          <label htmlFor="title">
+            Job Title<span className="required-asterisk">*</span>
+          </label>
+
           <input
             type="text"
             id="title"
@@ -208,10 +209,12 @@ const ApplicationModal = ({
             onChange={handleChange}
             required
           />
-        </h2>
-        <div className="company-input">
-          <label htmlFor="companyName"></label>
-          <span className="required-asterisk">*</span>
+        </div>
+        <div className="header-input">
+          <label htmlFor="companyName">
+            {" "}
+            Company<span className="required-asterisk">*</span>
+          </label>
           <DropdownSearch
             data={allCompanies}
             id="companyName"
@@ -230,6 +233,7 @@ const ApplicationModal = ({
         <div className="description-input">
           <label htmlFor="description">Job Description </label>
           <textarea
+            maxLength="500"
             id="description"
             name="description"
             placeholder="Required Skills, Location, etc."
@@ -240,10 +244,7 @@ const ApplicationModal = ({
         <div className="list-container user-details">
           <section className="status-details">
             <label htmlFor="status">
-              <h3>
-                <span className="required-asterisk">*</span>
-                Status |
-              </h3>
+              <h3>Status |</h3>
             </label>
             <select
               id="status"
@@ -262,11 +263,13 @@ const ApplicationModal = ({
               <option value={Status.Signed}>Signed</option>
               <option value={Status.Other}>Other</option>
             </select>
+            <span className="required-asterisk">*</span>
           </section>
           <section className="list-content">
             <article className="child notes">
               <label htmlFor="notes">Notes </label>
               <textarea
+                maxLength="400"
                 id="notes"
                 name="notes"
                 value={formInput.notes}

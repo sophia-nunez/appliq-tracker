@@ -1,12 +1,12 @@
 #loading-modal {
   margin-top: 10vh;
   height: calc(100% - 10vh);
-  background-color: var(--background-color);
+  background-color: inherit;
   .modal-content {
     height: fit-content;
     width: 500px;
     min-width: min-content;
-    background-color: var(--background-color);
+    background-color: inherit;
     box-shadow: none;
     border: transparent;
 
@@ -23,14 +23,25 @@
       color: var(--text-color);
       margin: 0.2em auto;
     }
+  }
+}
 
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
+.mini-modal {
+  margin: auto !important;
+  height: 100%;
+  width: 100%;
+  background-color: inherit;
+
+  .modal-content {
+    height: 100%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -3,18 +3,20 @@ import { useNavigate, Link } from "react-router";
 import { useGoogleLogin, hasGrantedAllScopesGoogle } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import { useUser } from "./UserContext";
+import { useTheme } from "./ThemeContext.jsx";
 import {
   loginGoogleUser,
   getGoogleToken,
   loginUser,
   registerUser,
 } from "../utils/authUtils";
-import { Text, Anchor, Divider, TextInput, PasswordInput } from "@mantine/core";
+import { Text, Anchor, TextInput, PasswordInput } from "@mantine/core";
 import { homePath, loginPath, registerPath, Scopes } from "../data/links";
 import "../styles/LoginPage.css";
 
 const AuthForm = ({ type }) => {
   const { setUser } = useUser();
+  const { setTheme } = useTheme();
   const navigate = useNavigate();
   const [formInput, setFormInput] = useState({ username: "", password: "" });
   const [message, setMessage] = useState({}); // error or success message
@@ -88,7 +90,7 @@ const AuthForm = ({ type }) => {
     let data;
     try {
       if (type === "login") {
-        data = await loginUser(formInput);
+        data = await loginUser(formInput, setTheme);
       } else {
         data = await registerUser(formInput);
       }
@@ -102,6 +104,7 @@ const AuthForm = ({ type }) => {
         clearTimeout(timeout);
       }, 1000);
     } catch (err) {
+      console.log(err);
       setMessage({
         type: "error",
         text:
@@ -144,7 +147,11 @@ const AuthForm = ({ type }) => {
             />
           </div>
           <div className={`${type}-btns`}>
-            <button className="google-btn" onClick={() => login()}>
+            <button
+              className="google-btn"
+              type="button"
+              onClick={() => login()}
+            >
               <FcGoogle className="google-logo" /> Google
             </button>
             <button className={`${type}-btn`} onClick={handleSubmit}>

@@ -1,43 +1,38 @@
-import { createContext, useState, useContext } from "react";
-import {
-  Button,
-  Paper,
-  MantineProvider,
-  useMantineColorScheme,
-} from "@mantine/core";
+import { createContext, useState, useContext, useEffect } from "react";
+import { MantineProvider, useMantineColorScheme } from "@mantine/core";
+import { useUser } from "./UserContext";
+import { Scheme } from "../data/enums";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  const { user } = useUser();
   // check the device preferred to set the initial value
   const getPreferredTheme = () => {
-    if (typeof window !== "undefined" && window.matchMedia) {
+    if (user && user.colorScheme) {
+      return user.colorScheme;
+    } else if (typeof window !== "undefined" && window.matchMedia) {
       return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+        ? Scheme.DARK
+        : Scheme.LIGHT;
     }
-    return "light";
+    return Scheme.LIGHT;
   };
 
   // set with initlial value as device preferred
-  const preferredTheme = getPreferredTheme();
-  const [theme, setTheme] = useState("light");
-  const { setColorScheme } = useMantineColorScheme();
+  const [theme, setTheme] = useState(getPreferredTheme());
 
-  // sets to opposite theme (toggles)
-  const toggleTheme = () => {
-    const currentTheme = theme;
-    setTheme(currentTheme === "light" ? "dark" : "light");
-    setColorScheme(currentTheme === "light" ? "dark" : "light");
-  };
+  useEffect(() => {
+    setTheme(user.colorScheme);
+  }, [user]);
 
-  const value = { theme, toggleTheme };
+  const value = { theme, setTheme };
 
   // return context provider to wrap app in
   return (
     <ThemeContext.Provider value={value}>
       <MantineProvider
-        theme={{ colorScheme: theme }}
+        forceColorScheme={theme}
         withGlobalStyles
         withNormalizeCSS
       >

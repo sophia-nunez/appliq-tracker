@@ -25,4 +25,9 @@ const Search = {
   ALL: "all",
 };
 
-export { Status, Order, Periods, Search };
+const Scheme = {
+  LIGHT: "light",
+  DARK: "dark",
+};
+
+export { Status, Order, Periods, Search, Scheme };

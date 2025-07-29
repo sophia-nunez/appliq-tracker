@@ -110,10 +110,15 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
       skip: page * APPS_PER_PAGE,
       take: APPS_PER_PAGE,
     });
-    if (applications) {
-      res.json(applications);
-    } else {
-      next({ status: 404, message: `No applications found` });
+    if (applications && applications.length > 0) {
+      return res.json(applications);
+    } else if (search.status) {
+      // if none of featured status, return most recently applied
+      const otherApplications = await prisma.application.findMany({
+        where: { userId: req.session.userId },
+        orderBy: [{ isFeatured: "desc" }, { appliedAt: "desc" }],
+      });
+      return res.json(otherApplications);
     }
   } catch (err) {
     return res.status(500).json({ error: "Failed to get applications." });
@@ -535,13 +540,18 @@ router.put(
   "/applications/edit/:appId",
   isAuthenticated,
   async (req, res, next) => {
-    const id = Number(req.params.appId);
-    const userId = req.session.userId;
+    const appId = Number(req.params.appId);
+    const appUserId = req.session.userId;
     // separate field of categories to be removed
-    const { givenId, givenUserId, companyId, removedCategories, ...data } =
-      req.body;
+    const {
+      id: givenId,
+      userId: givenUserId,
+      companyId,
+      removedCategories,
+      ...data
+    } = req.body;
 
-    if (givenUserId && givenUserId !== userId) {
+    if (givenUserId && givenUserId !== appUserId) {
       return res
         .status(401)
         .json({ message: "Application does not belong to signed in user." });
@@ -550,7 +560,7 @@ router.put(
     try {
       // Make sure the ID is valid
       const application = await prisma.application.findUnique({
-        where: { id, userId },
+        where: { id: appId, userId: appUserId },
       });
 
       if (!application) {
@@ -558,12 +568,12 @@ router.put(
       }
 
       // Validate that application has required fields
-      const updatedAppValid = id !== undefined;
+      const updatedAppValid = appId !== undefined;
       if (updatedAppValid) {
         if (updatedApp.companyName) {
           // if companyName is changed, check if that company exists
           const existingCompany = await prisma.company.findFirst({
-            where: { userId, name: updatedApp.companyName },
+            where: { userId: appUserId, name: updatedApp.companyName },
           });
           if (existingCompany) {
             updatedApp.company = { connect: { id: existingCompany.id } };
@@ -571,7 +581,7 @@ router.put(
             // if no matching company, make new company
             const newCompany = await prisma.company.create({
               data: {
-                userId,
+                userId: appUserId,
                 name: updatedApp.companyName,
               },
             });
@@ -598,7 +608,7 @@ router.put(
 
         const updated = await prisma.application.update({
           data: updatedApp,
-          where: { id },
+          where: { id: appId },
           include: {
             company: {
               select: {
@@ -631,6 +641,7 @@ router.put(
           .json({ error: "Application modifications are invalid" });
       }
     } catch (err) {
+      console.log(err);
       // TODO special error handling if elastic update fails
       return res.status(500).json({ error: "Failed to update application." });
     }

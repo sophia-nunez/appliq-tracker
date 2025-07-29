@@ -41,6 +41,7 @@ model User {
   emailScanned DateTime?
   lastLogin DateTime?
   calendarId String?
+  colorScheme String @default("light")
 }
 
 model Application {

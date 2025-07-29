@@ -7,10 +7,11 @@ import {
 } from "react-router";
 import { IoArrowBackCircleSharp } from "react-icons/io5";
 import Modal from "../components/Modal";
-import Status from "../components/Status";
+import StatusButton from "../components/Status";
 import { deleteApplication, getApplication } from "../utils/applicationUtils";
 import "../styles/Subpage.css";
 import "../styles/ApplicationDetailPage.css";
+import { Tooltip } from "@mantine/core";
 
 const ApplicationDetailPage = () => {
   const navigate = useNavigate();
@@ -73,21 +74,28 @@ const ApplicationDetailPage = () => {
           </NavLink>
           <div className="application-header">
             <h2>{application.title}</h2>
-            <button onClick={() => navigate(companyPage)}>
-              {application.company && application.company.name
-                ? application.company.name
-                : "No Company Assigned"}
-            </button>
           </div>
           <div className="back-btn" />
         </div>
         <section className="application-details">
-          <p>Job description: {application.description}</p>
+          <article className="company-info">
+            <Tooltip label="Go to company page" position="bottom">
+              <p className="company-text" onClick={() => navigate(companyPage)}>
+                {application.company && application.company.name
+                  ? application.company.name
+                  : "No Company Assigned"}
+              </p>
+            </Tooltip>
+          </article>
+          <article className="label-text">
+            <h4>Job description </h4>
+            <p>{application.description}</p>
+          </article>
           <div className="list-container user-details">
             <h3 className="status-details">
-              Status | <Status status={application.status} />
+              Status | <StatusButton status={application.status} />
             </h3>
-            <section className="list-content">
+            <section className="list-content visible-bg">
               <article className="child notes">
                 <h4>Notes</h4>
                 <p>{application.notes}</p>

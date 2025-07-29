@@ -4,6 +4,7 @@ const session = require("express-session");
 const rateLimit = require("express-rate-limit");
 const { OAuth2Client } = require("google-auth-library");
 const cors = require("cors");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("../generated/prisma");
@@ -17,6 +18,7 @@ const searchRouter = require("./search");
 const chronRouter = require("./chron");
 const middleware = require("../middleware/middleware");
 const { createCalendarURL } = require("../data/links");
+const { encrypt, decrypt } = require("../utils/encryptionUtils");
 
 // node environment indicators
 const DEV = process.env.DEV;
@@ -97,7 +99,7 @@ server.use(searchRouter);
 
 // user authentication
 server.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, colorScheme } = req.body;
 
   if (!username || !password) {
     return res
@@ -122,12 +124,16 @@ server.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-      data: { username, password: hashedPassword },
+      data: { username, password: hashedPassword, colorScheme },
     });
+
+    req.session.userId = newUser.id;
+
     res.status(201).json({
       id: newUser.id,
       type: newUser.auth_provider,
       username: newUser.username,
+      colorScheme: newUser.colorScheme,
     });
   } catch (err) {
     return res.status(400).json({ error: "Failed to create account." });
@@ -169,6 +175,7 @@ server.post("/login", loginLimiter, async (req, res) => {
       id: user.id,
       type: user.auth_provider,
       username: user.username,
+      colorScheme: user.colorScheme,
     });
   } catch (err) {
     return res.status(401).json({ error: "Login failed." });
@@ -205,6 +212,13 @@ server.post("/auth/google/login", async (req, res) => {
       .json({ error: "Google login failed - missing profile information." });
   }
 
+  // encrypt important tokens
+  const encryptedAccessToken = encrypt(access_token);
+  let encryptedRefreshToken = refresh_token;
+  if (refresh_token) {
+    encryptedRefreshToken = encrypt(refresh_token);
+  }
+
   const token_expiry = new Date(expiry_date);
 
   const existingUser = await prisma.user.findUnique({
@@ -216,7 +230,11 @@ server.post("/auth/google/login", async (req, res) => {
     req.session.userId = existingUser.id;
 
     const updated = await prisma.user.update({
-      data: { access_token, refresh_token, token_expiry },
+      data: {
+        access_token: encryptedAccessToken,
+        refresh_token: encryptedRefreshToken,
+        token_expiry,
+      },
       where: { google_id: sub },
     });
 
@@ -255,8 +273,8 @@ server.post("/auth/google/login", async (req, res) => {
           name: given_name,
           auth_provider: "google",
           google_id: sub,
-          access_token: access_token,
-          refresh_token: refresh_token,
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
           token_expiry,
           calendarId: calendar.id,
         },
@@ -308,16 +326,28 @@ server.get("/me", async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.session.userId },
-    select: { id: true, username: true, name: true, auth_provider: true },
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      auth_provider: true,
+      colorScheme: true,
+    },
   });
   if (user.auth_provider === "google") {
     return res.json({
       id: user.id,
       username: user.name,
       type: user.auth_provider,
+      colorScheme: user.colorScheme,
     });
   }
-  res.json({ id: user.id, username: user.username, type: user.auth_provider });
+  res.json({
+    id: user.id,
+    username: user.username,
+    type: user.auth_provider,
+    colorScheme: user.colorScheme,
+  });
 });
 
 server.get("/user", async (req, res) => {
@@ -341,15 +371,28 @@ server.get("/user", async (req, res) => {
       calendarId: true,
     },
   });
+
+  if (user.access_token) {
+    const { access_token, ...rest } = user;
+    const decryptedAccessToken = decrypt(access_token);
+    return res.json({ access_token: decryptedAccessToken, ...rest });
+  }
   res.json(user);
 });
 
 server.put("/user", async (req, res) => {
-  const { emailScanned } = req.body;
+  const { emailScanned, colorScheme } = req.body;
   if (!req.session.userId) {
     return res
       .status(401)
       .json({ message: "Not logged in: " + req.session.userId });
+  }
+
+  let data;
+  if (emailScanned) {
+    data = { emailScanned };
+  } else if (colorScheme) {
+    data = { colorScheme };
   }
 
   try {
@@ -359,7 +402,7 @@ server.put("/user", async (req, res) => {
 
     if (user) {
       const updated = await prisma.user.update({
-        data: { emailScanned },
+        data,
         where: { id: req.session.userId },
       });
     } else {

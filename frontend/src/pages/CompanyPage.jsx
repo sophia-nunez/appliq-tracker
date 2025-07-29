@@ -9,9 +9,11 @@ import CompanyLong from "../components/CompanyLong.jsx";
 import { getCompanies } from "../utils/companyUtils.js";
 import { useLoading } from "../components/LoadingContext.jsx";
 import { Search } from "../data/enums.js";
+import useBoolean from "../utils/useBoolean.js";
+import LoadingModal from "../components/LoadingModal.jsx";
 
 const CompanyPage = () => {
-  const { loading } = useLoading();
+  const [isLoading, setIsLoading] = useBoolean(false);
   const [companies, setCompanies] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -29,7 +31,7 @@ const CompanyPage = () => {
 
   useEffect(() => {
     loadCompanies();
-  }, [query, orderBy]);
+  }, [orderBy]);
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ const CompanyPage = () => {
 
   // loads company based on query state variables (defaults to no search params)
   const loadCompanies = async () => {
-    loading.setTrue();
+    setIsLoading.setTrue();
     const currQuery = new URLSearchParams({
       page: activePage,
       perPage: 15,
@@ -49,6 +51,7 @@ const CompanyPage = () => {
     try {
       const data = await getCompanies(currQuery);
       setCompanies(data.companies);
+      setTotalPages(data.totalPages);
     } catch (error) {
       setMessage({
         type: "error",
@@ -56,7 +59,7 @@ const CompanyPage = () => {
       });
       setStatusOpen(true);
     }
-    loading.setFalse();
+    setIsLoading.setFalse();
   };
 
   // opens modal to add company
@@ -81,29 +84,35 @@ const CompanyPage = () => {
             <FaCirclePlus className="add-btn" onClick={addCompany} />
           </div>
           <section className="list-content">
-            {companies && companies.length > 0 ? (
-              companies.map((company) => {
-                return (
-                  <CompanyLong
-                    openPage={openPage}
-                    reloadPage={loadCompanies}
-                    key={company.id}
-                    id={company.id}
-                    name={company.name}
-                    industry={company.industry}
-                    description={company.description}
-                    careerPage={company.careerPage}
-                    isFavorite={company.isFavorite}
-                  />
-                );
-              })
+            {isLoading ? (
+              <LoadingModal mini />
             ) : (
-              <div className="no-display">
-                <h2>No companies to display.</h2>
-                <p>
-                  Click the <FaCirclePlus /> above to add a company!
-                </p>
-              </div>
+              <>
+                {companies && companies.length > 0 ? (
+                  companies.map((company) => {
+                    return (
+                      <CompanyLong
+                        openPage={openPage}
+                        reloadPage={loadCompanies}
+                        key={company.id}
+                        id={company.id}
+                        name={company.name}
+                        industry={company.industry}
+                        description={company.description}
+                        careerPage={company.careerPage}
+                        isFavorite={company.isFavorite}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="no-display">
+                    <h2>No companies to display.</h2>
+                    <p>
+                      Click the <FaCirclePlus /> above to add a company!
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </section>
           <Pagination
@@ -111,6 +120,7 @@ const CompanyPage = () => {
             value={activePage}
             onChange={setPage}
             total={totalPages}
+            color="violet"
           />
         </section>
       </main>

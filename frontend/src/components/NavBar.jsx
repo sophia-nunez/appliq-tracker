@@ -59,7 +59,7 @@ const NavBar = ({ closeNav, reference }) => {
           <div className="bottom-nav">
             <Divider size="sm" />
             <div id="non-nav-btns">
-              <Link to={settingsPath}>
+              <Link to={settingsPath} onClick={closeNav}>
                 <IoIosSettings className="settings-icon" />
                 Settings
               </Link>

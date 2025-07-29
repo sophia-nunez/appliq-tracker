@@ -8,13 +8,14 @@ import Modal from "../components/Modal";
 import ApplicationLong from "../components/ApplicationLong";
 import { getApplications, getTotalPages } from "../utils/applicationUtils";
 import { getCategories } from "../utils/categoryUtils";
-import { useLoading } from "../components/LoadingContext";
 import "../styles/List.css";
 import "../styles/CategoryDropdown.css";
 import { Search } from "../data/enums";
+import useBoolean from "../utils/useBoolean";
+import LoadingModal from "../components/LoadingModal";
 
 const ApplicationsPage = () => {
-  const { loading } = useLoading();
+  const [isLoading, setIsLoading] = useBoolean(false);
   const [applications, setApplications] = useState(Array());
   const [modalOpen, setModalOpen] = useState(false);
   const [categoriesList, setCategoriesList] = useState(Array());
@@ -33,22 +34,19 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     loadApplications();
-  }, [query, filter, orderBy, activePage]);
+  }, [filter, orderBy, activePage]);
 
-  // gets total pages
-  useEffect(() => {
-    async function getPages() {
-      const pages = await getTotalPages(
-        new URLSearchParams({
-          text: query.trim(),
-          category: filter,
-        })
-      );
-      setTotalPages(pages);
-    }
-
-    getPages();
-  }, [query]);
+  // gets total pages and reloads search results
+  async function handleSearch() {
+    await loadApplications();
+    const pages = await getTotalPages(
+      new URLSearchParams({
+        text: query.trim(),
+        category: filter,
+      })
+    );
+    setTotalPages(pages);
+  }
 
   const openPage = (e, id) => {
     e.preventDefault();
@@ -57,7 +55,7 @@ const ApplicationsPage = () => {
 
   // loads application based on query state variables (defaults to no search params)
   const loadApplications = async () => {
-    loading.setTrue();
+    setIsLoading.setTrue();
     const currQuery = {
       page: activePage,
       text: query.trim(),
@@ -80,7 +78,7 @@ const ApplicationsPage = () => {
       });
       setStatusOpen(true);
     }
-    loading.setFalse();
+    setIsLoading.setFalse();
   };
 
   // opens modal to add application
@@ -96,7 +94,7 @@ const ApplicationsPage = () => {
           setQuery={setQuery}
           orderBy={orderBy}
           setOrderBy={setOrderBy}
-          handleSearch={loadApplications}
+          handleSearch={handleSearch}
         />
         <section className="list-container">
           <div className="list-header">
@@ -120,34 +118,40 @@ const ApplicationsPage = () => {
             <FaCirclePlus className="add-btn" onClick={addApplication} />
           </div>
           <section className="list-content">
-            {applications && applications.length > 0 ? (
-              applications.map((application) => {
-                return (
-                  <ApplicationLong
-                    openPage={openPage}
-                    reloadPage={loadApplications}
-                    key={application.id}
-                    id={application.id}
-                    companyName={
-                      application.company && application.company.name
-                        ? application.company.name
-                        : "No Company Assigned"
-                    }
-                    title={application.title}
-                    description={application.description}
-                    appliedAt={application.appliedAt}
-                    status={application.status}
-                    isFeatured={application.isFeatured}
-                  />
-                );
-              })
+            {isLoading ? (
+              <LoadingModal mini />
             ) : (
-              <div className="no-display">
-                <h2>No applications to display.</h2>
-                <p>
-                  Click the <FaCirclePlus /> above to add an application!
-                </p>
-              </div>
+              <>
+                {applications && applications.length > 0 ? (
+                  applications.map((application) => {
+                    return (
+                      <ApplicationLong
+                        openPage={openPage}
+                        reloadPage={loadApplications}
+                        key={application.id}
+                        id={application.id}
+                        companyName={
+                          application.company && application.company.name
+                            ? application.company.name
+                            : "No Company Assigned"
+                        }
+                        title={application.title}
+                        description={application.description}
+                        appliedAt={application.appliedAt}
+                        status={application.status}
+                        isFeatured={application.isFeatured}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="no-display">
+                    <h2>No applications to display.</h2>
+                    <p>
+                      Click the <FaCirclePlus /> above to add an application!
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </section>
           <Pagination
@@ -155,6 +159,7 @@ const ApplicationsPage = () => {
             value={activePage}
             onChange={setPage}
             total={totalPages}
+            color="violet"
           />
         </section>
       </main>

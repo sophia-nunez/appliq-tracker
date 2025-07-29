@@ -2,7 +2,7 @@
 .company-detail-page {
   place-items: center;
   .page-info {
-    margin-bottom: 20px;
+    margin: 20px 0px;
   }
 
   .application-header,
@@ -10,6 +10,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    h2 {
+      margin: 0px;
+    }
+  }
+
+  .company-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+
+    * {
+      margin: 0px;
+    }
+
+    .company-text {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .company-text:hover {
+      color: var(--gray);
+    }
+  }
+
+  .label-text {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
   }
 
   .list-content {
@@ -18,6 +48,7 @@
 
   .application-details,
   .company-details {
+    margin-bottom: 20px;
     width: clamp(250px, 80%, 2000px);
     display: flex;
     flex-direction: column;
@@ -36,6 +67,7 @@
       background-color: lightgray;
       padding: 5px;
       border-radius: 10px;
+      cursor: default;
     }
 
     .category-list {
