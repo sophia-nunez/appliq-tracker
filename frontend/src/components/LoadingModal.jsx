@@ -4,7 +4,10 @@ import "../styles/LoadingModal.css";
 
 const LoadingModal = (mini) => {
   return (
-    <aside className={mini ? "mini-modal" : "modal"} id="loading-modal">
+    <aside
+      className={mini === "true" ? "mini-modal" : "modal"}
+      id="loading-modal"
+    >
       <section className="modal-content">
         <FaSpinner className="loading-spinner" />
         <p> Loading...</p>

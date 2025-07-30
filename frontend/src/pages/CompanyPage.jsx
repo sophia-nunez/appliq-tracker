@@ -85,7 +85,7 @@ const CompanyPage = () => {
           </div>
           <section className="list-content">
             {isLoading ? (
-              <LoadingModal mini />
+              <LoadingModal mini="true" />
             ) : (
               <>
                 {companies && companies.length > 0 ? (
@@ -115,13 +115,15 @@ const CompanyPage = () => {
               </>
             )}
           </section>
-          <Pagination
-            className="page-numbers"
-            value={activePage}
-            onChange={setPage}
-            total={totalPages}
-            color="violet"
-          />
+          {!isLoading && (
+            <Pagination
+              className="page-numbers"
+              value={activePage}
+              onChange={setPage}
+              total={totalPages}
+              color="violet"
+            />
+          )}
         </section>
       </main>
       {modalOpen && (

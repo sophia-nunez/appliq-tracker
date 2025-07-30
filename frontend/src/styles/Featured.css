@@ -89,4 +89,15 @@
     transform: scale(1.02);
     box-shadow: 0px 2px 2px 1px var(--shadow-color);
   }
+
+  @media (min-width: 1450px) {
+    .featured-content {
+      justify-content: center;
+      gap: 3%;
+
+      .featured {
+        max-width: 300px;
+      }
+    }
+  }
 }

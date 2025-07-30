@@ -119,7 +119,7 @@ const ApplicationsPage = () => {
           </div>
           <section className="list-content">
             {isLoading ? (
-              <LoadingModal mini />
+              <LoadingModal mini="true" />
             ) : (
               <>
                 {applications && applications.length > 0 ? (
@@ -154,13 +154,15 @@ const ApplicationsPage = () => {
               </>
             )}
           </section>
-          <Pagination
-            className="page-numbers"
-            value={activePage}
-            onChange={setPage}
-            total={totalPages}
-            color="violet"
-          />
+          {!isLoading && (
+            <Pagination
+              className="page-numbers"
+              value={activePage}
+              onChange={setPage}
+              total={totalPages}
+              color="violet"
+            />
+          )}
         </section>
       </main>
       {modalOpen && (

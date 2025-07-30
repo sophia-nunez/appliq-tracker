@@ -110,14 +110,19 @@ const List = () => {
                   <h4>{note.task}</h4>
                   <p className="description-text">{note.description}</p>
                 </div>
-                <div className="buttons">
+                <Card.Section
+                  className="buttons"
+                  inheritPadding
+                  py="xs"
+                  style={{ marginTop: "auto" }}
+                >
                   <button
                     className="delete-btn"
                     onClick={(e) => handleDelete(e, note.id)}
                   >
                     <FaTrashAlt />
                   </button>
-                </div>
+                </Card.Section>
               </Card>
             );
           })}
