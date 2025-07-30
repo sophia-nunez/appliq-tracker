@@ -1,9 +1,11 @@
 const router = require("express").Router();
+const { LogStatus } = require("../data/enums");
 const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
 const middleware = require("../middleware/middleware");
+const { logDDMessage } = require("../utils/logUtils");
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
@@ -30,7 +32,11 @@ router.get("/notes", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error getting all notes for user ID: ${req.session.userId}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(404).json({ error: "Failed to get notes." });
   }
 });
 
@@ -49,7 +55,11 @@ router.get("/notes/:id", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error getting note ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(404).json({ error: "Failed to get note." });
   }
 });
 
@@ -69,7 +79,11 @@ router.post("/notes", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error creating note.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(500).json({ error: "Failed to create note." });
   }
 });
 
@@ -89,7 +103,11 @@ router.delete("/notes/:id", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error deleting note ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(404).json({ error: "Failed to delete note." });
   }
 });
 

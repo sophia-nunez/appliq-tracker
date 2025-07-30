@@ -124,6 +124,10 @@ router.get("/applications", isAuthenticated, async (req, res, next) => {
     }
     return res.json([]);
   } catch (err) {
+    logDDMessage(
+      `Error fetching all applications.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });
@@ -172,6 +176,10 @@ router.get(
       });
       return res.json(Math.ceil(count / APPS_PER_PAGE));
     } catch (err) {
+      logDDMessage(
+        `Error fetching total pages of applications.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(500).json({ error: "Failed to get applications." });
     }
   }
@@ -199,6 +207,10 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
+      logDDMessage(
+        `Error fetching ${type} group data for applications.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -258,6 +270,10 @@ router.get(
         next({ status: 404, message: `No applications found` });
       }
     } catch (err) {
+      logDDMessage(
+        `Error getting date range (${period}) of application activity.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(401).json({ error: "Failed to get applications." });
     }
   }
@@ -368,6 +384,10 @@ router.get(
         res.json([]);
       }
     } catch (err) {
+      logDDMessage(
+        `Error getting company-grouped application.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res
         .status(500)
         .json({ error: "Failed to get grouped applications." });
@@ -386,9 +406,13 @@ router.get("/applications/id/:id", isAuthenticated, async (req, res, next) => {
     if (application) {
       res.json(application);
     } else {
-      next({ status: 404, message: "Application not found" });
+      res.status(404).json({ message: "Application not found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error fetching application of ID ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Application not found." });
   }
 });
@@ -423,6 +447,10 @@ router.get(
       }
       return res.status(200).json([]);
     } catch (err) {
+      logDDMessage(
+        `Error fetching applications with new interviews.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(500).json({ error: "Application fetch failed." });
     }
   }
@@ -449,6 +477,10 @@ router.get(
       }
       return res.status(200).json({});
     } catch (err) {
+      logDDMessage(
+        `Error finding application by company (${companyName}) and title (${title}).\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(404).json({ error: "Application not found." });
     }
   }
@@ -712,6 +744,10 @@ router.delete(
         return res.status(404).json({ error: "Application not found" });
       }
     } catch (err) {
+      logDDMessage(
+        `Error deleting application ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(500).json({ error: "Failed to delete application." });
     }
   }
