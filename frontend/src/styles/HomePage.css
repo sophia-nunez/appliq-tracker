@@ -5,6 +5,11 @@
     margin: 0px;
   }
 
+  .home-container {
+    max-width: 2000px;
+    margin: auto;
+  }
+
   .home-nav {
     display: flex;
     flex-direction: row;

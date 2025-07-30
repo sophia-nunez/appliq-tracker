@@ -52,7 +52,7 @@ const Featured = () => {
   };
 
   return (
-    <section className="featured-container">
+    <section className="home-container">
       <h3> Featured </h3>
       <section className="featured-background">
         <div className="featured-content">
