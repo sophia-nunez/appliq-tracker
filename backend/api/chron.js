@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const Order = require("../data/enums");
+const { Order, LogStatus } = require("../data/enums");
 const { Client } = require("@elastic/elasticsearch");
 const { OAuth2Client } = require("google-auth-library");
 const { timeZoneAbbr } = require("../data/timezones");
@@ -103,8 +103,10 @@ router.post("/scheduler/email", async (req, res) => {
         }
       })
     );
-
-    console.info("Job completed with 2** status: ", response);
+    logDDMessage(
+      `Chron job completed with 2** status: ${response}`,
+      LogStatus.INFO
+    );
     // if any users failed, send Accepted status to indicate this
     if (response.some((result) => !result.success)) {
       return res
@@ -115,6 +117,7 @@ router.post("/scheduler/email", async (req, res) => {
     // if all users succeed,
     res.status(200).json({ message: "All users updated", result: response });
   } catch (err) {
+    logDDMessage(`Chron job failed: ${err.message}`, LogStatus.ERROR);
     res.status(500).json({ error: "Failed to sync emails for all users." });
   }
 });

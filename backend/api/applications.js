@@ -7,6 +7,7 @@ const {
   Status,
   OrderStatus,
   Search,
+  LogStatus,
 } = require("../data/enums");
 
 // env variables
@@ -26,6 +27,7 @@ const client = new Client({
 });
 
 const middleware = require("../middleware/middleware");
+const { logDDMessage } = require("../utils/logUtils");
 
 router.use(middleware);
 
@@ -532,7 +534,10 @@ router.post("/applications", isAuthenticated, async (req, res, next) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
   } catch (err) {
-    console.warn(err);
+    logDDMessage(
+      `Error creating application.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to create application." });
   }
 });
@@ -645,8 +650,10 @@ router.put(
           .json({ error: "Application modifications are invalid" });
       }
     } catch (err) {
-      // log on backend
-      console.warn(err);
+      logDDMessage(
+        `Error updating application.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(500).json({ error: "Failed to update application." });
     }
   }
