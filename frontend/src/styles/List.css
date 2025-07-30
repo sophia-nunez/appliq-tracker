@@ -1,6 +1,7 @@
 /* CSS file for list items, including applications and companies*/
 
 .list-container {
+  max-width: 2000px;
   margin: 20px auto;
   width: 100%;
 
@@ -30,6 +31,8 @@
 
 .list-content {
   min-height: 50vh;
+  max-width: 2000px;
+  margin: 0px auto;
   padding: 20px;
   border-radius: 3px;
 

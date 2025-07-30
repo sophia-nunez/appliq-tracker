@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { Status } from "../data/enums";
 
 // label to go on outside, middle section, with status and count
@@ -40,26 +40,28 @@ const SummaryChart = ({ data }) => {
   ]);
 
   return (
-    <PieChart width={730} height={250}>
-      <Pie
-        data={data}
-        dataKey="value"
-        nameKey="name"
-        cx="50%"
-        cy="50%"
-        innerRadius={60}
-        outerRadius={80}
-        fill="#82ca9d"
-        label={renderCustomizedLabel}
-      >
-        {
-          // sets attributes (fill) for each section of the graph
-          data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors.get(entry.name)} />
-          ))
-        }
-      </Pie>
-    </PieChart>
+    <ResponsiveContainer height={350} width="100%">
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={80}
+          fill="#82ca9d"
+          label={renderCustomizedLabel}
+        >
+          {
+            // sets attributes (fill) for each section of the graph
+            data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={colors.get(entry.name)} />
+            ))
+          }
+        </Pie>
+      </PieChart>
+    </ResponsiveContainer>
   );
 };
 
