@@ -80,8 +80,11 @@ const CompanyModal = ({
   return (
     <form className="company-form" onSubmit={handleSubmit}>
       <section className="company-header">
-        <h2>
-          <label htmlFor="name"></label>
+        <div className="header-input">
+          <label htmlFor="name">
+            Company Name<span className="required-asterisk">*</span>
+          </label>
+
           <input
             type="text"
             id="name"
@@ -91,11 +94,12 @@ const CompanyModal = ({
             onChange={handleChange}
             required
           />
-        </h2>
+        </div>
       </section>
       <section className="company-body">
         <div className="list-container user-details">
-          <section className="list-content">
+          <h3>Additional Details</h3>
+          <section className="list-content visible-bg">
             <article className="child careerPage">
               <label htmlFor="notes">
                 <h4>Career Page URL</h4>

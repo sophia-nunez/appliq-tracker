@@ -78,6 +78,10 @@
         color: var(--gray);
       }
     }
+
+    .featured-icon:hover {
+      font-size: 1.2em;
+    }
   }
 
   .featured:hover {

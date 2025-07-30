@@ -83,6 +83,13 @@
       }
     }
 
+    .featured:hover,
+    .favorite:hover,
+    .not-featured:hover,
+    .not-favorite:hover {
+      font-size: 1.2em;
+    }
+
     .details {
       display: flex;
       flex-direction: column;

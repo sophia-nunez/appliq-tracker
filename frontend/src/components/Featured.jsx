@@ -72,7 +72,7 @@ const Featured = () => {
                       className="favorite-status"
                       onClick={(e) => toggleFeatured(e, application.id)}
                     >
-                      <FaHeart />
+                      <FaHeart className="featured-icon" />
                     </div>
                   )}
                   {application.interviewAt && (

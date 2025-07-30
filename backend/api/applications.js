@@ -627,7 +627,10 @@ router.put(
 
         // format for elastic insert
         const { companyName, company, ...app } = updated;
-        const document = { ...app, companyName: company.name };
+        let document = { ...app };
+        if (company && company.name) {
+          document = { ...app, companyName: company.name };
+        }
         // updates document in the index
         const elasticResponse = await client.index({
           index: ELASTIC_INDEX,

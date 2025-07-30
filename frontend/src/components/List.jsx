@@ -94,34 +94,37 @@ const List = () => {
           <button type="submit">Add Task</button>
         </div>
       </form>
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, xl: 5 }}>
-        {notes && notes.length > 0
-          ? notes.map((note) => {
-              return (
-                <Card
-                  key={note.id}
-                  shadow="sm"
-                  padding="lg"
-                  radius="md"
-                  withBorder
-                >
-                  <div className="text">
-                    <h4>{note.task}</h4>
-                    <p className="description-text">{note.description}</p>
-                  </div>
-                  <div className="buttons">
-                    <button
-                      className="delete-btn"
-                      onClick={(e) => handleDelete(e, note.id)}
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  </div>
-                </Card>
-              );
-            })
-          : "No notes to display."}
-      </SimpleGrid>
+
+      {notes && notes.length > 0 ? (
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, xl: 5 }}>
+          {notes.map((note) => {
+            return (
+              <Card
+                key={note.id}
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                withBorder
+              >
+                <div className="text">
+                  <h4>{note.task}</h4>
+                  <p className="description-text">{note.description}</p>
+                </div>
+                <div className="buttons">
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => handleDelete(e, note.id)}
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </div>
+              </Card>
+            );
+          })}
+        </SimpleGrid>
+      ) : (
+        "No notes to display."
+      )}
     </section>
   );
 };

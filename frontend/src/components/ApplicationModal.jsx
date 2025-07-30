@@ -37,7 +37,6 @@ const ApplicationModal = ({
   // if editing existing application, loads in current data to the form
   useEffect(() => {
     if (application.id) {
-      // TODO currently adds userId and all other fields to payload, should this be avoided?
       const linkedCompanyName =
         application.company && application.company.name
           ? application.company.name
@@ -265,7 +264,7 @@ const ApplicationModal = ({
             </select>
             <span className="required-asterisk">*</span>
           </section>
-          <section className="list-content">
+          <section className="list-content visible-bg">
             <article className="child notes">
               <label htmlFor="notes">Notes </label>
               <textarea
