@@ -93,6 +93,13 @@
       font-size: 1.2em;
     }
 
+    .featured,
+    .favorite,
+    .not-featured,
+    .not-favorite {
+      transition: 0.5s ease font-size;
+    }
+
     .details {
       display: flex;
       flex-direction: column;
@@ -146,28 +153,14 @@
 .application,
 .company {
   cursor: pointer;
-  animation-name: animatescale;
-  animation-duration: 1s;
+  transition: transform 1s ease, box-shadow 1s ease;
 }
 
 .application:hover,
 .company:hover {
   cursor: pointer;
-  animation-name: animatescale;
-  animation-direction: reverse;
-  animation-duration: 1s;
   transform: scale(1.02);
   box-shadow: 0px 2px 2px 1px var(--shadow-color);
-}
-
-@keyframes animatescale {
-  from {
-    transform: scale(1.02);
-    box-shadow: 0px 0px 3px 0px var(--shadow-color);
-  }
-  to {
-    transform: scale(1);
-  }
 }
 
 .notes-list {

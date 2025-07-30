@@ -23,7 +23,7 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(getPreferredTheme());
 
   useEffect(() => {
-    setTheme(user.colorScheme);
+    setTheme(getPreferredTheme());
   }, [user]);
 
   const value = { theme, setTheme };
