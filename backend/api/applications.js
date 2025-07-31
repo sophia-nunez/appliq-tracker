@@ -427,24 +427,33 @@ router.get(
         where: { id: req.session.userId },
       });
 
-      // not logged in before, no emails to fetch
+      let applications = [];
+      // not logged in before, any interviews are new
       if (!user.lastLogin) {
-        return res.status(200).json([]);
+        applications = await prisma.application.findMany({
+          where: {
+            userId: user.id,
+            interviewAt: { not: null },
+          },
+          include: { company: { select: { name: true } } },
+        });
+      } else {
+        applications = await prisma.application.findMany({
+          where: {
+            interviewUpdated: {
+              gte: new Date(user.lastLogin),
+            },
+            userId: user.id,
+            interviewAt: { not: null },
+          },
+          include: { company: { select: { name: true } } },
+        });
       }
 
-      const applications = await prisma.application.findMany({
-        where: {
-          interviewUpdated: {
-            gte: new Date(user.lastLogin),
-          },
-          userId: user.id,
-          interviewAt: { not: null },
-        },
-        include: { company: { select: { name: true } } },
-      });
       if (applications.length > 0) {
         return res.json(applications);
       }
+      // no new applications found
       return res.status(200).json([]);
     } catch (err) {
       logDDMessage(
