@@ -58,11 +58,14 @@ const HomePage = () => {
   return (
     <main className="home-page" style={{ width: "100vw" }}>
       <h2>Home</h2>
-
-      <Featured />
+      <section className="featured-container">
+        <Featured />
+      </section>
       <section className="tasks-container">
-        <h3>Tasks</h3>
-        <List />
+        <section className="home-container">
+          <h3>Tasks</h3>
+          <List />
+        </section>
       </section>
     </main>
   );

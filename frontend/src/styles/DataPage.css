@@ -6,14 +6,6 @@
     align-items: center;
     gap: 40px;
     margin-bottom: 20px;
-    .summary-chart {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      width: 100%;
-    }
 
     .chart-container {
       background-color: var(--card-bg-color);
@@ -38,6 +30,7 @@
         gap: 20px;
 
         width: 80%;
+        max-width: 1500px;
       }
 
       .chart {
@@ -99,6 +92,42 @@
         color: inherit;
         background-color: inherit;
       }
+    }
+  }
+
+  .summary-chart {
+    background-color: var(--card-bg-color);
+    border-radius: 5px;
+
+    place-items: center;
+    padding: 20px;
+    border-radius: 5px;
+    width: 60%;
+    min-height: 20vh;
+    min-width: 250px;
+    max-width: 700px;
+
+    overflow: auto;
+  }
+
+  .summary-chart-container {
+    background-color: inherit;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    width: 80vw;
+    padding: 50px 20px;
+  }
+
+  @media (min-width: 700px) {
+    .summary-chart-container {
+      flex-direction: row;
+      align-items: start;
     }
   }
 }

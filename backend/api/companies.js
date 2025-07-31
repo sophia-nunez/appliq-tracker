@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { PrismaClient } = require("../generated/prisma");
-const { Order, Search } = require("../data/enums");
+const { Order, Search, LogStatus } = require("../data/enums");
 const { Client } = require("@elastic/elasticsearch");
 
 // env variables
@@ -19,6 +19,7 @@ const client = new Client({
 
 const prisma = new PrismaClient();
 const middleware = require("../middleware/middleware");
+const { logDDMessage } = require("../utils/logUtils");
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
@@ -95,6 +96,10 @@ router.get("/companies", async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error fetching all companies.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get companies." });
   }
 });
@@ -111,6 +116,10 @@ router.get("/companies/industries", isAuthenticated, async (req, res, next) => {
       return res.status(404).json({ error: "No companies found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error fetching all industries.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get companies." });
   }
 });
@@ -129,6 +138,10 @@ router.get("/companies/:id", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error fetching company ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get company" });
   }
 });
@@ -146,6 +159,10 @@ router.get("/companies/:name", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error fetching company by name: ${name}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get company" });
   }
 });
@@ -210,6 +227,10 @@ router.post("/companies", isAuthenticated, async (req, res, next) => {
       return res.status(422).json({ error: "Company name required" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error creating company: ${newCompany}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to create company." });
   }
 });
@@ -307,6 +328,10 @@ router.put("/companies/:companyId", isAuthenticated, async (req, res, next) => {
         .json({ error: "Company modifications are invalid" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error updating company ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to update company." });
   }
 });
@@ -353,6 +378,10 @@ router.delete("/companies/:id", async (req, res, next) => {
       return res.status(404).json({ error: "Company not found" });
     }
   } catch (err) {
+    logDDMessage(
+      `Error deleting company ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get company" });
   }
 });

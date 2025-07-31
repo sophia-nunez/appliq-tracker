@@ -4,6 +4,7 @@ const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 
 const middleware = require("../middleware/middleware");
+const { logDDMessage } = require("../utils/logUtils");
 
 const isAuthenticated = (req, res, next) => {
   if (!req.session.userId) {
@@ -30,7 +31,11 @@ router.get("/categories", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error getting categories for user ID: ${req.session.userId}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(500).json({ error: "Failed to get categories." });
   }
 });
 
@@ -49,7 +54,11 @@ router.get("/categories/:id", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error getting category ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(404).json({ error: "Failed to get category." });
   }
 });
 
@@ -71,7 +80,11 @@ router.get(
         });
       }
     } catch (err) {
-      next(err);
+      logDDMessage(
+        `Error getting category with name: ${name}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+        LogStatus.ERROR
+      );
+      res.status(500).json({ error: "Failed to get category." });
     }
   }
 );
@@ -95,7 +108,11 @@ router.post("/categories", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error creating category.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(500).json({ error: "Failed to create category." });
   }
 });
 
@@ -115,7 +132,11 @@ router.delete("/categories/:id", isAuthenticated, async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    logDDMessage(
+      `Error deleting category ID: ${id}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
+    res.status(404).json({ error: "Failed to delete category." });
   }
 });
 

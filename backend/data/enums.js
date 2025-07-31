@@ -30,4 +30,10 @@ const Search = {
   ALL: "all",
 };
 
-module.exports = { Order, Status, OrderStatus, Periods, Search };
+const LogStatus = {
+  INFO: "info",
+  WARN: "warn",
+  ERROR: "error",
+};
+
+module.exports = { Order, Status, OrderStatus, Periods, Search, LogStatus };

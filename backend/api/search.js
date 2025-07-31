@@ -10,6 +10,8 @@ const ELASTIC_INDEX = process.env.ELASTIC_INDEX;
 
 // middleware
 const middleware = require("../middleware/middleware");
+const { logDDMessage } = require("../utils/logUtils");
+const { LogStatus } = require("../data/enums");
 router.use(middleware);
 
 const prisma = new PrismaClient();
@@ -96,6 +98,10 @@ router.get("/applications/search", isAuthenticated, async (req, res, next) => {
       next({ status: 404, message: `No applications found` });
     }
   } catch (err) {
+    logDDMessage(
+      `Error searching applications on Elastic with query: ${search}.\nError Status: ${err.status}\nError Message: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(500).json({ error: "Failed to get applications." });
   }
 });

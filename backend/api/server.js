@@ -19,6 +19,8 @@ const chronRouter = require("./chron");
 const middleware = require("../middleware/middleware");
 const { createCalendarURL } = require("../data/links");
 const { encrypt, decrypt } = require("../utils/encryptionUtils");
+const { logDDMessage } = require("../utils/logUtils");
+const { LogStatus } = require("../data/enums");
 
 // node environment indicators
 const DEV = process.env.DEV;
@@ -178,6 +180,10 @@ server.post("/login", loginLimiter, async (req, res) => {
       colorScheme: user.colorScheme,
     });
   } catch (err) {
+    logDDMessage(
+      `Login failed due to uncaught error: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(401).json({ error: "Login failed." });
   }
 });
@@ -288,6 +294,10 @@ server.post("/auth/google/login", async (req, res) => {
         username: newUser.name,
       });
     } catch (err) {
+      logDDMessage(
+        `Registration failed due to uncaught error: ${err.message}`,
+        LogStatus.ERROR
+      );
       return res.status(400).json({ error: "Failed to create account." });
     }
   }
@@ -411,6 +421,10 @@ server.put("/user", async (req, res) => {
 
     res.json({ message: "User updated successfully" });
   } catch (error) {
+    logDDMessage(
+      `Account update failed due to uncaught error: ${err.message}`,
+      LogStatus.ERROR
+    );
     return res.status(400).json({ error: "Failed to update account." });
   }
 });
