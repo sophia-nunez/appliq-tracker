@@ -211,7 +211,7 @@ const findInterviewTimes = async (user) => {
     }
 
     // using the interview list, match interviews to applications to update or create
-    setInterviewTime(user, interviews);
+    await setInterviewTime(user, interviews);
 
     return interviews;
   } catch (error) {
@@ -228,7 +228,7 @@ const setInterviewTime = async (user, interviews) => {
       return interview.date;
     });
 
-    interviewDates.forEach(async (interview) => {
+    for (const interview of interviewDates) {
       try {
         // try to find application with matching company and title
         const application = await matchApplication(user, interview);
@@ -372,7 +372,7 @@ const setInterviewTime = async (user, interviews) => {
       } catch (error) {
         // failed to set interview, skip
       }
-    });
+    }
   }
 };
 
