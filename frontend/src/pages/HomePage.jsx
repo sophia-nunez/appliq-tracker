@@ -28,6 +28,7 @@ const HomePage = () => {
   const loginHome = async () => {
     // on load, search and set interviews from email
     const interviews = await findInterviewTimes();
+    await setInterviewsAdded(interviewsAdded + 1);
 
     // if interviews are found, display popup asking to add these to calendar
     if (interviews && interviews.length > 0) {
@@ -54,7 +55,6 @@ const HomePage = () => {
     }
 
     await trackLogin();
-    await setInterviewsAdded(interviewsAdded + 1);
   };
 
   return (
