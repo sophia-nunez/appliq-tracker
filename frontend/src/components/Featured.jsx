@@ -8,7 +8,7 @@ import { useLoading } from "./LoadingContext";
 import { Divider } from "@mantine/core";
 import { Status } from "../data/enums";
 
-const Featured = () => {
+const Featured = ({ interviewsAdded }) => {
   const { loading } = useLoading();
   const [featured, setFeatured] = useState(Array());
   const { setMessage, setStatusOpen } = useOutletContext();
@@ -18,7 +18,7 @@ const Featured = () => {
 
   useEffect(() => {
     loadApplications();
-  }, []);
+  }, [interviewsAdded]);
 
   const openApplicationPage = (e, id) => {
     e.preventDefault();
