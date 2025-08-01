@@ -367,9 +367,10 @@ const createEvent = async (interview) => {
       durationMinutes += interview.duration.minutes;
     }
   }
+  const interviewDate = new Date(interview.date);
   // set endDate as duration past startDate
   const endDate = new Date(
-    interview.date.getTime() + durationMinutes * 60000
+    interviewDate.getTime() + durationMinutes * 60000
   ).toISOString();
 
   let summary = `Interview: ${interview.title}`;
